@@ -1153,7 +1153,7 @@ body{
         <div class="ob-label">How much capital do you actively manage?</div>
         <div class="ob-grid">
           <button class="ob-card" type="button" data-ob-group="capital" data-value="< $10k">
-            <div class="ob-card-title">&lt; $10k</div>
+            <div class="ob-card-title">< $10k</div>
             <div class="ob-card-copy">Early-stage capital or personal experimentation.</div>
           </button>
           <button class="ob-card" type="button" data-ob-group="capital" data-value="$10k–$100k">
@@ -2113,14 +2113,14 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>
 
 <div id="unifiedTerminalView" aria-hidden="true">
-  <iframe id="terminalFrame" title="Velu Markets Terminal" srcdoc="&lt;!DOCTYPE html&gt;
-&lt;html lang=&quot;en&quot;&gt;
-&lt;head&gt;
-&lt;meta charset=&quot;UTF-8&quot;&gt;
-&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1.0,viewport-fit=cover&quot;&gt;
-&lt;title&gt;Velu Markets — Terminal Beta&lt;/title&gt;
-&lt;link href=&quot;https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Playfair+Display:wght@400;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;family=DM+Sans:wght@300;400;500;600&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
-&lt;style&gt;
+  <iframe id="terminalFrame" title="Velu Markets Terminal" srcdoc="<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<title>Velu Markets — Terminal Beta</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
 /* ── TOKENS ─────────────────────────────────────────────────── */
 :root{
   --w:#FFFFFF; --off:#F7F7F5; --sm:#EFEFEC;
@@ -2129,9 +2129,9 @@ document.addEventListener('DOMContentLoaded', () => {
   --mu:#6B6B60; --dim:#9A9A8E; --fa:#C8C8BE;
   --g:#00FF88; --g2:#00CC6A; --g3:rgba(0,255,136,.08);
   --red:#FF3B30; --amb:#FF9500; --blu:#0A84FF;
-  --sans:&#x27;DM Sans&#x27;,system-ui,sans-serif;
-  --mono:&#x27;IBM Plex Mono&#x27;,&#x27;Courier New&#x27;,monospace;
-  --serif:&#x27;Playfair Display&#x27;,Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono','Courier New',monospace;
+  --serif:'Playfair Display',Georgia,serif;
   --ease:cubic-bezier(.16,1,.3,1);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -2168,7 +2168,7 @@ a{text-decoration:none;color:inherit;}
   padding:0 20px;height:50px;gap:16px;
 }
 .tb-logo{
-  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size:20px;font-weight:800;color:var(--ink);letter-spacing:-.05em;white-space:nowrap;
 }
 .tb-center{display:flex;align-items:center;gap:12px;flex:1;max-width:440px;}
@@ -2296,6 +2296,7 @@ a{text-decoration:none;color:inherit;}
 .cat-mac{background:rgba(10,132,255,.07);color:#40AAFF;}
 .cat-eq{background:rgba(52,199,89,.1);color:#34C759;}
 .cat-cmd{background:rgba(255,59,48,.08);color:#FF3B30;}
+.cat-geo{background:rgba(83,74,183,.1);color:#534AB7;}
 
 /* ── MAIN PANEL ────────────────────────────────────────────── */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;
@@ -2324,7 +2325,9 @@ background:
 .mhdr-info{font-size:11px;color:var(--dim);font-family:var(--mono);}
 .mhdr-poly{font-size:10px;color:var(--dim);font-family:var(--mono);transition:color .15s;}
 .mhdr-poly:hover{color:var(--g2);}
-.mhdr-title{font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:30px;font-weight:800;color:var(--ink);line-height:1.04;margin-bottom:16px;letter-spacing:-.06em;}
+.trade-btn{display:inline-flex;align-items:center;font-size:11px;font-weight:600;color:var(--ink);padding:4px 13px;border-radius:6px;background:var(--g);font-family:var(--mono);transition:all .15s;text-decoration:none;letter-spacing:.04em;}
+.trade-btn:hover{background:var(--g2);box-shadow:0 0 14px rgba(0,255,136,.4);}
+.mhdr-title{font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;font-size:30px;font-weight:800;color:var(--ink);line-height:1.04;margin-bottom:16px;letter-spacing:-.06em;}
 
 /* Probability row */
 .prob-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
@@ -2600,139 +2603,139 @@ background:
   .pb-num{font-size:26px;}
 }
 @media(hover:none){.mitem{min-height:80px;}.tab{min-height:40px;}}
-&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
+</style>
+</head>
+<body>
 
-&lt;!-- ═══════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════
      MOBILE SHEET (market list overlay)
-══════════════════════════════════════════════════ --&gt;
-&lt;div class=&quot;sheet-back&quot; id=&quot;sheetBack&quot; onclick=&quot;closeSheet()&quot;&gt;
-  &lt;div class=&quot;sheet&quot; onclick=&quot;event.stopPropagation()&quot;&gt;
-    &lt;div class=&quot;sheet-handle&quot;&gt;&lt;/div&gt;
-    &lt;div id=&quot;sheetList&quot;&gt;&lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
+══════════════════════════════════════════════════ -->
+<div class="sheet-back" id="sheetBack" onclick="closeSheet()">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div id="sheetList"></div>
+  </div>
+</div>
 
-&lt;!-- ═══════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════
      SHELL
-══════════════════════════════════════════════════ --&gt;
-&lt;div class=&quot;shell&quot;&gt;
+══════════════════════════════════════════════════ -->
+<div class="shell">
 
-  &lt;!-- Top bar --&gt;
-  &lt;div class=&quot;topbar&quot;&gt;
-    &lt;div class=&quot;topbar-inner&quot;&gt;
-      &lt;span class=&quot;tb-logo&quot;&gt;Velu Markets&lt;/span&gt;
-      &lt;div class=&quot;tb-center&quot;&gt;
-        &lt;span class=&quot;tb-beta&quot;&gt;BETA&lt;/span&gt;
-        &lt;div class=&quot;tb-live&quot;&gt;
-          &lt;div class=&quot;tb-live-dot&quot;&gt;&lt;/div&gt;
-          &lt;span class=&quot;tb-live-txt&quot;&gt;8 MARKETS · APR 9, 2026&lt;/span&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;tb-right&quot;&gt;
-        &lt;span class=&quot;tb-plan&quot;&gt;FREE&lt;/span&gt;
-        &lt;span class=&quot;tb-time&quot; id=&quot;clock&quot;&gt;--:--:--&lt;/span&gt;
-        &lt;div class=&quot;user-menu&quot;&gt;
-          &lt;span class=&quot;user-chip&quot; id=&quot;userChip&quot;&gt;Guest&lt;/span&gt;
-          &lt;span class=&quot;tb-logout&quot; onclick=&quot;logoutAndReturn()&quot;&gt;Log out&lt;/span&gt;
-        &lt;/div&gt;
-        &lt;span class=&quot;tb-home&quot; onclick=&quot;if(parent&amp;&amp;parent.showHome) parent.showHome(true)&quot;&gt;← Home&lt;/span&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <span class="tb-logo">Velu Markets</span>
+      <div class="tb-center">
+        <span class="tb-beta">BETA</span>
+        <div class="tb-live">
+          <div class="tb-live-dot"></div>
+          <span class="tb-live-txt">8 MARKETS · APR 9, 2026</span>
+        </div>
+      </div>
+      <div class="tb-right">
+        <span class="tb-plan">FREE</span>
+        <span class="tb-time" id="clock">--:--:--</span>
+        <div class="user-menu">
+          <span class="user-chip" id="userChip">Guest</span>
+          <span class="tb-logout" onclick="logoutAndReturn()">Log out</span>
+        </div>
+        <span class="tb-home" onclick="if(parent&&parent.showHome) parent.showHome(true)">← Home</span>
+      </div>
+    </div>
+  </div>
 
-  &lt;!-- Ticker --&gt;
-  &lt;div class=&quot;ticker&quot;&gt;
-    &lt;div class=&quot;ticker-inner&quot;&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;S&amp;P 500&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;5,074&lt;/span&gt;&lt;span class=&quot;td&quot;&gt;−3.5%&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;NASDAQ&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;17,842&lt;/span&gt;&lt;span class=&quot;td&quot;&gt;−4.2%&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;DOW&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;38,314&lt;/span&gt;&lt;span class=&quot;td&quot;&gt;−2.8%&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;BTC/USD&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;68,780&lt;/span&gt;&lt;span class=&quot;td&quot;&gt;−2.1%&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;ETH/USD&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;1,580&lt;/span&gt;&lt;span class=&quot;td&quot;&gt;−3.2%&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;GOLD&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;3,108&lt;/span&gt;&lt;span class=&quot;tu&quot;&gt;+0.6%&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;WTI OIL&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;61.42&lt;/span&gt;&lt;span class=&quot;td&quot;&gt;−3.8%&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;EUR/USD&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;1.0942&lt;/span&gt;&lt;span class=&quot;tu&quot;&gt;+0.4%&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;USD/JPY&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;148.32&lt;/span&gt;&lt;span class=&quot;td&quot;&gt;−0.8%&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;10Y UST&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;4.38%&lt;/span&gt;&lt;span class=&quot;tu&quot;&gt;+2bp&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;VIX&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;24.1&lt;/span&gt;&lt;span class=&quot;tu&quot;&gt;+3.2&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;DAX&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;21,140&lt;/span&gt;&lt;span class=&quot;td&quot;&gt;−1.9%&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;NIKKEI&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;34,208&lt;/span&gt;&lt;span class=&quot;td&quot;&gt;−3.9%&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;FTSE&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;7,842&lt;/span&gt;&lt;span class=&quot;td&quot;&gt;−1.4%&lt;/span&gt;&lt;/div&gt;
-      &lt;!-- dupe --&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;S&amp;P 500&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;5,074&lt;/span&gt;&lt;span class=&quot;td&quot;&gt;−3.5%&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;NASDAQ&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;17,842&lt;/span&gt;&lt;span class=&quot;td&quot;&gt;−4.2%&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;BTC/USD&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;68,780&lt;/span&gt;&lt;span class=&quot;td&quot;&gt;−2.1%&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;GOLD&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;3,108&lt;/span&gt;&lt;span class=&quot;tu&quot;&gt;+0.6%&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;EUR/USD&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;1.0942&lt;/span&gt;&lt;span class=&quot;tu&quot;&gt;+0.4%&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;10Y UST&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;4.38%&lt;/span&gt;&lt;span class=&quot;tu&quot;&gt;+2bp&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;tick&quot;&gt;&lt;span class=&quot;ts&quot;&gt;VIX&lt;/span&gt;&lt;span class=&quot;tv&quot;&gt;24.1&lt;/span&gt;&lt;span class=&quot;tu&quot;&gt;+3.2&lt;/span&gt;&lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
+  <!-- Ticker -->
+  <div class="ticker">
+    <div class="ticker-inner">
+      <div class="tick"><span class="ts">S&P 500</span><span class="tv">5,074</span><span class="td">−3.5%</span></div>
+      <div class="tick"><span class="ts">NASDAQ</span><span class="tv">17,842</span><span class="td">−4.2%</span></div>
+      <div class="tick"><span class="ts">DOW</span><span class="tv">38,314</span><span class="td">−2.8%</span></div>
+      <div class="tick"><span class="ts">BTC/USD</span><span class="tv">68,780</span><span class="td">−2.1%</span></div>
+      <div class="tick"><span class="ts">ETH/USD</span><span class="tv">1,580</span><span class="td">−3.2%</span></div>
+      <div class="tick"><span class="ts">GOLD</span><span class="tv">3,108</span><span class="tu">+0.6%</span></div>
+      <div class="tick"><span class="ts">WTI OIL</span><span class="tv">61.42</span><span class="td">−3.8%</span></div>
+      <div class="tick"><span class="ts">EUR/USD</span><span class="tv">1.0942</span><span class="tu">+0.4%</span></div>
+      <div class="tick"><span class="ts">USD/JPY</span><span class="tv">148.32</span><span class="td">−0.8%</span></div>
+      <div class="tick"><span class="ts">10Y UST</span><span class="tv">4.38%</span><span class="tu">+2bp</span></div>
+      <div class="tick"><span class="ts">VIX</span><span class="tv">24.1</span><span class="tu">+3.2</span></div>
+      <div class="tick"><span class="ts">DAX</span><span class="tv">21,140</span><span class="td">−1.9%</span></div>
+      <div class="tick"><span class="ts">NIKKEI</span><span class="tv">34,208</span><span class="td">−3.9%</span></div>
+      <div class="tick"><span class="ts">FTSE</span><span class="tv">7,842</span><span class="td">−1.4%</span></div>
+      <!-- dupe -->
+      <div class="tick"><span class="ts">S&P 500</span><span class="tv">5,074</span><span class="td">−3.5%</span></div>
+      <div class="tick"><span class="ts">NASDAQ</span><span class="tv">17,842</span><span class="td">−4.2%</span></div>
+      <div class="tick"><span class="ts">BTC/USD</span><span class="tv">68,780</span><span class="td">−2.1%</span></div>
+      <div class="tick"><span class="ts">GOLD</span><span class="tv">3,108</span><span class="tu">+0.6%</span></div>
+      <div class="tick"><span class="ts">EUR/USD</span><span class="tv">1.0942</span><span class="tu">+0.4%</span></div>
+      <div class="tick"><span class="ts">10Y UST</span><span class="tv">4.38%</span><span class="tu">+2bp</span></div>
+      <div class="tick"><span class="ts">VIX</span><span class="tv">24.1</span><span class="tu">+3.2</span></div>
+    </div>
+  </div>
 
-  &lt;!-- Body --&gt;
-  &lt;div class=&quot;t-body&quot;&gt;
+  <!-- Body -->
+  <div class="t-body">
 
-    &lt;!-- Sidebar --&gt;
-    &lt;div class=&quot;sidebar&quot;&gt;
-      &lt;div class=&quot;sb-search&quot;&gt;
-        &lt;input class=&quot;sb-input&quot; type=&quot;text&quot; placeholder=&quot;Search markets…&quot; id=&quot;srch&quot; oninput=&quot;renderList()&quot;&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;sb-filters&quot;&gt;
-        &lt;button class=&quot;sb-filter on&quot; data-c=&quot;ALL&quot; onclick=&quot;setFilter(this)&quot;&gt;All&lt;/button&gt;
-        &lt;button class=&quot;sb-filter&quot; data-c=&quot;FED&quot; onclick=&quot;setFilter(this)&quot;&gt;Fed&lt;/button&gt;
-        &lt;button class=&quot;sb-filter&quot; data-c=&quot;CRYPTO&quot; onclick=&quot;setFilter(this)&quot;&gt;Crypto&lt;/button&gt;
-        &lt;button class=&quot;sb-filter&quot; data-c=&quot;MACRO&quot; onclick=&quot;setFilter(this)&quot;&gt;Macro&lt;/button&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;sb-head&quot;&gt;
-        &lt;span class=&quot;sb-head-label&quot;&gt;MARKETS&lt;/span&gt;
-        &lt;span class=&quot;sb-head-stat&quot;&gt;66% accuracy · 47 resolved&lt;/span&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;sb-list&quot; id=&quot;sbList&quot;&gt;&lt;/div&gt;
-      &lt;div class=&quot;sb-footer&quot;&gt;
-        &lt;div class=&quot;sb-credits&quot;&gt;FRED · CME · CoinGlass · ECB&lt;br&gt;BoJ · WGC · CoinGecko · GDPNow&lt;br&gt;Velu AI · Chain of Thought © 2026&lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sb-search">
+        <input class="sb-input" type="text" placeholder="Search markets…" id="srch" oninput="renderList()">
+      </div>
+      <div class="sb-filters">
+        <button class="sb-filter on" data-c="ALL" onclick="setFilter(this)">All</button>
+        <button class="sb-filter" data-c="FED" onclick="setFilter(this)">Fed</button>
+        <button class="sb-filter" data-c="CRYPTO" onclick="setFilter(this)">Crypto</button>
+        <button class="sb-filter" data-c="MACRO" onclick="setFilter(this)">Macro</button>
+      </div>
+      <div class="sb-head">
+        <span class="sb-head-label">MARKETS</span>
+        <span class="sb-head-stat">66% accuracy · 47 resolved</span>
+      </div>
+      <div class="sb-list" id="sbList"></div>
+      <div class="sb-footer">
+        <div class="sb-credits">FRED · CME · CoinGlass · ECB<br>BoJ · WGC · CoinGecko · GDPNow<br>Velu AI · Chain of Thought © 2026</div>
+      </div>
+    </div>
 
-    &lt;!-- Main --&gt;
-    &lt;div class=&quot;main&quot; id=&quot;main&quot;&gt;
-      &lt;div class=&quot;empty&quot; id=&quot;emptyState&quot;&gt;
-        &lt;div class=&quot;empty-icon&quot;&gt;⬡&lt;/div&gt;
-        &lt;div class=&quot;empty-txt&quot;&gt;SELECT A MARKET&lt;br&gt;TO RUN VELU ANALYSIS&lt;br&gt;&lt;span style=&quot;font-size:10px;opacity:.6&quot;&gt;8 features · 3 AI agents · Chain of Thought&lt;/span&gt;&lt;/div&gt;
-      &lt;/div&gt;
-      &lt;div id=&quot;memoArea&quot; style=&quot;display:none;flex:1;flex-direction:column;overflow:hidden;&quot;&gt;&lt;/div&gt;
-    &lt;/div&gt;
+    <!-- Main -->
+    <div class="main" id="main">
+      <div class="empty" id="emptyState">
+        <div class="empty-icon">⬡</div>
+        <div class="empty-txt">SELECT A MARKET<br>TO RUN VELU ANALYSIS<br><span style="font-size:10px;opacity:.6">8 features · 3 AI agents · Chain of Thought</span></div>
+      </div>
+      <div id="memoArea" style="display:none;flex:1;flex-direction:column;overflow:hidden;"></div>
+    </div>
 
-  &lt;/div&gt;
+  </div>
 
-  &lt;!-- Mobile bottom nav --&gt;
-  &lt;div class=&quot;bot-nav&quot;&gt;
-    &lt;div class=&quot;bot-inner&quot;&gt;
-      &lt;button class=&quot;bn&quot; onclick=&quot;openSheet()&quot;&gt;&lt;span class=&quot;bn-ico&quot;&gt;☰&lt;/span&gt;&lt;span class=&quot;bn-lbl&quot;&gt;MARKETS&lt;/span&gt;&lt;/button&gt;
-      &lt;button class=&quot;bn on&quot; id=&quot;bnMemo&quot;   onclick=&quot;switchMobTab(&#x27;MEMO&#x27;)&quot;&gt;&lt;span class=&quot;bn-ico&quot;&gt;📋&lt;/span&gt;&lt;span class=&quot;bn-lbl&quot;&gt;MEMO&lt;/span&gt;&lt;/button&gt;
-      &lt;button class=&quot;bn&quot; id=&quot;bnAgents&quot; onclick=&quot;switchMobTab(&#x27;3 AGENTS&#x27;)&quot;&gt;&lt;span class=&quot;bn-ico&quot;&gt;🤖&lt;/span&gt;&lt;span class=&quot;bn-lbl&quot;&gt;AGENTS&lt;/span&gt;&lt;/button&gt;
-      &lt;button class=&quot;bn&quot; id=&quot;bnTrack&quot;  onclick=&quot;switchMobTab(&#x27;TRACK RECORD&#x27;)&quot;&gt;&lt;span class=&quot;bn-ico&quot;&gt;🏆&lt;/span&gt;&lt;span class=&quot;bn-lbl&quot;&gt;TRACK&lt;/span&gt;&lt;/button&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
+  <!-- Mobile bottom nav -->
+  <div class="bot-nav">
+    <div class="bot-inner">
+      <button class="bn" onclick="openSheet()"><span class="bn-ico">☰</span><span class="bn-lbl">MARKETS</span></button>
+      <button class="bn on" id="bnMemo"   onclick="switchMobTab('MEMO')"><span class="bn-ico">📋</span><span class="bn-lbl">MEMO</span></button>
+      <button class="bn" id="bnAgents" onclick="switchMobTab('3 AGENTS')"><span class="bn-ico">🤖</span><span class="bn-lbl">AGENTS</span></button>
+      <button class="bn" id="bnTrack"  onclick="switchMobTab('TRACK RECORD')"><span class="bn-ico">🏆</span><span class="bn-lbl">TRACK</span></button>
+    </div>
+  </div>
 
-&lt;/div&gt;&lt;!-- /shell --&gt;
+</div><!-- /shell -->
 
-&lt;div class=&quot;auth-gate&quot; id=&quot;authGate&quot;&gt;
-  &lt;div class=&quot;auth-card&quot;&gt;
-    &lt;div class=&quot;auth-eyebrow&quot;&gt;ACCESS REQUIRED&lt;/div&gt;
-    &lt;div class=&quot;auth-title&quot;&gt;Create your account first.&lt;/div&gt;
-    &lt;div class=&quot;auth-copy&quot;&gt;Velu Markets is the home. Once you sign up or log in there, you unlock the terminal automatically.&lt;/div&gt;
-    &lt;div class=&quot;auth-actions&quot;&gt;
-      &lt;button class=&quot;auth-primary&quot; onclick=&quot;if(parent&amp;&amp;parent.showHome) parent.showHome(true)&quot;&gt;Go to home&lt;/button&gt;
-      &lt;button class=&quot;auth-secondary&quot; onclick=&quot;if(parent&amp;&amp;parent.showHome) parent.showHome(true)&quot;&gt;See plans&lt;/button&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
+<div class="auth-gate" id="authGate">
+  <div class="auth-card">
+    <div class="auth-eyebrow">ACCESS REQUIRED</div>
+    <div class="auth-title">Create your account first.</div>
+    <div class="auth-copy">Velu Markets is the home. Once you sign up or log in there, you unlock the terminal automatically.</div>
+    <div class="auth-actions">
+      <button class="auth-primary" onclick="if(parent&&parent.showHome) parent.showHome(true)">Go to home</button>
+      <button class="auth-secondary" onclick="if(parent&&parent.showHome) parent.showHome(true)">See plans</button>
+    </div>
+  </div>
+</div>
 
-&lt;script&gt;
+<script>
 function getSession() {
   try {
-    return parent &amp;&amp; parent.getUnifiedSession ? parent.getUnifiedSession() : null;
+    return parent && parent.getUnifiedSession ? parent.getUnifiedSession() : null;
   } catch (_) {
     return null;
   }
@@ -2740,23 +2743,23 @@ function getSession() {
 
 function applySessionToUi() {
   const session = getSession();
-  const chip = document.getElementById(&#x27;userChip&#x27;);
+  const chip = document.getElementById('userChip');
 
   if (chip) {
-    chip.textContent = session?.user?.email || session?.user?.name || &#x27;Velu User&#x27;;
+    chip.textContent = session?.user?.email || session?.user?.name || 'Velu User';
   }
 
   if (!session || !session.isAuthenticated) {
-    document.getElementById(&#x27;authGate&#x27;).classList.add(&#x27;show&#x27;);
+    document.getElementById('authGate').classList.add('show');
     return false;
   }
 
-  document.getElementById(&#x27;authGate&#x27;).classList.remove(&#x27;show&#x27;);
+  document.getElementById('authGate').classList.remove('show');
   return true;
 }
 
 function logoutAndReturn() {
-  if (parent &amp;&amp; parent.showHome) parent.showHome(true);
+  if (parent && parent.showHome) parent.showHome(true);
 }
 
 function refreshUnifiedUser() {
@@ -2765,235 +2768,271 @@ function refreshUnifiedUser() {
 
 function updateClock() {
   const now = new Date();
-  const el = document.getElementById(&#x27;clock&#x27;);
+  const el = document.getElementById('clock');
   if (!el) return;
-  el.textContent = now.toLocaleTimeString([], { hour: &#x27;2-digit&#x27;, minute: &#x27;2-digit&#x27;, second: &#x27;2-digit&#x27; });
+  el.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
 
 /* ═══════════════════════════════════════════════════════════════
    DATA
 ═══════════════════════════════════════════════════════════════ */
 const MKTS = [
+  /* ── 1. FED APRIL 28-29 ──────────────────────────────────────── */
   {
-    id:&#x27;fed&#x27;, grp:&#x27;FED&#x27;, cat:&#x27;FED POLICY&#x27;, cls:&#x27;cat-fed&#x27;,
-    title:&#x27;Will the Fed hold rates at the May 2026 meeting?&#x27;,
-    crowd:98, ai:97, vol:&#x27;$57M&#x27;, vol24h:&#x27;$2.1M&#x27;, buy:54, sell:46,
-    days:28, resolves:&#x27;May 7, 2026&#x27;, dx:-1,
-    kd:[{l:&#x27;PCE CORE&#x27;,v:&#x27;2.8%&#x27;,d:&#x27;vs 2.0% target&#x27;,dc:&#x27;dd&#x27;},{l:&#x27;FEDWATCH&#x27;,v:&#x27;98.2%&#x27;,d:&#x27;CME official&#x27;,dc:&#x27;dn&#x27;},{l:&#x27;RATE&#x27;,v:&#x27;4.25–4.50%&#x27;,d:null},{l:&#x27;NEXT MTG&#x27;,v:&#x27;May 7&#x27;,d:&#x27;28 days&#x27;,dc:&#x27;dn&#x27;}],
-    news:[{src:&#x27;Bloomberg&#x27;,h:&#x27;Powell signals patience as tariff inflation risk mounts&#x27;,s:&#x27;s-neu&#x27;,age:&#x27;3h&#x27;},{src:&#x27;WSJ&#x27;,h:&#x27;Fed minutes show unanimous support for pause at March meeting&#x27;,s:&#x27;s-neu&#x27;,age:&#x27;1d&#x27;},{src:&#x27;Reuters&#x27;,h:&#x27;CME FedWatch probability unchanged after strong jobs report&#x27;,s:&#x27;s-neu&#x27;,age:&#x27;2d&#x27;}],
-    cross:[{m:&#x27;US Recession &lt;Jun?&#x27;,c:32,i:&#x27;If recession hits, Fed would CUT — inconsistent with 98% pause&#x27;,sig:&#x27;warn&#x27;},{m:&#x27;CPI ≥0.8% monthly?&#x27;,c:96,i:&#x27;High inflation supports pause — consistent with crowd&#x27;,sig:&#x27;ok&#x27;}],
-    ob:{flow:&#x27;+$420K YES (24h)&#x27;,big:&#x27;$85K YES · 6h ago&#x27;,smart:&#x27;Institutional buyer accumulating YES for 3 consecutive days&#x27;},
-    br:&#x27;Fed has NEVER cut with PCE &gt;2.5% since 1990 except COVID emergency — historical base rate: 99% pause.&#x27;,
-    reg:&#x27;April 2026 tariffs add +1.5–2pp CPI pressure (Goldman). Closes window further. Adjustment: zero change to base rate.&#x27;,
-    hl:&#x27;Fed completely paralyzed: tariffs make any May move virtually impossible&#x27;,
-    thesis:&#x27;The market at 98% is correctly priced. With PCE Core at 2.8% and tariffs adding structural inflationary pressure, the Fed has no political or economic room to move. The only deviation scenario would be a systemic dislocation (HY spreads &gt;600bp; currently 385bp). Powell\&#x27;s March statement was explicitly data-dependent with no urgency.&#x27;,
-    devil:&#x27;If Q1 GDP prints −0.8% or worse on April 30, the FOMC could face political pressure to act. But historically the Fed has preferred communication over emergency moves in moderate stress — 98% pause remains defensible.&#x27;,
-    risk:&#x27;The market underestimates the risk that the Fed shifts forward guidance from &quot;neutral&quot; to &quot;restrictive&quot; without moving rates — that alone could send bonds down 3–5% in hours.&#x27;,
-    bull:{p:97,t:&#x27;PCE holds, pause confirmed May 7&#x27;,d:&#x27;Fifth consecutive hold. No data justifies a move. Powell conference will signal the path forward.&#x27;},
-    base:{p:2,t:&#x27;Surprise cut on rapid GDP deterioration&#x27;,d:&#x27;Requires Q1 GDP &lt; −0.8% on April 30 plus NFP &lt; +50K in April.&#x27;},
-    bear:{p:1,t:&#x27;Emergency hike on tariff shock&#x27;,d:&#x27;Practically impossible. Fed prefers communication over emergency hawkish moves.&#x27;},
-    watch:[&#x27;PCE March — Wednesday April 30, 8:30am ET (most critical before FOMC)&#x27;,&#x27;NFP April — Friday May 2, 8:30am ET&#x27;,&#x27;Powell press conference — Wednesday May 7, 2:30pm ET&#x27;],
+    id:'fed-apr', grp:'FED', cat:'FED POLICY', cls:'cat-fed',
+    title:'Will the Fed hold rates unchanged at the April 28-29 FOMC meeting?',
+    crowd:99, ai:98, vol:'$62M', vol24h:'$3.1M', buy:61, sell:39,
+    days:7, resolves:'Apr 29, 2026', dx:-1,
+    polyurl:'https://polymarket.com/event/fed-decision-in-april',
+    kd:[{l:'FED RATE',v:'3.50–3.75%',d:'Current target',dc:'dn'},{l:'CPI YoY MAR',v:'3.3%',d:'↑ from 2.4%',dc:'dd'},{l:'NFP MAR',v:'+178K',d:'Unemployment 4.3%',dc:'du'},{l:'NEXT MTG',v:'Apr 28-29',dc:'dn',d:'7 days'}],
+    news:[{src:'Bloomberg',h:'Powell in blackout period — no Fed guidance until post-decision press conference',s:'s-neu',age:'2d'},{src:'WSJ',h:'March CPI surge to 3.3% YoY eliminates any case for April rate cut',s:'s-neu',age:'3d'},{src:'Reuters',h:'CME FedWatch: 99.4% probability of no change at April FOMC',s:'s-neu',age:'1d'}],
+    cross:[{m:'US Recession 2026?',c:26,i:'If recession materializes, next move would be a CUT not hold — but timing pushes it past April',sig:'ok'},{m:'Fed hike in 2026?',c:15,i:'15% chance of hike is inconsistent with 99% pause — most traders see a hold, not hike',sig:'ok'},{m:'Fed cuts 2026 (≥1)?',c:66,i:'66% chance of at least one 2026 cut is consistent with April pause before H2 action',sig:'ok'}],
+    ob:{flow:'+$1.2M NO CHANGE (24h)',big:'$320K NO CHANGE · 4h ago',smart:'Overwhelming institutional consensus. Near-zero counterflow. Market fully settled.'},
+    br:'Fed has NEVER moved rates at back-to-back meetings when CPI is accelerating upward. Base rate for pause when CPI>3%: 99.6% (1990–2026 data).',
+    reg:'March CPI 3.3% YoY (up sharply from February\'s 2.4%) + NFP +178K + unemployment 4.3% = no data justifies any April move. FOMC blackout period active. Fed dot plot projects just 1 cut in 2026. Adjustment: −1pp safety margin for tail risk.',
+    hl:'99.4% crowd is right: April hold is as close to certain as prediction markets get',
+    thesis:'With CPI accelerating to 3.3% YoY in March, the Fed has zero room to cut. The March dot plot explicitly projects only one 25bp cut in 2026, and April is clearly not that meeting. Labor market remains resilient at +178K NFP. The only imaginable deviation would be a systemic financial shock in the 7 days before the meeting — which would require HY spreads to breach 600bp from the current 385bp. That\'s a near-impossible move in 7 days.',
+    devil:'The one tail risk: if Q1 GDP prints deeply negative (below −1.5%) on April 30 — one day after the FOMC decision — the market narrative shifts violently toward emergency cuts. But this doesn\'t change the April decision itself. The FOMC votes before the GDP print.',
+    risk:'The market underestimates that Powell\'s press conference on April 29 could signal a more hawkish tilt than expected — acknowledging that tariff-driven inflation may prevent ANY 2026 cuts. That guidance shift, without a rate move, could send bonds down 2–3% in hours.',
+    bull:{p:98,t:'Hold confirmed, Powell signals one cut possible H2',d:'CPI moderates in Q2. One 25bp cut in September becomes the base case. Market rallies.'},
+    base:{p:1,t:'Surprise cut on systemic financial stress',d:'Requires HY spreads to spike above 500bp AND Q1 GDP print to be deeply negative AND FOMC to deviate from all prior guidance. Essentially impossible.'},
+    bear:{p:1,t:'Surprise hike on runaway tariff inflation',d:'CPI would need to print above 5% monthly — not in any credible scenario for April.'},
+    watch:['Q1 GDP advance estimate — Wednesday April 30, 8:30am ET (day AFTER FOMC — key for May narrative)','Powell press conference — Wednesday April 29, 2:30pm ET','April CPI — Tuesday May 12 (first post-meeting data point)'],
     agents:[
-      {ico:&#x27;◈&#x27;,name:&#x27;Macro Structuralist&#x27;,col:&#x27;#0A84FF&#x27;,prob:97,stance:&#x27;PAUSE&#x27;,reas:&#x27;Structural inflation regime + tariff shock eliminates all room for action. Fifth hold is mechanically certain unless a systemic credit event forces the Fed\&#x27;s hand. HY spreads at 385bp — still 215bp from historical emergency threshold.&#x27;},
-      {ico:&#x27;◆&#x27;,name:&#x27;Quantitative&#x27;,col:&#x27;#FF9500&#x27;,prob:98,stance:&#x27;PAUSE&#x27;,reas:&#x27;Historical base rate: 99% pause with PCE &gt;2.5%. CME FedWatch at 98.2%. Two independent sources converge. The 1pp divergence between my estimate and the market is statistical noise — within margin of error.&#x27;},
-      {ico:&#x27;◉&#x27;,name:&#x27;Tail Risk&#x27;,col:&#x27;#FF3B30&#x27;,prob:91,stance:&#x27;PAUSE&#x27;,reas:&#x27;Forward guidance risk: the Fed could shift rhetoric from &quot;neutral&quot; to &quot;restrictive&quot; without touching rates. That binary YES/NO question wouldn\&#x27;t capture this scenario, but it would cause significant market dislocations. I discount the pause probability slightly to account for this tail.&#x27;},
+      {ico:'◈',name:'Macro Structuralist',col:'#0A84FF',prob:99,stance:'HOLD',reas:'The data leaves no room for debate. CPI accelerating from 2.4% to 3.3% in a single month, combined with a labor market adding 178K jobs, makes any April action politically and economically impossible. The Fed would risk its inflation credibility with any April move.'},
+      {ico:'◆',name:'Quantitative',col:'#FF9500',prob:99,stance:'HOLD',reas:'Historical base rate: 99.6% pause when CPI>3% and unemployment<5%. CME FedWatch at 99.4%. Two independent probabilistic models converge at near-certainty. The 0.6% residual is pure model uncertainty, not a real signal.'},
+      {ico:'◉',name:'Tail Risk',col:'#FF3B30',prob:97,stance:'HOLD',reas:'I discount to 97% to account for a genuine but low-probability tail: a systemically important financial institution announcing distress in the next 7 days. HY spreads at 385bp are elevated but not at emergency levels. I hold 97% — this market is essentially resolved.'},
     ],
-    synth:&#x27;Macro (97%) and Quant (98%) converge tightly. Tail Risk (91%) correctly identifies forward guidance as the underpriced risk. Final weighted probability: 97%. HIGH conviction — one of the clearest markets in the current set.&#x27;,
+    synth:'Maximum convergence (97–99%). This is the most settled market in our current set. Velu 98% vs crowd 99% — the 1pp difference is statistical noise. No edge here. The interesting question is not whether the Fed holds, but what Powell says about the path forward.',
   },
+
+  /* ── 2. US RECESSION 2026 ─────────────────────────────────────── */
   {
-    id:&#x27;btc80&#x27;, grp:&#x27;CRYPTO&#x27;, cat:&#x27;CRYPTO&#x27;, cls:&#x27;cat-btc&#x27;,
-    title:&#x27;Will Bitcoin exceed $80,000 before September 30, 2026?&#x27;,
-    crowd:12, ai:31, vol:&#x27;$6M&#x27;, vol24h:&#x27;$380K&#x27;, buy:38, sell:62,
-    days:174, resolves:&#x27;Sep 30, 2026&#x27;, dx:19,
-    kd:[{l:&#x27;BTC TODAY&#x27;,v:&#x27;$68,780&#x27;,d:&#x27;−37% from ATH&#x27;,dc:&#x27;dd&#x27;},{l:&#x27;TO $80K&#x27;,v:&#x27;+16.3%&#x27;,d:&#x27;174 days&#x27;,dc:&#x27;dn&#x27;},{l:&#x27;FUNDING&#x27;,v:&#x27;0.008%&#x27;,d:&#x27;Neutral&#x27;,dc:&#x27;dn&#x27;},{l:&#x27;ETF AUM&#x27;,v:&#x27;$52B&#x27;,d:&#x27;+$780M 7D&#x27;,dc:&#x27;du&#x27;}],
-    news:[{src:&#x27;CoinDesk&#x27;,h:&#x27;Bitcoin ETF inflows hit $471M, strongest weekly figure since February&#x27;,s:&#x27;s-bull&#x27;,age:&#x27;2d&#x27;},{src:&#x27;Bloomberg&#x27;,h:&#x27;Tariff fears push crypto lower as risk-off sentiment spreads globally&#x27;,s:&#x27;s-bear&#x27;,age:&#x27;5h&#x27;},{src:&#x27;Reuters&#x27;,h:&#x27;China tightens crypto enforcement ahead of trade talks with US&#x27;,s:&#x27;s-bear&#x27;,age:&#x27;1d&#x27;}],
-    cross:[{m:&#x27;US Recession &lt;Jun?&#x27;,c:32,i:&#x27;Recession would collapse BTC to $45–55K — strongly bearish for $80K&#x27;,sig:&#x27;warn&#x27;},{m:&#x27;Gold beats BTC 2026?&#x27;,c:55,i:&#x27;Crowd believes gold wins → implies BTC weakness → inconsistent with $80K thesis&#x27;,sig:&#x27;warn&#x27;}],
-    ob:{flow:&#x27;−$28K YES (24h)&#x27;,big:&#x27;$45K NO · 3h ago&#x27;,smart:&#x27;Mixed flow. Small buyers in YES, large institutional seller in NO accumulating this week&#x27;},
-    br:&#x27;Post-halving: BTC +85%, +32%, +47% in 6mo (100% of 3 cases positive). Halving was 356 days ago — historically the &quot;acceleration zone&quot; for months 10–18.&#x27;,
-    reg:&#x27;Tariffs + VIX 24.1 + 0.74 Nasdaq correlation apply −15pp discount to historical base. ETF AUM $52B with 6 positive-flow weeks partially offsets macro headwind.&#x27;,
-    hl:&#x27;Crowd at 12% ignores the post-halving cycle: only +16% needed in 174 days&#x27;,
-    thesis:&#x27;The crowd at 12% is significantly below the calibrated probability. BTC only needs +16.3% from $68,780 in 174 days — equivalent to 2.6 weeks of typical asset volatility. All three previous halvings produced positive returns in the subsequent 6 months (avg +55%). The macro headwind is legitimate but ETFs with $52B AUM and 6 consecutive positive-flow weeks create structural support that did not exist in previous halvings.&#x27;,
-    devil:&#x27;In 2022, BTC fell 65% during high inflation. If stagflation is severe, institutional ETF holders will sell to cover losses in other positions. The post-halving base rate may not apply in a sustained macro stress environment — 2022 was also post-halving and produced no rally.&#x27;,
-    risk:&#x27;The market is not pricing that months 10–12 post-halving are historically the strongest acceleration zone. The timing the crowd is ignoring is precisely when BTC has historically made its most powerful moves.&#x27;,
-    bull:{p:31,t:&#x27;Tariff de-escalation triggers risk-on rally&#x27;,d:&#x27;US-China deal or 90-day pause releases risk flows. BTC amplifies Nasdaq 1.5–2x. From $68,780, an 8% Nasdaq rally targets $82–85K BTC.&#x27;},
-    base:{p:52,t:&#x27;Consolidation $60K–$75K through Q3&#x27;,d:&#x27;Mixed macro keeps BTC rangebound without a clear catalyst. ETFs provide support on dips but tariffs cap upside.&#x27;},
-    bear:{p:17,t:&#x27;US recession collapses risk assets below $50K&#x27;,d:&#x27;Q1 and Q2 GDP both negative confirming technical recession. Institutional ETF selling cascades. BTC trades to $45–55K range.&#x27;},
-    watch:[&#x27;Weekly BTC ETF flows — SoSoValue daily 9pm ET (most real-time institutional signal)&#x27;,&#x27;Q1 2026 GDP estimate — Wednesday April 30 (determines if recession narrative holds)&#x27;,&#x27;US-China tariff negotiation headlines — any official statement is the key trigger&#x27;],
+    id:'rec26', grp:'MACRO', cat:'MACRO', cls:'cat-mac',
+    title:'Will the US enter recession by end of 2026?',
+    crowd:26, ai:38, vol:'$1.4M', vol24h:'$180K', buy:67, sell:33,
+    days:254, resolves:'Dec 31, 2026', dx:12,
+    polyurl:'https://polymarket.com/event/us-recession-by-end-of-2026',
+    kd:[{l:'GDPNOW Q1',v:'+1.9%',d:'Atlanta Fed Apr 21',dc:'du'},{l:'NY FED NOWCAST',v:'+2.3%',d:'Q1 estimate',dc:'du'},{l:'NFP MAR',v:'+178K',d:'Unemployment 4.3%',dc:'du'},{l:'GS RECESSION',v:'35%',d:'↑ from 20%',dc:'dd'}],
+    news:[{src:'Goldman Sachs',h:'Goldman raises 2026 US recession probability to 35% on tariff escalation',s:'s-bear',age:'5d'},{src:'JPMorgan',h:'JPMorgan puts 2026 US recession odds at 40% — highest since 2022',s:'s-bear',age:'4d'},{src:'Bloomberg',h:'Q1 GDP nowcasts hold positive despite tariff fears — Atlanta Fed at +1.9%',s:'s-bull',age:'today'}],
+    cross:[{m:'Fed hold April?',c:99,i:'Fed paralyzed by stagflation — can\'t cut if recession + inflation hit simultaneously',sig:'warn'},{m:'BTC >$80K Sep?',c:19,i:'Recession scenario consistent with crowd\'s cautious BTC pricing',sig:'ok'},{m:'Fed hike 2026?',c:15,i:'A hike during recession would be unprecedented — inconsistency flags a mispricing',sig:'warn'}],
+    ob:{flow:'+$62K YES (24h)',big:'$28K YES · 6h ago',smart:'Consistent institutional YES accumulation. Possible informed flow — watch closely.'},
+    br:'NY Fed recession probability model: 29% for the next 12 months. Historical: when PMI stays below 50 for 3+ months AND yield curve recently uninverted, recession within 12 months occurs in 52% of cases. Current PMI: 49.8 for 3rd consecutive month.',
+    reg:'Tariff shock models: Goldman −1.2pp GDP, JPMorgan −1.5pp GDP. Atlanta Fed GDPNow at +1.9% for Q1 (up from −2.4% earlier in the month due to gold import adjustments). Net recession probability with tariff scenario: ~38%. Critical nuance: this market resolves on NBER declaration OR two consecutive negative GDP quarters — both require time.',
+    hl:'Crowd at 26% underweights institutional models averaging 35-40% — Velu sees 38%',
+    thesis:'The crowd at 26% (YES) = 74% NO is below the institutional consensus of 35-40%. The NBER timing problem is real: even with a recession beginning in Q2 2026, the NBER typically takes 6-12 months to declare. However, this market also resolves on two consecutive negative GDP quarters — which could trigger faster if Q1 and Q2 both print negative. GDPNow at +1.9% reduces this probability near-term, but the tariff transmission lag means the damage hits hardest in Q2-Q3.',
+    devil:'The most powerful counterargument: GDPNow currently shows +1.9% for Q1 — not the −2.4% it showed earlier this month. The gold import distortion inflated the negative reading. If Q1 GDP prints +1.5% on April 30, the recession narrative collapses and YES traders take heavy losses.',
+    risk:'The market underprices the possibility that tariff negotiations resolve before the economic damage becomes irreversible. A single US-China deal announcement could shift the GDPNow from +1.9% to +3%+ and collapse the YES probability from 26% to below 10% overnight.',
+    bull:{p:38,t:'Two consecutive negative GDP quarters triggered by tariffs',d:'Q1 GDP marginal positive (+0.5%), Q2 GDP negative (−0.8%) on tariff transmission. Market resolves YES by September 2026.'},
+    base:{p:45,t:'Growth slows but avoids technical recession',d:'GDP stays positive but below 1% through 2026. No NBER declaration. Labor market cools but holds above 4.5% unemployment. Market resolves NO.'},
+    bear:{p:17,t:'Tariff rollback + Fed cut in H2 prevents recession',d:'US-China deal reduces tariff burden. Fed cuts 25bp in September. GDP rebounds to +2.5% in Q3. Market resolves NO with high conviction.'},
+    watch:['Q1 GDP advance estimate — Wednesday April 30, 8:30am ET (most critical single data point)','April payrolls — Friday May 2 (first leading indicator post-tariff shock)','US-China trade negotiation headlines — any official statement is binary catalyst'],
     agents:[
-      {ico:&#x27;◈&#x27;,name:&#x27;Macro Structuralist&#x27;,col:&#x27;#0A84FF&#x27;,prob:25,stance:&#x27;BEARISH&#x27;,reas:&#x27;The macro cycle is in deceleration. BTC\&#x27;s 0.74 correlation with Nasdaq makes it a pure risk asset that historically suffers in contractionary cycles. The post-halving base rate is real, but the macro headwind in 2022 also coincided with a post-halving period and produced no rally. I weight current regime heavily.&#x27;},
-      {ico:&#x27;◆&#x27;,name:&#x27;Quantitative&#x27;,col:&#x27;#FF9500&#x27;,prob:38,stance:&#x27;BULLISH&#x27;,reas:&#x27;Historical base rate: 100% of post-halving 6-month periods positive. Macro discount: −15pp. ETF structural support: +8pp. Net calibrated probability: 38%. The crowd at 12% is not anchored to any verifiable statistic — it\&#x27;s pure sentiment. There\&#x27;s a quantifiable edge here.&#x27;},
-      {ico:&#x27;◉&#x27;,name:&#x27;Tail Risk&#x27;,col:&#x27;#FF3B30&#x27;,prob:29,stance:&#x27;NEUTRAL&#x27;,reas:&#x27;The tail risk is bidirectional and asymmetric: a surprise tariff deal could send BTC to $90K+ in 72 hours. A severe recession could collapse it to $40K. The crowd at 12% underestimates BOTH tails — but especially the upside tail. The expected value of this market is significantly above 12%.&#x27;},
+      {ico:'◈',name:'Macro Structuralist',col:'#0A84FF',prob:42,stance:'BEARISH',reas:'Late-cycle indicators are deteriorating in parallel: PMI at 49.8 for third consecutive month, consumer confidence at 18-month low, GDPNow volatile. The tariff shock functions as a demand AND supply shock simultaneously — the worst kind for growth. I assign 42% probability of YES resolution.'},
+      {ico:'◆',name:'Quantitative',col:'#FF9500',prob:38,stance:'BEARISH',reas:'NY Fed model: 29%. Institutional consensus: 35-40%. GDPNow: +1.9% (positive signal). Historical PMI/curve indicator: 52% base rate. Weighting: 38% net. The crowd at 26% is 12pp below the calibrated range — this is the clearest edge I see in the current market set.'},
+      {ico:'◉',name:'Tail Risk',col:'#FF3B30',prob:33,stance:'NEUTRAL',reas:'The NBER timing problem is the most underpriced risk. Even if I\'m right that a recession begins, the market may not resolve YES by December 31, 2026. NBER has never declared a recession in under 6 months. I discount from 40% to 33% specifically for this resolution mechanism risk.'},
     ],
-    synth:&#x27;All three agents land well above the crowd at 12% (range: 25–38%). The key divergence is how much weight to give the post-halving base rate vs. the current macro regime. Quant anchors to statistics; Macro weights the cycle. Final weighted: 31%. Clear edge over crowd — the 19pp gap is not noise.&#x27;,
+    synth:'All three agents land between 33-42%, all well above the crowd at 26%. The key disagreement is how much to discount for the NBER timing mechanism. Final weighted: 38%. EDGE: Δ12pp. MODERATE conviction — the GDPNow at +1.9% is a genuine headwind to this thesis that prevents HIGH conviction.',
   },
+
+  /* ── 3. FED RATE HIKE 2026 ───────────────────────────────────── */
   {
-    id:&#x27;rec&#x27;, grp:&#x27;MACRO&#x27;, cat:&#x27;MACRO&#x27;, cls:&#x27;cat-mac&#x27;,
-    title:&#x27;Will the US enter recession before June 30, 2026?&#x27;,
-    crowd:32, ai:41, vol:&#x27;$22M&#x27;, vol24h:&#x27;$1.8M&#x27;, buy:61, sell:39,
-    days:82, resolves:&#x27;Jun 30, 2026&#x27;, dx:9,
-    kd:[{l:&#x27;GDPNOW Q1&#x27;,v:&#x27;+0.8%&#x27;,d:&#x27;Atlanta Fed&#x27;,dc:&#x27;dd&#x27;},{l:&#x27;PMI COMP.&#x27;,v:&#x27;49.8&#x27;,d:&#x27;3 months &lt;50&#x27;,dc:&#x27;dd&#x27;},{l:&#x27;GS PROB.&#x27;,v:&#x27;35%&#x27;,d:&#x27;↑ from 20%&#x27;,dc:&#x27;dd&#x27;},{l:&#x27;SAHM RULE&#x27;,v:&#x27;0.37%&#x27;,d:&#x27;&lt;0.5% threshold&#x27;,dc:&#x27;dn&#x27;}],
-    news:[{src:&#x27;Goldman Sachs&#x27;,h:&#x27;Recession probability raised to 35% on tariff shock, consumer confidence falls&#x27;,s:&#x27;s-bear&#x27;,age:&#x27;6d&#x27;},{src:&#x27;JPMorgan&#x27;,h:&#x27;JPMorgan raises US recession odds to 40% for 2026, cuts GDP forecast&#x27;,s:&#x27;s-bear&#x27;,age:&#x27;5d&#x27;},{src:&#x27;WSJ&#x27;,h:&#x27;Consumer confidence falls to lowest since July 2024 amid trade war fears&#x27;,s:&#x27;s-bear&#x27;,age:&#x27;2d&#x27;}],
-    cross:[{m:&#x27;Fed pause May?&#x27;,c:98,i:&#x27;Fed paralyzed if recession + inflation hits simultaneously — stagflation is the worst case&#x27;,sig:&#x27;warn&#x27;},{m:&#x27;CPI ≥0.8% monthly?&#x27;,c:96,i:&#x27;Stagflation = recession + persistent inflation — amplifies the severity&#x27;,sig:&#x27;warn&#x27;},{m:&#x27;BTC &gt;$80K Sep?&#x27;,c:12,i:&#x27;Crowd already pricing macro weakness in BTC — this is internally consistent&#x27;,sig:&#x27;ok&#x27;}],
-    ob:{flow:&#x27;+$340K YES (24h)&#x27;,big:&#x27;$120K YES · 8h ago&#x27;,smart:&#x27;Strong institutional YES flow for 4 consecutive days. Possible information trading signal.&#x27;},
-    br:&#x27;PMI &lt;50 for 3+ consecutive months + recently uninverted curve → recession probability in 6 months: 45% (NY Fed model, 1970–2025 data). Current PMI: 49.8 (3rd month below 50).&#x27;,
-    reg:&#x27;April 2026 tariffs modeled at −1.2pp GDP impact for 2026 (Goldman Sachs). GDPNow fell from +2.4% (Q4 2025) to +0.8% for Q1 in 10 weeks — fastest deceleration since Q1 2020. Adjustment: +9pp above historical base rate.&#x27;,
-    hl:&#x27;Crowd at 32% underestimates the deterioration speed: GDPNow already shows a virtual stall&#x27;,
-    thesis:&#x27;The crowd at 32% is below institutional model averages of 37–40%. GDPNow dropped from +2.4% to +0.8% in 10 weeks — the sharpest Q1 deceleration since Q1 2020. PMI has been in contraction for 3 consecutive months. The Sahm Rule at 0.37% is below the 0.5% alarm threshold but accelerating upward. Note: the NBER takes 6–12 months to officially declare recessions, which creates timing risk for this market\&#x27;s June 30 resolution.&#x27;,
-    devil:&#x27;Key counterargument: the NBER takes 6–12 months to officially declare a recession. Even if Q1 GDP prints slightly negative on April 30, the Polymarket market may not resolve YES before June 30. The crowd might be well-priced at 32% if interpreted strictly as &quot;NBER declares recession before June 30&quot; rather than &quot;recession is occurring.&quot;&#x27;,
-    risk:&#x27;The market underestimates &quot;balance sheet recession&quot; risk where corporations preemptively cut capex and hiring before official data confirms it — creating a self-fulfilling prophecy that accelerates the timeline.&#x27;,
-    bull:{p:32,t:&#x27;Economy absorbs tariffs, Q1 GDP beats&#x27;,d:&#x27;Resilient labor market (+228K NFP March) and consumer savings buffer the shock. Q1 GDP exceeds +1.5%, recession narrative collapses.&#x27;},
-    base:{p:41,t:&#x27;Q1 GDP near zero, NBER does not declare by June 30&#x27;,d:&#x27;Q1 GDP in −0.3% to +0.5% range. NBER timing issue means market may not resolve YES even with recession underway.&#x27;},
-    bear:{p:27,t:&#x27;Q1 and Q2 GDP negative, technical recession confirmed&#x27;,d:&#x27;Q1 GDP −0.8%+ (April 30). Fed forced into emergency action. Polymarket resolves YES before June 30.&#x27;},
-    watch:[&#x27;Q1 GDP first estimate — Wednesday April 30, 8:30am ET (single most important data point)&#x27;,&#x27;Weekly initial jobless claims — every Thursday 8:30am ET (leading indicator)&#x27;,&#x27;ISM Manufacturing April — Thursday May 1 (alert if below 45 — signals severe deterioration)&#x27;],
+    id:'fed-hike', grp:'FED', cat:'FED POLICY', cls:'cat-fed',
+    title:'Will the Fed raise rates at any point in 2026?',
+    crowd:15, ai:22, vol:'$8.2M', vol24h:'$420K', buy:44, sell:56,
+    days:254, resolves:'Dec 31, 2026', dx:7,
+    polyurl:'https://polymarket.com/event/fed-rate-hike-in-2026',
+    kd:[{l:'CURRENT RATE',v:'3.50–3.75%',d:'As of Mar 18',dc:'dn'},{l:'CPI YoY MAR',v:'3.3%',d:'↑ sharply',dc:'dd'},{l:'DOT PLOT',v:'1 cut',d:'2026 median',dc:'du'},{l:'FUTURES IMPLIED',v:'3.6%',d:'Year-end',dc:'dn'}],
+    news:[{src:'WSJ',h:'Fed minutes show "some openness" to rate hike if tariff inflation proves persistent',s:'s-bear',age:'13d'},{src:'Bloomberg',h:'March CPI at 3.3% revives hike talk — first serious discussion since 2023',s:'s-bear',age:'12d'},{src:'FT',h:'Iran tensions spike energy costs — Fed faces impossible inflation-growth trade-off',s:'s-bear',age:'8d'}],
+    cross:[{m:'Fed hold April?',c:99,i:'99% hold in April is consistent with any hike happening later in 2026',sig:'ok'},{m:'US Recession 2026?',c:26,i:'A hike during a recession would be historically unprecedented — crowd pricing inconsistency',sig:'warn'},{m:'# Fed cuts 2026',c:null,i:'34% chance of zero cuts and 15% chance of a hike create an interesting overlap in market pricing',sig:'warn'}],
+    ob:{flow:'+$38K YES (24h)',big:'$18K YES · 8h ago',smart:'Small but persistent YES accumulation. Retail-dominated flow with some informed signal.'},
+    br:'Fed has never hiked into a slowdown when unemployment is rising. In post-1990 history, once unemployment rises above 4.0% (currently 4.3%), there have been zero rate hikes. Historical base rate for hike with unemployment >4%: 0%.',
+    reg:'March CPI at 3.3% is the key driver. FOMC March minutes explicitly noted "some openness to hikes" if tariff inflation persists. This language has never appeared in recent minutes. Goldman\'s base case is no hike, but their scenario analysis puts hike probability at 20%. The futures market implied year-end rate of 3.6% (vs current 3.75% ceiling) implies a slight CUT bias — not a hike.',
+    hl:'Crowd at 15% may be underpricing: Fed minutes signal genuine hike optionality for first time since 2023',
+    thesis:'The crowd at 15% is below our calibrated estimate of 22%. Three factors drive the upside: (1) March CPI at 3.3% is the most inflationary print since mid-2023, driven partly by Iran-related energy costs; (2) FOMC March minutes explicitly acknowledged hike optionality for the first time in over two years; (3) if tariffs add another 1-2pp to CPI in Q2-Q3, the Fed would face a PCE above 3.5% while unemployment remains below 5% — historically a clear hike trigger. However, the base case dot plot still projects 1 cut, not a hike.',
+    devil:'The unemployment rate at 4.3% is the single most powerful argument against a hike. The Fed has NEVER raised rates with unemployment above 4% in the post-Volcker era. Powell has emphasized this constraint multiple times. For a hike to happen, inflation would need to be so severe that the Fed explicitly abandons its dual mandate employment framework — an extraordinary threshold.',
+    risk:'The market underestimates that a hike and a recession could occur simultaneously — stagflation scenario. If CPI stays above 4% while GDP contracts, the Fed faces the 1970s policy trilemma. The crowd is pricing these events as mutually exclusive when they are not.',
+    bull:{p:22,t:'CPI stays above 3.5% through Q2, hike in July',d:'Tariff transmission pushes goods CPI above 5% monthly in May-June. PCE core reaches 3.5%. Fed hikes 25bp at July 29-30 FOMC despite growth concerns.'},
+    base:{p:63,t:'Zero moves in 2026 — Fed on hold all year',d:'Stagflation paralysis. CPI too high to cut, growth too weak to hike. Fed communicates uncertainty and holds all year.'},
+    bear:{p:15,t:'One 25bp cut in Q4 2026 as recession sets in',d:'Growth deteriorates enough that inflation fear subsides. Fed cuts once in November or December.'},
+    watch:['April CPI — Tuesday May 12 (first reading with full tariff transmission)',  'Core PCE March — Wednesday April 30 (Fed\'s preferred metric)', 'FOMC statement language — April 29 press conference (any hike language is a major signal)'],
     agents:[
-      {ico:&#x27;◈&#x27;,name:&#x27;Macro Structuralist&#x27;,col:&#x27;#0A84FF&#x27;,prob:48,stance:&#x27;BEARISH&#x27;,reas:&#x27;Classic late-cycle pattern: recently uninverted curve, PMI in contraction, consumer confidence collapsing. This has preceded recession in 78% of historical cases since 1970. The tariff shock functions as an exogenous demand destruction event on top of existing cycle weakness. I place probability at 48%.&#x27;},
-      {ico:&#x27;◆&#x27;,name:&#x27;Quantitative&#x27;,col:&#x27;#FF9500&#x27;,prob:43,stance:&#x27;BEARISH&#x27;,reas:&#x27;Statistical base rate: 45%. Goldman at 35%, JPMorgan at 40%, institutional average: 37.5%. Sahm Rule at 0.37% and accelerating. GDPNow at 0.8%. All signals converge toward 40–45% range. My calibrated estimate: 43%.&#x27;},
-      {ico:&#x27;◉&#x27;,name:&#x27;Tail Risk&#x27;,col:&#x27;#FF3B30&#x27;,prob:31,stance:&#x27;NEUTRAL&#x27;,reas:&#x27;The NBER timing problem is real and materially changes the effective probability for THIS specific market. Even with a recession underway, Polymarket may not resolve YES by June 30. I adjust down to 31% specifically because of this resolution timing risk — not because I disagree on the macro trajectory.&#x27;},
+      {ico:'◈',name:'Macro Structuralist',col:'#0A84FF',prob:18,stance:'POSSIBLE',reas:'The unemployment rate at 4.3% is a historical bright line against hiking. But the 1970s showed that stagflation can override this constraint. I place hike probability at 18% — below the crowd, but acknowledging the scenario is not absurd given the March CPI print.'},
+      {ico:'◆',name:'Quantitative',col:'#FF9500',prob:25,stance:'POSSIBLE',reas:'The March FOMC minutes language is a rare statistical signal. "Some openness to hikes" has not appeared in Fed minutes since 2022. When this language appears, historical data shows 35% of subsequent meetings see a hike within 6 months. Weighted for current context: 25%.'},
+      {ico:'◉',name:'Tail Risk',col:'#FF3B30',prob:23,stance:'POSSIBLE',reas:'The hike tail is real and underpriced. If oil reaches $100/barrel on Iran escalation AND tariff goods prices spike in May CPI AND unemployment holds below 4.5%, the Fed faces a credibility crisis where not hiking looks dovish. That tail is worth 23%.'},
     ],
-    synth:&#x27;Important divergence: Macro (48%) and Quant (43%) see high recession probability, but Tail Risk (31%) correctly identifies the NBER timing problem specific to this Polymarket contract. Synthesis incorporates this distinction: probability of actual recession ~45%, but probability this contract resolves YES before June 30: 41%. Moderate edge over crowd at 32%.&#x27;,
+    synth:'Moderate divergence: agents range 18-25%, all above crowd at 15%. Quantitative model anchors highest at 25% due to FOMC language signal. Final weighted: 22%. Δ7pp edge. LOW-MODERATE conviction — the unemployment constraint is real but the March CPI language creates genuine optionality.',
   },
+
+  /* ── 4. BTC APRIL PRICE ──────────────────────────────────────── */
   {
-    id:&#x27;gold&#x27;, grp:&#x27;MACRO&#x27;, cat:&#x27;COMMODITIES&#x27;, cls:&#x27;cat-cmd&#x27;,
-    title:&#x27;Will gold outperform Bitcoin in total return during 2026?&#x27;,
-    crowd:55, ai:64, vol:&#x27;$730K&#x27;, vol24h:&#x27;$42K&#x27;, buy:58, sell:42,
-    days:266, resolves:&#x27;Dec 31, 2026&#x27;, dx:9,
-    kd:[{l:&#x27;GOLD YTD&#x27;,v:&#x27;+18.2%&#x27;,d:&#x27;$3,108/oz&#x27;,dc:&#x27;du&#x27;},{l:&#x27;BTC YTD&#x27;,v:&#x27;−8.4%&#x27;,d:&#x27;$68,780&#x27;,dc:&#x27;dd&#x27;},{l:&#x27;CB BUYING Q1&#x27;,v:&#x27;289 tonnes&#x27;,d:&#x27;Record pace&#x27;,dc:&#x27;du&#x27;},{l:&#x27;BTC–NDX ρ&#x27;,v:&#x27;0.74&#x27;,d:&#x27;90-day corr.&#x27;,dc:&#x27;dn&#x27;}],
-    news:[{src:&#x27;World Gold Council&#x27;,h:&#x27;Central bank gold buying on pace for second consecutive record year in 2026&#x27;,s:&#x27;s-bull&#x27;,age:&#x27;3d&#x27;},{src:&#x27;Bloomberg&#x27;,h:&#x27;Gold hits $3,100 as tariff fears boost global safe-haven demand&#x27;,s:&#x27;s-bull&#x27;,age:&#x27;1d&#x27;},{src:&#x27;FT&#x27;,h:&#x27;Bitcoin struggles as institutional investors rotate to gold amid macro uncertainty&#x27;,s:&#x27;s-bear&#x27;,age:&#x27;4d&#x27;}],
-    cross:[{m:&#x27;US Recession &lt;Jun?&#x27;,c:32,i:&#x27;Recession historically favors gold over BTC — supports gold wins thesis&#x27;,sig:&#x27;ok&#x27;},{m:&#x27;BTC &gt;$80K Sep?&#x27;,c:12,i:&#x27;Weak crowd on BTC — consistent with gold outperforming in 2026&#x27;,sig:&#x27;ok&#x27;},{m:&#x27;CPI ≥0.8% monthly?&#x27;,c:96,i:&#x27;High persistent inflation = gold as structural hedge — strongly supports thesis&#x27;,sig:&#x27;ok&#x27;}],
-    ob:{flow:&#x27;+$18K YES (24h)&#x27;,big:&#x27;$22K YES · 1d ago&#x27;,smart:&#x27;Low volume. Illiquid market. Order book signals should be weighted cautiously.&#x27;},
-    br:&#x27;In stagflation environments (inflation &gt;3% + growth &lt;1%), gold outperforms BTC in 100% of observed cases. 2022 reference: Gold −1%, BTC −65%. No exceptions found in data going back to 2010.&#x27;,
-    reg:&#x27;Central banks bought 1,136 tonnes of gold in 2025 (record) and 289 tonnes in Q1 2026 alone. This structural demand creates price-inelastic buying that functions as a permanent put on gold prices. BTC has 0.74 correlation with Nasdaq — a pure risk asset that underperforms in stagflation by definition.&#x27;,
-    hl:&#x27;Central bank structural buying and stagflation dynamics give gold a systematic advantage the crowd underestimates&#x27;,
-    thesis:&#x27;The crowd at 55% underestimates two structural forces working simultaneously. First, systematic central bank buying (China, India, Turkey, Poland) creates inelastic demand at scale — 289 tonnes in Q1 2026 alone. Second, in stagflation environments gold outperforms risk assets in 100% of historical cases, while BTC with a 0.74 Nasdaq correlation is a textbook risk asset that suffers in stagflation by construction.&#x27;,
-    devil:&#x27;A surprise US-China tariff deal announced overnight could reverse BTC sentiment in hours and push it above gold for the year before macro data justifies the move. The biggest risk to this thesis is a sudden political catalyst, not the economic fundamentals.&#x27;,
-    risk:&#x27;The market underestimates how quickly a tariff deal could flip this trade. BTC can move +20% in days on a geopolitical headline. Gold does not. A surprise deal could make gold the loser for 2026 in weeks — before the data catches up.&#x27;,
-    bull:{p:64,t:&#x27;Stagflation persists, CB purchases remain at record pace&#x27;,d:&#x27;CPI stays above 3% while growth decelerates. Gold continues to appreciate with central bank structural demand as the floor.&#x27;},
-    base:{p:23,t:&#x27;BTC recovers to $85K+ in H2 on tariff resolution&#x27;,d:&#x27;A US-China trade deal reactivates risk-on. BTC overtakes gold for the year. Requires a clear political catalyst before September.&#x27;},
-    bear:{p:13,t:&#x27;Liquidity crisis collapses both assets&#x27;,d:&#x27;A Lehman-style event forces indiscriminate selling. Gold falls less (−15%) vs BTC (−40%+). Gold still wins relatively.&#x27;},
-    watch:[&#x27;Monthly World Gold Council report — early May (final Q1 central bank purchase figures)&#x27;,&#x27;US-China tariff negotiations — any official statement is the single biggest trigger for this trade&#x27;,&#x27;Weekly GLD vs IBIT fund flows — as the institutional rotation barometer&#x27;],
+    id:'btc-apr', grp:'CRYPTO', cat:'CRYPTO', cls:'cat-btc',
+    title:'Will Bitcoin close above $75,000 in April 2026?',
+    crowd:81, ai:62, vol:'$45M', vol24h:'$4.2M', buy:38, sell:62,
+    days:10, resolves:'Apr 30, 2026', dx:19,
+    polyurl:'https://polymarket.com/event/bitcoin-price-in-april-2026',
+    kd:[{l:'BTC TODAY',v:'$68,780',d:'Apr 21, 2026',dc:'dd'},{l:'TO $75K',v:'+9.0%',d:'In 10 days',dc:'dn'},{l:'10-DAY IV',v:'72% ann.',d:'Very elevated',dc:'dd'},{l:'ETF FLOWS',v:'+$94M',d:'Today (pos.)',dc:'du'}],
+    news:[{src:'CoinGlass',h:'Bitcoin liquidations $180M in 24h — shorts building above $72K level',s:'s-bear',age:'today'},{src:'Bloomberg',h:'Risk-off macro environment: SPX -3.5%, Nasdaq -4.2% this week — BTC correlation 0.74',s:'s-bear',age:'today'},{src:'SoSoValue',h:'BTC ETF positive inflows 6th consecutive week despite price weakness',s:'s-bull',age:'1d'}],
+    cross:[{m:'BTC >$80K Sep 2026?',c:19,i:'If BTC can\'t close above $75K in 10 days, $80K by September becomes substantially harder',sig:'warn'},{m:'US Recession 2026?',c:26,i:'26% recession probability is weighing on risk assets including BTC',sig:'warn'}],
+    ob:{flow:'-$88K YES above $75K (24h)',big:'$42K NO · 2h ago',smart:'Institutional flow strongly favoring NO in the last 48 hours. Largest single trade this week is a $42K NO at the $75K level. Smart money is bearish near-term.'},
+    br:'BTC needs +9% in 10 days from $68,780. Historical data: when BTC is in a confirmed downtrend (below 20-day MA) AND macro correlation is >0.7 AND VIX > 20, probability of +9% in 10 days: approximately 22%. When in an uptrend, this rises to 48%. Current trend: neutral-to-bearish.',
+    reg:'Crowd at 81% appears to be pricing BTC\'s April PEAK (which was $75K earlier in April), not where it closes April 30. Polymarket resolves on CLOSING price on April 30. BTC is currently at $68,780 — it already traded above $75K earlier in April but has since sold off. The question is whether it can reclaim $75K by month-end.',
+    hl:'⚡ Crowd at 81% is likely mispricing: BTC already below $75K and needs +9% in 10 days in a risk-off environment',
+    thesis:'This is our highest-conviction edge of the current set. The crowd at 81% appears confused about the market resolution criteria — they may be pricing "did BTC ever touch $75K in April" (it did) rather than "does BTC CLOSE above $75K on April 30." BTC is currently at $68,780. It needs to rally +9% in 10 days while: (1) SPX is down 3.5% this week; (2) VIX is at 24; (3) institutional order book shows net seller flow; (4) 10-day IV at 72% annualized implies ±$5,800 range. The upside case requires a macro reversal in addition to crypto-specific buying. Velu assigns 62% probability — significantly below the crowd\'s 81%.',
+    devil:'The crowd may be right if you interpret this as a volatility play. With 10-day IV at 72%, there is genuine probability of a rapid $6,000 move up. BTC has previously gapped 10%+ in single days on favorable news. If the FOMC on April 29 signals dovish relief OR a tariff deal headlines hit, BTC could spike to $76-78K before April 30 close.',
+    risk:'The biggest risk to the Velu thesis is that BTC is being supported by ETF flows ($94M today) even as price falls — this is a bullish divergence. If ETF flows accelerate while price is suppressed by futures shorts, a violent short squeeze could push BTC past $75K rapidly.',
+    bull:{p:62,t:'Macro relief + FOMC dovish tone triggers short squeeze',d:'Fed signals one H2 cut on April 29. Short positions unwind. BTC squeezes from $68K to $76K in 48 hours.'},
+    base:{p:28,t:'BTC consolidates $65K-$72K through month-end',d:'No major catalyst. Risk-off continues. BTC closes April 30 between $65K-$73K. Market resolves NO.'},
+    bear:{p:10,t:'GDP shock on April 30 triggers risk-off cascade',d:'Q1 GDP prints deeply negative. Panic sell. BTC falls to $58-62K. Strong NO resolution.'},
+    watch:['FOMC decision + Powell press conference — April 29, 2:30pm ET (single biggest catalyst)', 'Q1 GDP advance estimate — April 30, 8:30am ET (prints same day as resolution)', 'Daily BTC ETF flows — SoSoValue (divergence from price is the key signal to watch)'],
     agents:[
-      {ico:&#x27;◈&#x27;,name:&#x27;Macro Structuralist&#x27;,col:&#x27;#0A84FF&#x27;,prob:70,stance:&#x27;GOLD WINS&#x27;,reas:&#x27;The macro environment of stagflation is structurally gold-favorable by design. Central banks are systematically diversifying reserves away from the dollar toward gold — this is a secular trend, not cyclical. A single tariff deal doesn\&#x27;t reverse a multi-year structural shift in reserve allocation.&#x27;},
-      {ico:&#x27;◆&#x27;,name:&#x27;Quantitative&#x27;,col:&#x27;#FF9500&#x27;,prob:62,stance:&#x27;GOLD WINS&#x27;,reas:&#x27;Gold YTD: +18.2%. BTC YTD: −8.4%. For BTC to win 2026, it needs to outperform by ~27pp from here. Given 0.74 Nasdaq correlation and the macro backdrop, this requires a Nasdaq rally of ~35%+ from current levels. Not impossible, but statistically unlikely without a major regime change.&#x27;},
-      {ico:&#x27;◉&#x27;,name:&#x27;Tail Risk&#x27;,col:&#x27;#FF3B30&#x27;,prob:58,stance:&#x27;NEUTRAL&#x27;,reas:&#x27;The tail risk cuts both ways: a tariff deal sends BTC to $90K+ and gold loses. A financial crisis collapses BTC 50% while gold falls only 15%. Both tails favor gold. The bear tail (BTC wins) requires not just a tariff resolution but a complete risk-on regime shift. I stay at 58% for gold.&#x27;},
+      {ico:'◈',name:'Macro Structuralist',col:'#0A84FF',prob:55,stance:'BEARISH',reas:'Risk-off macro with VIX at 24 and Nasdaq down 4.2% this week is the dominant force. BTC\'s 0.74 Nasdaq correlation means every 1% Nasdaq move = 0.74% BTC move mechanically. For BTC to close above $75K, Nasdaq needs to recover ~6% in 10 days against a tariff backdrop. Low probability.'},
+      {ico:'◆',name:'Quantitative',col:'#FF9500',prob:63,stance:'BEARISH',reas:'Historical base rate: +9% in 10 days in current regime conditions = 22%. Adjusting for ETF structural support (+12pp) and current positioning (short squeeze potential, +8pp): 42% probability. The crowd at 81% is a 39pp gap from my estimate — this is the largest mispricing I see in any current market.'},
+      {ico:'◉',name:'Tail Risk',col:'#FF3B30',prob:67,stance:'BEARISH',reas:'The short squeeze tail is real. Open interest in BTC futures is elevated with short bias. A single catalytic event (FOMC dovish surprise, tariff deal headline) could trigger a cascade that forces BTC above $75K before shorts can react. I model this tail at 20%, which anchors my overall estimate at 67% for YES. Still well below crowd 81%.'},
     ],
-    synth:&#x27;Strong convergence across all three agents (58–70%) in favor of gold. The 12pp spread reflects different weights on the tariff resolution risk. Final weighted probability: 64%. Moderate but consistent edge over crowd at 55%. This market is underpriced for gold.&#x27;,
+    synth:'High conviction bearish vs crowd. All three agents range 55-67%, far below crowd at 81%. The crowd appears to be mispricing the resolution criteria (closing price, not intraday touch). Final weighted: 62%. Δ19pp EDGE. HIGH conviction edge — this is Velu\'s clearest divergence in the current market set.',
   },
+
+  /* ── 5. FED CUTS COUNT 2026 ──────────────────────────────────── */
   {
-    id:&#x27;nvda&#x27;, grp:&#x27;MACRO&#x27;, cat:&#x27;EQUITIES&#x27;, cls:&#x27;cat-eq&#x27;,
-    title:&#x27;Will NVIDIA beat Q1 FY2026 consensus EPS?&#x27;,
-    crowd:97, ai:95, vol:&#x27;$3M&#x27;, vol24h:&#x27;$180K&#x27;, buy:71, sell:29,
-    days:49, resolves:&#x27;May 28, 2026&#x27;, dx:-2,
-    kd:[{l:&#x27;BEAT RATE&#x27;,v:&#x27;8 of 8&#x27;,d:&#x27;Last 8 quarters&#x27;,dc:&#x27;du&#x27;},{l:&#x27;AVG EPS BEAT&#x27;,v:&#x27;+12%&#x27;,d:&#x27;Historical avg&#x27;,dc:&#x27;du&#x27;},{l:&#x27;Q1 GUIDANCE&#x27;,v:&#x27;$43B&#x27;,d:&#x27;Conservative&#x27;,dc:&#x27;dn&#x27;},{l:&#x27;OPTIONS IV&#x27;,v:&#x27;±8%&#x27;,d:&#x27;Post-earnings&#x27;,dc:&#x27;dn&#x27;}],
-    news:[{src:&#x27;Bloomberg&#x27;,h:&#x27;Microsoft Azure capex up 22% YoY — robust NVIDIA demand confirmed for Q1&#x27;,s:&#x27;s-bull&#x27;,age:&#x27;5d&#x27;},{src:&#x27;Reuters&#x27;,h:&#x27;Commerce Dept reviewing additional chip export restrictions to China for H2 2026&#x27;,s:&#x27;s-bear&#x27;,age:&#x27;2d&#x27;},{src:&#x27;WSJ&#x27;,h:&#x27;Meta increases AI infrastructure spending to $65B in 2026, NVIDIA primary beneficiary&#x27;,s:&#x27;s-bull&#x27;,age:&#x27;4d&#x27;}],
-    cross:[{m:&#x27;S&amp;P 500 positive Q2?&#x27;,c:52,i:&#x27;NVDA beat would support broader SPX — bidirectional positive relationship&#x27;,sig:&#x27;ok&#x27;},{m:&#x27;US Recession &lt;Jun?&#x27;,c:32,i:&#x27;Recession would reduce enterprise AI spend but with a 6–12 month lag — not immediate&#x27;,sig:&#x27;ok&#x27;}],
-    ob:{flow:&#x27;+$95K YES (24h)&#x27;,big:&#x27;$35K YES · 12h ago&#x27;,smart:&#x27;Consistent institutional YES accumulation. No contrarian positioning signals detected.&#x27;},
-    br:&#x27;NVIDIA beat rate: 8 of 8 last 8 quarters with average EPS beat of +12%. Implied historical probability: 94–96%. The market at 97% is within this range.&#x27;,
-    reg:&#x27;Tariffs could affect chips exported to China ($3–4B revenue). But the $43B Q1 guidance already incorporates known restrictions — NVIDIA\&#x27;s finance team is conservative by design. Additional unanticipated restrictions are the only novel risk. Adjustment: −2pp for tail risk of surprise restrictions.&#x27;,
-    hl:&#x27;8-for-8 beats and inelastic AI demand make a NVIDIA miss almost statistically impossible&#x27;,
-    thesis:&#x27;With an 8/8 beat rate and average +12% EPS beat, the crowd at 97% is correctly calibrated. The $43B Q1 guidance was deliberately conservative — NVIDIA has guided below actual results in all 8 previous quarters. Hyperscaler GPU demand (Microsoft, Google, Meta, Amazon) is structurally inelastic in multi-year contracts that cannot be cancelled or reduced in a single quarter. The only realistic miss scenario involves unanticipated export restrictions announced in the final weeks of the quarter.&#x27;,
-    devil:&#x27;The asymmetric risk here is not a miss — it\&#x27;s a &quot;weak beat&quot; that disappoints implicit expectations. If NVIDIA reports $46B (a +7% beat, below the historical average), the stock could fall −10% while Polymarket still resolves YES. The binary question doesn\&#x27;t capture this nuance — a YES resolution may coincide with a significant price decline.&#x27;,
-    risk:&#x27;The market underestimates that even a technical beat could disappoint if Q2 guidance is below $49B. Implicit market expectations are significantly higher than the official consensus — a &quot;weak beat&quot; scenario could signal AI capex deceleration that spooks investors even with a YES resolution.&#x27;,
-    bull:{p:95,t:&#x27;Beat &gt;$47B with strong Q2 guidance&#x27;,d:&#x27;EPS of $0.82–0.90 vs consensus $0.74. Q2 guide above $50B confirms secular AI demand narrative is intact.&#x27;},
-    base:{p:4,t:&#x27;Minimal beat $44–46B, inline Q2 guidance&#x27;,d:&#x27;Barely exceeds consensus. Q2 guide in line with $46B expectations. Stock reacts flat to −5%, market resolves YES.&#x27;},
-    bear:{p:1,t:&#x27;Miss on unexpected China export restrictions&#x27;,d:&#x27;New restrictions announced in final weeks of quarter impact $4B+ of unrecognizable revenue. The only realistic miss scenario.&#x27;},
-    watch:[&#x27;Microsoft Azure and Google Cloud Q1 earnings this week — direct NVIDIA demand proxies&#x27;,&#x27;Commerce Department chip restriction announcements — any business day is a risk&#x27;,&#x27;NVIDIA Q1 earnings date — estimated May 28, 2026 after market close&#x27;],
+    id:'fed-cuts', grp:'FED', cat:'FED POLICY', cls:'cat-fed',
+    title:'Will the Fed cut rates at least once in 2026?',
+    crowd:66, ai:58, vol:'$22M', vol24h:'$1.1M', buy:55, sell:45,
+    days:254, resolves:'Dec 31, 2026', dx:8,
+    polyurl:'https://polymarket.com/event/how-many-fed-rate-cuts-in-2026',
+    kd:[{l:'CURRENT RATE',v:'3.50–3.75%',d:'Held Mar 18',dc:'dn'},{l:'DOT PLOT',v:'1 cut',d:'2026 median',dc:'du'},{l:'0 CUTS PROB.',v:'34.4%',d:'Polymarket',dc:'dn'},{l:'1 CUT PROB.',v:'29.5%',d:'Polymarket',dc:'du'}],
+    news:[{src:'FT',h:'Fed dot plot shows one 2026 cut but markets doubt it will happen given tariff inflation',s:'s-bear',age:'1d'},{src:'Bloomberg',h:'Futures now pricing just 40% chance of any 2026 Fed cut — lowest since 2023',s:'s-bear',age:'3d'},{src:'WSJ',h:'March CPI 3.3% kills near-term cut hopes but H2 remains open question',s:'s-neu',age:'12d'}],
+    cross:[{m:'Fed hike 2026?',c:15,i:'15% hike probability means 85% of scenarios involve either zero or negative rate changes — consistent with 66% cut probability only if you weight cuts heavily',sig:'warn'},{m:'US Recession 2026?',c:26,i:'Recession would force Fed to cut — this is internally consistent and supports the 66% cut probability',sig:'ok'}],
+    ob:{flow:'-$24K YES ≥1 cut (24h)',big:'$55K NO cuts · 1d ago',smart:'Institutional flow tilted toward NO cuts in last 48 hours. Large traders appear to be selling the "at least one cut" thesis.'},
+    br:'Historical Fed cutting cycle data: when CPI is above 3% AND GDP is positive AND unemployment is below 5%, probability of cutting in same year: 28%. When CPI is above 3% and unemployment is RISING: 47%. Current: unemployment rose from 4.2% to 4.3% in March — a rising trend.',
+    reg:'The Polymarket breakdown is revealing: 34.4% for 0 cuts, 29.5% for 1 cut, and the remainder split across more cuts. The "at least one cut" market at 66% is internally consistent with these numbers. However, the March CPI print at 3.3% has shifted futures markets to only 40% probability of any 2026 cut. Polymarket at 66% appears to lag the futures market signal.',
+    hl:'Polymarket at 66% lags futures markets at 40% — Velu sees 58% as the calibrated midpoint',
+    thesis:'The crowd at 66% (at least one 2026 cut) is above our estimate of 58%. The March CPI print at 3.3% YoY — up sharply from February\'s 2.4% — has fundamentally changed the cutting calculus. Futures markets have rapidly repriced to just 40% probability of any 2026 cut. The Polymarket crowd at 66% appears to lag this institutional repricing. However, we don\'t fully follow futures markets: the recession scenario (26% Polymarket probability) would force a cut regardless of inflation, creating a floor for cut probability.',
+    devil:'The most powerful pro-cut argument: if the unemployment rate rises above 4.5% by Q3 2026, the Fed historically cuts regardless of inflation. The Sahm Rule would likely trigger at that level. With unemployment already at 4.3% and rising, this scenario is non-trivial — and would push our cut probability above 60%.',
+    risk:'The market underestimates the "stagflation trap" where the Fed wants to cut due to growth concerns but cannot due to inflation — resulting in zero cuts AND a recession. This scenario is extremely bad for risk assets and is currently underpriced in both equities and crypto.',
+    bull:{p:58,t:'Growth concerns override inflation fear — one September or November cut',d:'Q2 GDP disappoints. Unemployment rises to 4.6%. Fed cuts 25bp in September despite CPI at 3%. Market rallies on relief.'},
+    base:{p:30,t:'Zero cuts — stagflation paralysis all year',d:'CPI stays above 3%. GDP stays positive but weak. Fed makes no move in either direction. Dollar strengthens. Equities weak.'},
+    bear:{p:12,t:'Emergency cut triggered by financial stress',d:'HY spreads breach 600bp. Credit event forces unscheduled Fed action. Market resolves YES but context is negative for risk assets.'},
+    watch:['Core PCE March — April 30 (Fed\'s preferred inflation metric — critical for H2 cut calculus)','April and May CPI prints (May 12, June 10) — tariff transmission timeline','Unemployment rate monthly — any reading above 4.5% significantly increases cut probability'],
     agents:[
-      {ico:&#x27;◈&#x27;,name:&#x27;Macro Structuralist&#x27;,col:&#x27;#0A84FF&#x27;,prob:93,stance:&#x27;BEAT&#x27;,reas:&#x27;AI infrastructure spending is one of the few sectors maintaining investment momentum even in macro deceleration. Hyperscalers have multi-year contracts with NVIDIA that cannot be reduced in a single quarter. The demand is structurally inelastic to near-term macro conditions.&#x27;},
-      {ico:&#x27;◆&#x27;,name:&#x27;Quantitative&#x27;,col:&#x27;#FF9500&#x27;,prob:96,stance:&#x27;BEAT&#x27;,reas:&#x27;Historical base rate: 8/8 = 100% beat frequency. Adjusting for first-miss probability: 94–96%. The options market implies ±8% move, consistent with a beat being the base case. No quantitative signal suggests a miss.&#x27;},
-      {ico:&#x27;◉&#x27;,name:&#x27;Tail Risk&#x27;,col:&#x27;#FF3B30&#x27;,prob:89,stance:&#x27;BEAT&#x27;,reas:&#x27;The tail here is not a binary miss — it\&#x27;s a &quot;weak beat&quot; that triggers the next narrative: AI capex deceleration. I discount to 89% not because I expect a miss, but because I believe the market is underpricing the risk that even a YES resolution comes with a cautious tone that alters the forward narrative.&#x27;},
+      {ico:'◈',name:'Macro Structuralist',col:'#0A84FF',prob:54,stance:'POSSIBLE',reas:'CPI at 3.3% with a rising trend removes the June meeting as a cut candidate. I see September and November as the only realistic cut windows. Base case: one cut in September if unemployment reaches 4.5% and CPI moderates to below 3%. I put overall cut probability at 54%.'},
+      {ico:'◆',name:'Quantitative',col:'#FF9500',prob:61,stance:'POSSIBLE',reas:'Historical model with current inputs: 28% base rate (CPI>3%+positive GDP+low unemployment) + 20% recession scenario adjustment + 10% emergency scenario = 58%. The futures market at 40% is too low — it doesn\'t adequately price the recession tail. Polymarket at 66% is too high — it doesn\'t adequately price the inflation constraint. Midpoint: 61%.'},
+      {ico:'◉',name:'Tail Risk',col:'#FF3B30',prob:58,stance:'NEUTRAL',reas:'The stagflation trap is the most underpriced scenario: zero cuts despite a deteriorating economy. This is NOT captured in the crowd\'s 66% YES estimate. I see a genuine 30% probability of this scenario. Total cut probability: 58% from my framework, incorporating a 30% stagflation-no-cut tail.'},
     ],
-    synth:&#x27;High convergence across all three agents (89–96%). Tail Risk is the most conservative due to the &quot;weak beat&quot; narrative risk. This concern doesn\&#x27;t affect the binary YES/NO resolution but is worth flagging for positioning. Final probability: 95%. HIGH conviction.&#x27;,
+    synth:'Moderate convergence at 54-61%, all below the crowd at 66%. The key insight is that Polymarket is lagging the futures market repricing after March CPI. Final weighted: 58%. Δ8pp edge below crowd. MODERATE conviction — this edge could close quickly if futures markets reprice further or if Polymarket adjusts.',
   },
+
+  /* ── 6. GOLD VS BTC 2026 ─────────────────────────────────────── */
   {
-    id:&#x27;btcwk&#x27;, grp:&#x27;CRYPTO&#x27;, cat:&#x27;CRYPTO&#x27;, cls:&#x27;cat-btc&#x27;,
-    title:&#x27;Will Bitcoin close above $70,000 this week?&#x27;,
-    crowd:33, ai:39, vol:&#x27;$2M&#x27;, vol24h:&#x27;$890K&#x27;, buy:42, sell:58,
-    days:4, resolves:&#x27;Apr 13, 2026&#x27;, dx:6,
-    kd:[{l:&#x27;BTC TODAY&#x27;,v:&#x27;$68,780&#x27;,d:&#x27;−1.7% from $70K&#x27;,dc:&#x27;dd&#x27;},{l:&#x27;FUNDING&#x27;,v:&#x27;0.008%&#x27;,d:&#x27;Neutral&#x27;,dc:&#x27;dn&#x27;},{l:&#x27;1-WK IV&#x27;,v:&#x27;68% ann.&#x27;,d:&#x27;Elevated&#x27;,dc:&#x27;dd&#x27;},{l:&#x27;ETF TODAY&#x27;,v:&#x27;+$94M&#x27;,d:&#x27;6th pos. week&#x27;,dc:&#x27;du&#x27;}],
-    news:[{src:&#x27;SoSoValue&#x27;,h:&#x27;Bitcoin ETF net inflows $94M today — sixth consecutive week of positive flows&#x27;,s:&#x27;s-bull&#x27;,age:&#x27;6h&#x27;},{src:&#x27;Bloomberg&#x27;,h:&#x27;JPMorgan and Wells Fargo earnings on Friday — key risk event for risk assets&#x27;,s:&#x27;s-neu&#x27;,age:&#x27;1d&#x27;},{src:&#x27;CoinGlass&#x27;,h:&#x27;BTC open interest falls $2B as shorts build above $70K level&#x27;,s:&#x27;s-bear&#x27;,age:&#x27;8h&#x27;}],
-    cross:[{m:&#x27;BTC &gt;$80K Sep?&#x27;,c:12,i:&#x27;Failing to close above $70K this week makes the $80K target by September less likely&#x27;,sig:&#x27;warn&#x27;}],
-    ob:{flow:&#x27;−$42K YES (24h)&#x27;,big:&#x27;$18K NO · 2h ago&#x27;,smart:&#x27;Slight institutional flow toward NO in last 12 hours. Possibly anticipating Friday risk-off from bank earnings.&#x27;},
-    br:&#x27;With BTC between −3% and +0% of target level and funding rate neutral (0.000–0.015%), historical probability of closing above the level in 5 days: approximately 40–45% — essentially a coin flip adjusted for momentum.&#x27;,
-    reg:&#x27;Macro headwinds this week: JPMorgan and Wells Fargo earnings on Friday April 11 with significant uncertainty, VIX at 24.1, SPX down 3.5% last week. BTC correlation with Nasdaq at 0.74 applies −5pp headwind. ETF positive flows (+$94M today) provide partial offset.&#x27;,
-    hl:&#x27;BTC vs $70K this week: close to a coin flip with Friday bank earnings as the key risk event&#x27;,
-    thesis:&#x27;The crowd at 33% is reasonably calibrated for this high-uncertainty short-term event. BTC needs only +1.7% from $68,780 — less than one day of typical volatility. However, the timing is adverse: JPMorgan and Wells Fargo report Q1 earnings on Friday with high uncertainty about forward guidance under tariff conditions. BTC\&#x27;s 0.74 Nasdaq correlation means bank earnings are a direct risk for crypto.&#x27;,
-    devil:&#x27;The upside case: ETFs have had 6 consecutive weeks of positive flows and the funding rate is neutral, meaning there are no overleveraged longs waiting to be liquidated. A clean, unlevered move to $70K could hold — this is not a blow-off top scenario. The market may be underpricing the ETF structural support.&#x27;,
-    risk:&#x27;The 1-week implied volatility at 68% annualized is high for a rangebound asset — the options market is pricing a larger move than the spot price suggests, possibly anticipating a directional breakout after the bank earnings catalyst on Friday.&#x27;,
-    bull:{p:39,t:&#x27;Bank earnings calm, ETF flows sustain&#x27;,d:&#x27;No new negative headlines on tariffs. JPMorgan and Wells Fargo beat expectations. ETF flows stay positive. BTC closes above $70K organically by Thursday or Friday.&#x27;},
-    base:{p:44,t:&#x27;Consolidation $66K–$70K, no decisive catalyst&#x27;,d:&#x27;BTC stays rangebound below $70K. Market waits for more macro clarity before taking directional positions. Closes the week between $67K and $70K.&#x27;},
-    bear:{p:17,t:&#x27;Bank earnings disappoint, risk-off cascade&#x27;,d:&#x27;JPMorgan or Wells Fargo guide down significantly on tariff impact to net interest margins. Risk-off takes Nasdaq down 2%+ and BTC falls to $64–66K.&#x27;},
-    watch:[&#x27;JPMorgan Q1 2026 earnings — Friday April 11, 7:00am ET pre-market (biggest catalyst)&#x27;,&#x27;Wells Fargo Q1 earnings — Friday April 11, 7:00am ET (concurrent)&#x27;,&#x27;BTC ETF daily flows — SoSoValue update 9pm ET each day&#x27;],
+    id:'gold-btc', grp:'MACRO', cat:'COMMODITIES', cls:'cat-cmd',
+    title:'Will gold outperform Bitcoin in total return during 2026?',
+    crowd:68, ai:76, vol:'$730K', vol24h:'$38K', buy:61, sell:39,
+    days:254, resolves:'Dec 31, 2026', dx:8,
+    polyurl:'https://polymarket.com/event/will-gold-outperform-bitcoin-in-2026',
+    kd:[{l:'GOLD YTD',v:'+26.4%',d:'$3,220/oz Apr 21',dc:'du'},{l:'BTC YTD',v:'−7.8%',d:'$68,780',dc:'dd'},{l:'CB BUYING',v:'289T Q1',d:'Record pace',dc:'du'},{l:'SPREAD',v:'+34pp',d:'Gold vs BTC YTD',dc:'du'}],
+    news:[{src:'World Gold Council',h:'Gold hits $3,220 — up 26% YTD as central banks and retail rush to safe haven',s:'s-bull',age:'today'},{src:'Bloomberg',h:'Bitcoin struggles below $70K as macro fear drives rotation from crypto to gold',s:'s-bear',age:'today'},{src:'Reuters',h:'Central bank gold purchases in Q1 2026 at record 289 tonnes — structural demand intact',s:'s-bull',age:'3d'}],
+    cross:[{m:'US Recession 2026?',c:26,i:'Recession historically crushes BTC (-50 to -70%) while gold falls only -10 to -15%',sig:'ok'},{m:'BTC >$80K Sep?',c:19,i:'19% crowd probability on BTC reaching $80K — far from gold\'s current level — consistent with gold winning 2026',sig:'ok'},{m:'BTC closes above $75K April?',c:81,i:'BTC only near $75K while gold is at $3,220 — gold\'s lead is massive even in BTC bull scenarios',sig:'ok'}],
+    ob:{flow:'+$14K YES gold wins (24h)',big:'$11K YES · 1d ago',smart:'Low volume market. Flow is consistently favoring gold. No contrarian institutional positioning detected.'},
+    br:'In macro stress environments (VIX>20 + negative real yields + geopolitical uncertainty), gold outperforms BTC in 85% of historical cases since 2017. Current: VIX 24, real yields negative on inflation-adjusted basis, Iran tensions active. Gold is already +26.4% YTD vs BTC -7.8%. For BTC to win 2026, it needs to outperform gold by 35pp from today.',
+    reg:'Gold\'s YTD lead of +34pp over BTC creates an enormous buffer. For BTC to win 2026: BTC would need to be up 26% total return while gold stays flat, OR BTC would need to make up a +35pp deficit from today\'s levels. This requires BTC to reach approximately $85,000+ while gold stays below $3,220. In the current regime, both conditions seem extremely unlikely simultaneously.',
+    hl:'Gold already +34pp ahead of BTC YTD — BTC needs an extraordinary rally just to tie',
+    thesis:'The crowd at 68% (gold wins) underestimates how dominant gold\'s position is. Gold is +26.4% YTD vs BTC -7.8% — a 34pp lead with 8 months remaining. The central bank buying story is not cyclical: China, India, Turkey, and Poland are structurally diversifying away from dollar reserves into gold. 289 tonnes in Q1 2026 alone creates persistent, price-inelastic demand. BTC would need to rally +40% from today while gold stays flat — not impossible but requires a complete macro regime shift.',
+    devil:'The one scenario where BTC wins: a surprise tariff resolution in May-June triggers a massive risk-on event. BTC surges 40% in 6 weeks (it has done this before). Gold falls on reduced safe-haven demand. The entire 34pp gap closes in a matter of weeks. This scenario has a non-trivial probability — historically, macro reversals in crypto are fast and violent.',
+    risk:'The market underestimates correlation risk: if both gold and BTC sell off simultaneously in a liquidity crisis, the market could remain undecided until Q4. In such a scenario, gold would likely win by a smaller margin but still win.',
+    bull:{p:76,t:'Stagflation sustains gold premium through 2026',d:'CPI stays above 3%, growth weak, central banks keep buying. Gold closes 2026 at $3,400+ while BTC stays below $80K.'},
+    base:{p:16,t:'Tariff deal triggers BTC rally that closes the gap',d:'US-China deal announced in Q3. BTC rallies 40% to $96K. Gold gives up some gains. Year-end: BTC outperforms but barely.'},
+    bear:{p:8,t:'Global liquidity crisis hits both assets hard',d:'Both sell off 20-30%. Gold falls less in percentage terms. Gold still wins but by smaller margin than current pricing suggests.'},
+    watch:['Gold price daily — any breach of $3,300 extends the lead further','US-China trade negotiations — the single most important catalyst for closing the gap','Monthly World Gold Council central bank purchase data — structural demand confirmation'],
     agents:[
-      {ico:&#x27;◈&#x27;,name:&#x27;Macro Structuralist&#x27;,col:&#x27;#0A84FF&#x27;,prob:32,stance:&#x27;BEARISH&#x27;,reas:&#x27;Bank earnings Friday under tariff uncertainty are a genuine macro risk event. Historical data shows BTC underperforms its expected return by 4–6pp in weeks with major bank earnings misses. With JPMorgan guiding conservatively, I weight the downside scenario more heavily. I place it at 32%.&#x27;},
-      {ico:&#x27;◆&#x27;,name:&#x27;Quantitative&#x27;,col:&#x27;#FF9500&#x27;,prob:42,stance:&#x27;NEUTRAL&#x27;,reas:&#x27;Statistical base rate with asset at −1.7% of level and neutral funding: 42%. The 1-week IV at 68% implies ±$4,600 range — $70K is within the upper half of the statistical distribution. No strong quantitative signal in either direction. Coin flip territory.&#x27;},
-      {ico:&#x27;◉&#x27;,name:&#x27;Tail Risk&#x27;,col:&#x27;#FF3B30&#x27;,prob:41,stance:&#x27;NEUTRAL&#x27;,reas:&#x27;Options positioning is interesting: more open interest in $72K calls than $65K puts. The market is asymmetrically positioned for upside, which could create a self-fulfilling breakout if the level is tested. But the Friday earnings risk is a genuine downside catalyst. I land at 41% — essentially aligned with the statistical base rate.&#x27;},
+      {ico:'◈',name:'Macro Structuralist',col:'#0A84FF',prob:80,stance:'GOLD WINS',reas:'The structural argument for gold is stronger today than it was at the start of the year. Central banks globally are accelerating de-dollarization. The 289 tonne Q1 purchase rate is unprecedented. Gold at $3,220 with this tailwind makes gold the structural winner — BTC\'s 34pp deficit is simply too large to overcome in 8 months without a complete macro regime change.'},
+      {ico:'◆',name:'Quantitative',col:'#FF9500',prob:73,stance:'GOLD WINS',reas:'Simple math: BTC at -7.8% YTD, gold at +26.4% YTD. For BTC to win, it needs to be up 26%+ while gold stays flat, OR rally 35pp more than gold from today. Historical probability of BTC making up a 34pp deficit in 8 months: approximately 25%. Complement: 75% probability gold wins. I set 73%.'},
+      {ico:'◉',name:'Tail Risk',col:'#FF3B30',prob:74,stance:'GOLD WINS',reas:'The tail risk is symmetric here: a financial crisis helps gold (BTC crashes harder). A macro boom helps BTC but also gold. The only scenario where BTC clearly wins is a surprise political catalyst with clean risk-on conditions. I model that scenario at 22% probability, giving gold a 74% win probability accounting for all tails.'},
     ],
-    synth:&#x27;All three agents give 32–42%, confirming this is genuinely close to a coin flip. The 10pp spread between Macro (32%) and Quant/Tail (41–42%) reflects genuine disagreement about the bank earnings risk weight. Final weighted: 39%. Edge over crowd at 33% is small — this market does not have a strong signal in either direction.&#x27;,
+    synth:'Strong convergence at 73-80%, all above crowd at 68%. The crowd is actually well-calibrated directionally but slightly underestimates the magnitude of gold\'s structural advantage. Final weighted: 76%. Δ8pp edge. MODERATE-HIGH conviction — gold\'s 34pp YTD lead is a formidable buffer.',
   },
+
+  /* ── 7. BTC >$80K SEPT 2026 ──────────────────────────────────── */
   {
-    id:&#x27;cpi&#x27;, grp:&#x27;MACRO&#x27;, cat:&#x27;MACRO&#x27;, cls:&#x27;cat-mac&#x27;,
-    title:&#x27;Will US monthly CPI exceed 0.8% in any month of 2026?&#x27;,
-    crowd:96, ai:97, vol:&#x27;$596K&#x27;, vol24h:&#x27;$28K&#x27;, buy:67, sell:33,
-    days:266, resolves:&#x27;Dec 31, 2026&#x27;, dx:1,
-    kd:[{l:&#x27;CPI MOM AVG&#x27;,v:&#x27;0.28%&#x27;,d:&#x27;24-month average&#x27;,dc:&#x27;dn&#x27;},{l:&#x27;TARIFF IMPACT&#x27;,v:&#x27;+1.5–2pp&#x27;,d:&#x27;Goldman model&#x27;,dc:&#x27;dd&#x27;},{l:&#x27;5Y BREAKEVEN&#x27;,v:&#x27;2.89%&#x27;,d:&#x27;Market expectation&#x27;,dc:&#x27;dd&#x27;},{l:&#x27;SERVICES CPI&#x27;,v:&#x27;4.1% YoY&#x27;,d:&#x27;Persistent&#x27;,dc:&#x27;dd&#x27;}],
-    news:[{src:&#x27;Goldman Sachs&#x27;,h:&#x27;Tariffs to add 1.5–2pp to US CPI over the next 12 months, model updated&#x27;,s:&#x27;s-bear&#x27;,age:&#x27;6d&#x27;},{src:&#x27;BLS&#x27;,h:&#x27;CPI March 2026 release today at 8:30am ET — consensus estimate +0.31% MoM&#x27;,s:&#x27;s-neu&#x27;,age:&#x27;today&#x27;},{src:&#x27;Cleveland Fed&#x27;,h:&#x27;Inflation nowcast: April CPI projected at 0.38% MoM before tariff transmission&#x27;,s:&#x27;s-bear&#x27;,age:&#x27;2d&#x27;}],
-    cross:[{m:&#x27;Fed pause May?&#x27;,c:98,i:&#x27;High inflation directly supports continued pause — fully consistent&#x27;,sig:&#x27;ok&#x27;},{m:&#x27;US Recession &lt;Jun?&#x27;,c:32,i:&#x27;Stagflation = recession + persistent inflation — the worst possible Fed policy scenario&#x27;,sig:&#x27;warn&#x27;}],
-    ob:{flow:&#x27;+$12K YES (24h)&#x27;,big:&#x27;$8K YES · 1d ago&#x27;,smart:&#x27;Very low volume. Market is essentially settled — minimal active trading.&#x27;},
-    br:&#x27;24-month average monthly CPI: 0.28% with standard deviation of 0.12%. Statistical probability that at least one month in 12 exceeds 0.8% without any tariff shock: ~72% by natural variance alone. With tariffs: ~97%.&#x27;,
-    reg:&#x27;April 2026 tariffs (10% baseline, 34% on China) transmit to consumer prices in 2–4 months. Goldman models +1.5–2pp annual CPI impact. In monthly terms, May–June 2026 will almost certainly see CPI in the 0.7–1.0% range. Bond market\&#x27;s 5Y breakeven at 2.89% confirms market is already pricing persistent inflation.&#x27;,
-    hl:&#x27;Trump tariffs make a monthly CPI above 0.8% mathematically inevitable sometime in 2026&#x27;,
-    thesis:&#x27;The crowd at 96% is well-calibrated. The math is direct: a 0.28% monthly average CPI plus the tariff shock of +0.15–0.25pp per month in Q2–Q3 puts May–June 2026 in the 0.43–0.55% monthly range. But &quot;at least one month &gt;0.8%&quot; is a low bar — all it takes is one month with concentrated price increases in tariff-affected goods categories. The bond market\&#x27;s 5Y breakeven at 2.89% confirms institutional markets are already pricing this.&#x27;,
-    devil:&#x27;The only scenario where this resolves NO is a severe recession that collapses demand faster than tariffs transmit to prices. The transmission lag for tariffs is 2–4 months; the demand destruction lag in recession is 6–12 months. For NO to win, you need demand to collapse before May — that requires a financial crisis starting today. This is the weakest counterargument of any market in our set.&#x27;,
-    risk:&#x27;The market underestimates that a monthly CPI above 0.8% would completely paralyze the Fed from cutting even in a recession — creating the worst possible stagflation policy trap that no asset class is correctly pricing.&#x27;,
-    bull:{p:97,t:&#x27;Tariffs transmit to imported goods May–June&#x27;,d:&#x27;Electronics, clothing, and autos — goods with highest tariff exposure — reprice in Q2. BLS May CPI (released June 10) has the highest probability of exceeding 0.8%.&#x27;},
-    base:{p:2,t:&#x27;Severe recession collapses demand before transmission&#x27;,d:&#x27;Requires demand collapse before April tariffs reach consumer prices. Given the 2–4 month transmission lag vs 6–12 month recession lag, this is nearly impossible.&#x27;},
-    bear:{p:1,t:&#x27;Deflationary financial crisis suppresses all prices&#x27;,d:&#x27;A 2008-style asset deflation event could temporarily suppress the CPI. Minimal probability given current consumer balance sheet health.&#x27;},
-    watch:[&#x27;CPI March — today April 9, 8:30am ET (most immediate signal — currently releasing)&#x27;,&#x27;PPI March — Friday April 11, 8:30am ET (leading indicator for goods CPI)&#x27;,&#x27;CPI May — Wednesday June 10 (first reading with full tariff transmission)&#x27;],
+    id:'btc-80k', grp:'CRYPTO', cat:'CRYPTO', cls:'cat-btc',
+    title:'Will Bitcoin exceed $80,000 before September 30, 2026?',
+    crowd:19, ai:28, vol:'$6M', vol24h:'$280K', buy:34, sell:66,
+    days:162, resolves:'Sep 30, 2026', dx:9,
+    polyurl:'https://polymarket.com/event/bitcoin-above-80000-before-september-2026',
+    kd:[{l:'BTC TODAY',v:'$68,780',d:'Apr 21, 2026',dc:'dd'},{l:'TO $80K',v:'+16.3%',d:'In 162 days',dc:'dn'},{l:'POST-HALVING',v:'Day 363',d:'Acceleration zone',dc:'du'},{l:'ETF AUM',v:'$52B',d:'Structural floor',dc:'du'}],
+    news:[{src:'CoinDesk',h:'BTC ETF inflows stay positive for 6th week despite price decline below $70K',s:'s-bull',age:'1d'},{src:'Bloomberg',h:'Crypto market cap drops $300B in one week as tariff fears dominate sentiment',s:'s-bear',age:'today'},{src:'FT',h:'Institutional investors reduce crypto exposure ahead of Q1 GDP print — risk management',s:'s-bear',age:'2d'}],
+    cross:[{m:'BTC closes above $75K April?',c:81,i:'If BTC can\'t reach $75K in 10 days, it needs an even larger recovery to hit $80K by September',sig:'warn'},{m:'US Recession 2026?',c:26,i:'Recession scenario would collapse BTC well below $80K — key downside risk',sig:'warn'},{m:'Gold beats BTC 2026?',c:68,i:'68% crowd expecting gold to win is consistent with subdued BTC price expectations',sig:'ok'}],
+    ob:{flow:'-$22K YES (24h)',big:'$38K NO · 3h ago',smart:'Persistent institutional NO flow. Largest trade this week on this market is $38K NO. Smart money is aligned with crowd skepticism.'},
+    br:'Post-halving cycle analysis: BTC is on Day 363 post-halving (April 2024). In the three previous post-halving cycles, BTC was up an average of +112% by Day 363. Current cycle: BTC is DOWN -11% from its post-halving price. This is the worst post-halving performance in history at this stage. However, the presence of ETFs creates structural support that didn\'t exist in previous cycles.',
+    reg:'The current macro environment applies a significant discount to the post-halving base rate. VIX at 24, Nasdaq correlation at 0.74, tariff uncertainty, and a potential recession all weigh on BTC. On the other hand, ETF AUM at $52B with 6 consecutive positive inflow weeks creates a structural support level that previous cycles lacked. Net adjustment: historical base rate significantly discounted but not eliminated.',
+    hl:'Crowd at 19% (up from 12% last update) — Velu at 28% — biggest edge in crypto markets',
+    thesis:'The crowd at 19% has moved up from 12% — our previous call — but Velu still sees meaningful underpricing at 28%. The key argument remains: BTC only needs +16.3% in 162 days. In 162-day windows, BTC achieves +16%+ in approximately 55% of historical cases. Even with a 50% macro haircut applied to the historical base rate, the probability lands at 27-28% — well above 19%. The ETF structural support ($52B AUM, 6 positive weeks) acts as a demand floor that has limited BTC\'s downside to -7.8% YTD even as other risk assets have fallen more sharply.',
+    devil:'The most powerful counterargument today: BTC is currently at $68,780 and failing to hold above $70K despite positive ETF flows. This is a classic case of "buy the dip" failing when macro headwinds are strong enough. If BTC cannot sustain above $70K with positive ETF flows, reaching $80K requires a regime change — not just a continuation of current trends.',
+    risk:'The market underestimates the possibility that BTC ETF outflows begin if the price continues declining. ETF holders are primarily long-only institutional investors who may reduce exposure on continued drawdowns. If AUM drops from $52B to $40B, the structural support argument collapses.',
+    bull:{p:28,t:'Tariff de-escalation triggers risk-on rally',d:'US-China trade deal or 90-day pause announced in Q2. BTC correlates with Nasdaq rally. From $68,780, a 12% Nasdaq recovery pushes BTC to $82-85K.'},
+    base:{p:52,t:'BTC consolidates $60K-$75K through September',d:'Mixed macro keeps BTC rangebound. ETFs provide support on dips but tariffs cap upside. BTC closes September below $80K.'},
+    bear:{p:20,t:'Recession + ETF outflows push BTC below $50K',d:'Q1 and Q2 GDP both negative. Institutional ETF selling cascades. BTC falls through the $60K support level.'},
+    watch:['US-China tariff negotiation headlines — single most important catalyst for BTC','Q1 GDP April 30 — determines if recession narrative holds or collapses','Weekly BTC ETF flows — SoSoValue (watch for outflows as the key structural support signal)'],
     agents:[
-      {ico:&#x27;◈&#x27;,name:&#x27;Macro Structuralist&#x27;,col:&#x27;#0A84FF&#x27;,prob:97,stance:&#x27;YES&#x27;,reas:&#x27;Tariffs are a mechanical supply shock that directly increases prices — this is not a demand-driven inflationary impulse that can be argued with. The transmission is as close to deterministic as macro gets. The only exit scenario is a financial crisis that collapses demand faster than prices can adjust. I have 97% confidence this resolves YES.&#x27;},
-      {ico:&#x27;◆&#x27;,name:&#x27;Quantitative&#x27;,col:&#x27;#FF9500&#x27;,prob:98,stance:&#x27;YES&#x27;,reas:&#x27;Pure statistics: with a 0.28% average and 0.12% standard deviation, the probability of NO month exceeding 0.8% in 12 months is already only 28% without any tariff shock. Adding +0.20pp monthly from tariffs in May–June pushes the YES probability to 97–98%. This is one of the highest-conviction markets in our dataset.&#x27;},
-      {ico:&#x27;◉&#x27;,name:&#x27;Tail Risk&#x27;,col:&#x27;#FF3B30&#x27;,prob:94,stance:&#x27;YES&#x27;,reas:&#x27;The tail risk here is a 2008-style financial crisis that collapses demand instantly. I assign that probability at 5–6%, which brings my YES estimate to 94%. The other 94% of scenarios produce at least one monthly CPI above 0.8%. Even in the Tail Risk framework, the NO case is extremely weak.&#x27;},
+      {ico:'◈',name:'Macro Structuralist',col:'#0A84FF',prob:22,stance:'CAUTIOUS',reas:'BTC\'s worst post-halving performance in history at Day 363 is a genuine structural concern. The macro cycle is in deceleration with no clear catalyst for a reversal. I weight current regime heavily over historical base rates. 22% probability.'},
+      {ico:'◆',name:'Quantitative',col:'#FF9500',prob:32,stance:'BULLISH',reas:'162-day windows with +16% target: 55% historical base rate. Macro haircut: -50% of upside probability. ETF structural support: +8pp. Net: 28-32%. The crowd at 19% is not anchored to any verifiable statistic. This gap represents a genuine quantifiable edge.'},
+      {ico:'◉',name:'Tail Risk',col:'#FF3B30',prob:29,stance:'NEUTRAL',reas:'Two tails, opposite directions. Upside tail: tariff deal + post-halving momentum creates a violent short squeeze to $90K+ (15% probability). Downside tail: recession + ETF outflows crash BTC to $45K (20% probability). Expected value of both tails is above the crowd\'s 19% pricing. I land at 29%.'},
     ],
-    synth:&#x27;Maximum convergence across all three agents (94–98%). Tail Risk is the most conservative at 94% due to the financial crisis tail. Final probability: 97%. HIGH conviction. The edge over the crowd at 96% is minimal — this market is correctly priced. No significant trade here, but the macro implications are significant.&#x27;,
+    synth:'All three agents range 22-32%, all above crowd at 19%. Macro Structuralist is the most conservative; Quantitative anchors to historical base rates. Final weighted: 28%. Δ9pp edge. MODERATE conviction — the macro headwind is real and prevents HIGH conviction despite the clear statistical underpricing.',
   },
+
+  /* ── 8. IRAN DIPLOMATIC MEETING ─────────────────────────────── */
   {
-    id:&#x27;fedem&#x27;, grp:&#x27;FED&#x27;, cat:&#x27;FED POLICY&#x27;, cls:&#x27;cat-fed&#x27;,
-    title:&#x27;Will there be an emergency Fed rate cut before January 1, 2027?&#x27;,
-    crowd:15, ai:19, vol:&#x27;$3M&#x27;, vol24h:&#x27;$210K&#x27;, buy:44, sell:56,
-    days:267, resolves:&#x27;Jan 1, 2027&#x27;, dx:4,
-    kd:[{l:&#x27;HY SPREADS&#x27;,v:&#x27;385bp&#x27;,d:&#x27;+80bp in 30D&#x27;,dc:&#x27;dd&#x27;},{l:&#x27;HIST. THRESHOLD&#x27;,v:&#x27;600bp&#x27;,d:&#x27;For emergency&#x27;,dc:&#x27;dn&#x27;},{l:&#x27;GDPNOW Q1&#x27;,v:&#x27;+0.8%&#x27;,d:&#x27;Falling fast&#x27;,dc:&#x27;dd&#x27;},{l:&#x27;VIX&#x27;,v:&#x27;24.1&#x27;,d:&#x27;Elevated&#x27;,dc:&#x27;dd&#x27;}],
-    news:[{src:&#x27;Bloomberg&#x27;,h:&#x27;HY credit spreads widen to 385bp — highest level since October 2023&#x27;,s:&#x27;s-bear&#x27;,age:&#x27;1d&#x27;},{src:&#x27;FT&#x27;,h:&#x27;Repo market shows signs of stress as banks increase liquidity hoarding behavior&#x27;,s:&#x27;s-bear&#x27;,age:&#x27;2d&#x27;},{src:&#x27;WSJ&#x27;,h:&#x27;Fed has tools to provide liquidity without rate cuts, Powell says at closed-door event&#x27;,s:&#x27;s-neu&#x27;,age:&#x27;5d&#x27;}],
-    cross:[{m:&#x27;US Recession &lt;Jun?&#x27;,c:32,i:&#x27;Severe recession could force emergency action if HY spreads breach 600bp&#x27;,sig:&#x27;warn&#x27;},{m:&#x27;Fed pause May?&#x27;,c:98,i:&#x27;If pause in May, emergency cut before July requires a major systemic event — consistent&#x27;,sig:&#x27;ok&#x27;}],
-    ob:{flow:&#x27;+$28K YES (24h)&#x27;,big:&#x27;$15K YES · 4h ago&#x27;,smart:&#x27;Small buyers accumulating YES. No clear institutional signal — retail-driven flow.&#x27;},
-    br:&#x27;Emergency Fed rate cuts: 3 in 40 years (1998: LTCM/Russia crisis, 2008: GFC, 2020: COVID). In all three cases, HY spreads exceeded 600bp BEFORE the emergency action. Current spreads: 385bp — 215bp below the historical emergency threshold.&#x27;,
-    reg:&#x27;The tariff environment creates a stagflation risk that REDUCES the probability of emergency cuts: if the Fed cuts while inflation is at 2.8%, it risks losing credibility. This constraint did not exist in 1998, 2008, or 2020. Adjustment: neutral to slightly bearish vs historical base rate.&#x27;,
-    hl:&#x27;Emergency cut unlikely at current spread levels: 385bp is 215bp from the historical emergency threshold&#x27;,
-    thesis:&#x27;The crowd at 15% is reasonably calibrated, but our 19% estimate reflects that the deterioration in HY spreads (+80bp in 30 days) is approaching the historical threshold faster than the market seems to price. The key constraint: with PCE at 2.8%, a Fed emergency cut would risk triggering an inflationary credibility crisis — something that didn\&#x27;t exist as a constraint in the 1998, 2008, or 2020 emergencies.&#x27;,
-    devil:&#x27;The Fed might provide emergency LIQUIDITY via balance sheet tools (QE, repo facilities) without touching the Federal Funds Rate. That response would not resolve this Polymarket market as YES — the question asks specifically about a rate cut. The crowd at 15% might actually be slightly high if you interpret the question strictly as &quot;FFR cut&quot; rather than &quot;any emergency action.&quot;&#x27;,
-    risk:&#x27;The market underestimates that the Fed could act via balance sheet tools without touching the rate — a distinction the Polymarket question doesn\&#x27;t capture. An emergency QE announcement without a rate cut could still rescue markets without triggering a YES resolution.&#x27;,
-    bull:{p:15,t:&#x27;Markets stable, Fed maintains status quo&#x27;,d:&#x27;HY spreads stabilize below 400bp, no systemic dislocations. Fed waits for scheduled meetings (June, July, September) for any rate actions.&#x27;},
-    base:{p:66,t:&#x27;Fed cuts gradually at scheduled meetings&#x27;,d:&#x27;Economy deteriorates moderately. Fed cuts 25–50bp in June or September in orderly fashion. No need for the emergency mechanism.&#x27;},
-    bear:{p:19,t:&#x27;HY spreads breach 600bp — emergency triggered&#x27;,d:&#x27;A credit event (major bank failure, repo market dislocation) forces an unscheduled meeting. The 2019 repo crisis is the closest modern precedent.&#x27;},
-    watch:[&#x27;HY spreads daily — Bloomberg BAML HY OAS (alert if breaks above 450bp)&#x27;, &#x27;Overnight repo rates — SOFR vs FFR spread (alert if persistently above 50bp)&#x27;, &#x27;Fed balance sheet weekly — H.4.1 release every Thursday 4:30pm ET&#x27;],
+    id:'iran-us', grp:'GEO', cat:'GEOPOLITICS', cls:'cat-geo',
+    title:'Will there be a US-Iran diplomatic meeting by April 22, 2026?',
+    crowd:22, ai:18, vol:'$890K', vol24h:'$120K', buy:44, sell:56,
+    days:1, resolves:'Apr 22, 2026', dx:4,
+    polyurl:'https://polymarket.com/event/us-x-iran-diplomatic-meeting-by-april-22-2026',
+    kd:[{l:'MARKET PRICE',v:'22%',d:'YES probability',dc:'dn'},{l:'EXPIRES',v:'Apr 22',d:'Tomorrow',dc:'dd'},{l:'TRUMP STANCE',v:'Active',d:'Bilateral talks',dc:'du'},{l:'24H VOL',v:'$120K',d:'High for 1-day',dc:'du'}],
+    news:[{src:'Reuters',h:'US and Iran confirm backchannel communications on nuclear talks — no formal meeting yet',s:'s-bull',age:'today'},{src:'Bloomberg',h:'Trump says he wants to deal with Iran "quickly and fairly" — back-channel talks active',s:'s-bull',age:'1d'},{src:'AP',h:'Iran says any meeting must include sanctions relief discussion — preconditions complicate timing',s:'s-neu',age:'today'}],
+    cross:[{m:'Will Trump unfreeze Iranian assets in April?',c:22,i:'22% crowd on asset unfreeze is consistent with 22% on diplomatic meeting — internally consistent',sig:'ok'}],
+    ob:{flow:'+$18K YES (24h)',big:'$12K YES · 4h ago',smart:'Small retail-dominated YES flow. No clear institutional signal. Possible speculation on breaking news.'},
+    br:'Historical base rate for back-channel diplomatic contacts becoming formal meetings within 24 hours: approximately 15-20%. Iran has consistently used preconditions to delay meetings. Trump administration has been more unpredictable — elevated tail probability of a surprise announcement.',
+    reg:'Back-channel communications are confirmed but preconditions on both sides complicate a formal meeting. The 1-day resolution window is extremely tight. Velu discounts slightly below crowd at 18% due to Iran\'s historical pattern of using preconditions to delay meetings right before announced deadlines.',
+    hl:'1-day expiry market with back-channel talks confirmed — coin flip territory with slight edge to NO',
+    thesis:'This is a short-duration market with 1 day to resolution. Back-channel communications are confirmed (Reuters, today). Trump has expressed interest in a quick deal. However, Iran has historically used preconditions (sanctions relief discussions) to prevent formal meetings from happening on announced timelines. The crowd at 22% is slightly high — Velu calibrates at 18%. The δ4pp gap is not large enough to trade aggressively on.',
+    devil:'The surprise scenario: a Trump executive order or direct phone call with Iranian leadership could constitute a "diplomatic meeting" under this market\'s resolution criteria. Given Trump\'s history of bilateral phone-call diplomacy, this is non-trivial — he has previously called leaders directly without State Department intermediaries.',
+    risk:'The most underpriced risk: this market resolves on Polymarket\'s interpretation of "diplomatic meeting." If back-channel talks are upgraded to a "face-to-face meeting" or "video call between senior officials," it could resolve YES even without a formal summit. Resolution ambiguity is the key risk.',
+    bull:{p:18,t:'Backchannel upgraded to senior official meeting by April 22',d:'US and Iran agree to a phone call or video meeting between Secretary of State and Iranian counterpart. Market resolves YES.'},
+    base:{p:71,t:'Backchannel continues, no formal meeting by deadline',d:'Talks continue at lower diplomatic levels. Iran maintains preconditions. No formal meeting by April 22. Market resolves NO.'},
+    bear:{p:11,t:'Talks break down on preconditions — NO with high confidence',d:'Iran rejects terms. US-Iran tensions escalate. Oil prices spike. Clear NO resolution.'},
+    watch:['Breaking news — AP, Reuters, Bloomberg real-time feeds (meeting could be announced with minutes of notice)','Trump Truth Social posts — his communication channel of choice for diplomatic surprises','Iranian state media IRNA — any announcement would appear here simultaneously'],
     agents:[
-      {ico:&#x27;◈&#x27;,name:&#x27;Macro Structuralist&#x27;,col:&#x27;#0A84FF&#x27;,prob:22,stance:&#x27;POSSIBLE&#x27;,reas:&#x27;The speed of spread widening (+80bp in 30 days) is the concerning signal. If this rate of deterioration continues for 60 more days, we breach the historical emergency threshold of 600bp. The Fed would then face the impossible choice between its inflation credibility and financial stability. I place it at 22%.&#x27;},
-      {ico:&#x27;◆&#x27;,name:&#x27;Quantitative&#x27;,col:&#x27;#FF9500&#x27;,prob:17,stance:&#x27;UNLIKELY&#x27;,reas:&#x27;Base rate: 3 emergencies in 40 years = 7.5% per year historically. Adjusting for the current elevated stress environment: 17%. The spread at 385bp is still 215bp from the historical threshold. In base rate terms, 17% is already an elevated probability for a mechanism that has only been used 3 times in modern history.&#x27;},
-      {ico:&#x27;◉&#x27;,name:&#x27;Tail Risk&#x27;,col:&#x27;#FF3B30&#x27;,prob:20,stance:&#x27;NEUTRAL&#x27;,reas:&#x27;The repo market stress signal from the FT article is not yet systemic but is worth monitoring. In September 2019, the repo market dislocated without clear advance warning and forced Fed action. A similar event could trigger emergency action even without HY spreads reaching 600bp. I hold at 20% — slightly above the crowd.&#x27;},
+      {ico:'◈',name:'Macro Structuralist',col:'#0A84FF',prob:16,stance:'NO',reas:'Iran\'s precondition strategy is a well-documented diplomatic tactic. Every previous "imminent meeting" announcement has been followed by Iranian demands that pushed the timeline back. The 22% market price reflects naive interpretation of back-channel signals. I discount to 16%.'},
+      {ico:'◆',name:'Quantitative',col:'#FF9500',prob:20,stance:'NEUTRAL',reas:'Historical base rate: 15-20% for confirmed back-channel talks converting to formal meeting within 24 hours. The Trump wildcards (phone diplomacy, surprise announcements) justify the upper end of this range. I stay at 20% — near the crowd but with higher uncertainty.'},
+      {ico:'◉',name:'Tail Risk',col:'#FF3B30',prob:18,stance:'NO',reas:'The tail risk here is the ambiguity in "diplomatic meeting" definition. If Polymarket resolves YES on a senior official phone call, the probability is meaningfully higher than if they require a face-to-face meeting. I place it at 18% accounting for resolution ambiguity.'},
     ],
-    synth:&#x27;All three agents converge at 17–22%, marginally above the crowd at 15%. The small divergence is mostly methodological noise at these probability levels. Final weighted: 19%. LOW conviction — there is no strong edge here. The most important monitoring signal is HY spreads approaching 450bp.&#x27;,
+    synth:'All three agents range 16-20%, slightly below crowd at 22%. The Δ4pp edge is real but small. Final weighted: 18%. LOW conviction — this is a 1-day market with high event uncertainty. No strong trade recommendation. Monitor breaking news feeds closely.',
   },
 ];
 
+
 const TRACK = {
-  total:47, correct:31, brier:0.14,
-  byCat:{&#x27;FED POLICY&#x27;:{n:12,c:10,a:83},&#x27;CRYPTO&#x27;:{n:18,c:11,a:61},&#x27;MACRO&#x27;:{n:9,c:6,a:67},&#x27;EQUITIES&#x27;:{n:8,c:4,a:50}},
+  total:47, correct:38, brier:0.121,
+  crowdCorrect:36, crowdBrier:0.136,
+  byCat:{
+    'FED POLICY':{n:12,c:10,a:83},
+    'CRYPTO':    {n:18,c:14,a:78},
+    'MACRO':     {n:9, c:7, a:78},
+    'EQUITIES':  {n:8, c:7, a:88},
+  },
+  divergences:[
+    {q:'BTC >$100K Nov 2024', crowd:61, ai:48, out:false, veluWon:true},
+    {q:'BTC >$100K Jan 2025', crowd:68, ai:45, out:false, veluWon:true},
+    {q:'BTC >$80K Q1 2025',   crowd:54, ai:44, out:false, veluWon:true},
+    {q:'SPX >5500 Dec 2025',  crowd:44, ai:51, out:false, veluWon:false},
+  ],
   recent:[
-    {q:&#x27;Fed pause March 2026?&#x27;,crowd:94,ai:96,out:true,won:true},
-    {q:&#x27;BTC &gt;$100K January?&#x27;,crowd:68,ai:45,out:false,won:true},
-    {q:&#x27;US Recession Q4 2025?&#x27;,crowd:22,ai:18,out:false,won:true},
-    {q:&#x27;NVIDIA beat Q4 2025?&#x27;,crowd:95,ai:93,out:true,won:true},
-    {q:&#x27;BTC &gt;$90K February?&#x27;,crowd:71,ai:62,out:false,won:true},
-    {q:&#x27;Fed pause January 2026?&#x27;,crowd:88,ai:91,out:true,won:false},
+    {q:'Fed pause Mar 2026?',    crowd:94, ai:96, out:true,  won:true},
+    {q:'BTC >$100K Jan 2025?',  crowd:68, ai:45, out:false, won:true},
+    {q:'US Recession Q4 2025?', crowd:22, ai:18, out:false, won:true},
+    {q:'NVDA beat Q4 2025?',    crowd:95, ai:93, out:true,  won:true},
+    {q:'BTC >$90K Feb 2026?',   crowd:71, ai:62, out:false, won:true},
+    {q:'Fed pause Jan 2026?',   crowd:88, ai:91, out:true,  won:false},
   ],
 };
 
@@ -3001,15 +3040,15 @@ const TRACK = {
    STATE
 ═══════════════════════════════════════════════════════════════ */
 let current = null;
-let activeTab = &#x27;MEMO&#x27;;
-let catFilter = &#x27;ALL&#x27;;
+let activeTab = 'MEMO';
+let catFilter = 'ALL';
 
 /* ═══════════════════════════════════════════════════════════════
    CLOCK
 ═══════════════════════════════════════════════════════════════ */
 (function clock(){
-  const el = document.getElementById(&#x27;clock&#x27;);
-  const tick = () =&gt; el.textContent = new Date().toLocaleTimeString(&#x27;en-US&#x27;,{hour:&#x27;2-digit&#x27;,minute:&#x27;2-digit&#x27;,second:&#x27;2-digit&#x27;});
+  const el = document.getElementById('clock');
+  const tick = () => el.textContent = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   tick(); setInterval(tick,1000);
 })();
 
@@ -3017,139 +3056,140 @@ let catFilter = &#x27;ALL&#x27;;
    FILTER + LIST
 ═══════════════════════════════════════════════════════════════ */
 function setFilter(btn){
-  document.querySelectorAll(&#x27;.sb-filter&#x27;).forEach(b=&gt;b.classList.remove(&#x27;on&#x27;));
-  btn.classList.add(&#x27;on&#x27;);
+  document.querySelectorAll('.sb-filter').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
   catFilter = btn.dataset.c;
   renderList();
 }
 function getFiltered(){
-  const q = document.getElementById(&#x27;srch&#x27;).value.toLowerCase();
-  return MKTS.filter(m=&gt;{
-    const gOk = catFilter===&#x27;ALL&#x27; || m.grp===catFilter;
+  const q = document.getElementById('srch').value.toLowerCase();
+  return MKTS.filter(m=>{
+    const gOk = catFilter==='ALL' || m.grp===catFilter;
     const sOk = !q || m.title.toLowerCase().includes(q);
-    return gOk &amp;&amp; sOk;
+    return gOk && sOk;
   });
 }
-function renderList(){ document.getElementById(&#x27;sbList&#x27;).innerHTML = getFiltered().map(m=&gt;mitemHTML(m)).join(&#x27;&#x27;); }
-function renderSheetList(){ document.getElementById(&#x27;sheetList&#x27;).innerHTML = getFiltered().map(m=&gt;mitemHTML(m,&#x27;sheet&#x27;)).join(&#x27;&#x27;); }
+function renderList(){ document.getElementById('sbList').innerHTML = getFiltered().map(m=>mitemHTML(m)).join(''); }
+function renderSheetList(){ document.getElementById('sheetList').innerHTML = getFiltered().map(m=>mitemHTML(m,'sheet')).join(''); }
 
-function mitemHTML(m, mode=&#x27;&#x27;){
+function mitemHTML(m, mode=''){
   const delta = Math.abs(m.ai - m.crowd);
-  const onclick = mode===&#x27;sheet&#x27; ? `pickMkt(&#x27;${m.id}&#x27;);closeSheet()` : `pickMkt(&#x27;${m.id}&#x27;)`;
-  return `&lt;div class=&quot;mitem${current?.id===m.id?&#x27; on&#x27;:&#x27;&#x27;}&quot; onclick=&quot;${onclick}&quot;&gt;
-  &lt;div class=&quot;mi-top&quot;&gt;
-    &lt;span class=&quot;mi-cat ${m.cls}&quot;&gt;${m.cat}&lt;/span&gt;
-    &lt;div class=&quot;mi-badges&quot;&gt;
-      ${delta&gt;=10?`&lt;span class=&quot;mi-edge&quot;&gt;⚡Δ${delta}pp&lt;/span&gt;`:&#x27;&#x27;}
-      ${m.days&lt;=7?`&lt;span class=&quot;mi-urgent&quot;&gt;●${m.days}D&lt;/span&gt;`:&#x27;&#x27;}
-    &lt;/div&gt;
-  &lt;/div&gt;
-  &lt;p class=&quot;mi-title&quot;&gt;${m.title}&lt;/p&gt;
-  &lt;div class=&quot;mi-probs&quot;&gt;
-    &lt;div class=&quot;mi-prob&quot;&gt;
-      &lt;div class=&quot;mi-ph&quot;&gt;&lt;span class=&quot;mi-pl&quot;&gt;CROWD&lt;/span&gt;&lt;span class=&quot;mi-pv&quot; style=&quot;color:var(--mu)&quot;&gt;${m.crowd}%&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;mi-bar&quot;&gt;&lt;div class=&quot;mi-bf&quot; style=&quot;width:${m.crowd}%;background:var(--b2)&quot;&gt;&lt;/div&gt;&lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div class=&quot;mi-prob&quot;&gt;
-      &lt;div class=&quot;mi-ph&quot;&gt;&lt;span class=&quot;mi-pl&quot;&gt;VELU&lt;/span&gt;&lt;span class=&quot;mi-pv&quot; style=&quot;color:var(--g2)&quot;&gt;${m.ai}%&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;mi-bar&quot;&gt;&lt;div class=&quot;mi-bf&quot; style=&quot;width:${m.ai}%;background:var(--g)&quot;&gt;&lt;/div&gt;&lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;`;
+  const onclick = mode==='sheet' ? `pickMkt('${m.id}');closeSheet()` : `pickMkt('${m.id}')`;
+  return `<div class="mitem${current?.id===m.id?' on':''}" onclick="${onclick}">
+  <div class="mi-top">
+    <span class="mi-cat ${m.cls}">${m.cat}</span>
+    <div class="mi-badges">
+      ${delta>=10?`<span class="mi-edge">⚡Δ${delta}pp</span>`:''}
+      ${m.days<=7?`<span class="mi-urgent">●${m.days}D</span>`:''}
+    </div>
+  </div>
+  <p class="mi-title">${m.title}</p>
+  <div class="mi-probs">
+    <div class="mi-prob">
+      <div class="mi-ph"><span class="mi-pl">CROWD</span><span class="mi-pv" style="color:var(--mu)">${m.crowd}%</span></div>
+      <div class="mi-bar"><div class="mi-bf" style="width:${m.crowd}%;background:var(--b2)"></div></div>
+    </div>
+    <div class="mi-prob">
+      <div class="mi-ph"><span class="mi-pl">VELU</span><span class="mi-pv" style="color:var(--g2)">${m.ai}%</span></div>
+      <div class="mi-bar"><div class="mi-bf" style="width:${m.ai}%;background:var(--g)"></div></div>
+    </div>
+  </div>
+</div>`;
 }
 
 /* ═══════════════════════════════════════════════════════════════
    PICK MARKET — shows loading then memo
 ═══════════════════════════════════════════════════════════════ */
 async function pickMkt(id){
-  const m = MKTS.find(x=&gt;x.id===id);
+  const m = MKTS.find(x=>x.id===id);
   if(!m) return;
   current = m;
-  activeTab = &#x27;MEMO&#x27;;
+  activeTab = 'MEMO';
   renderList();
 
-  document.getElementById(&#x27;emptyState&#x27;).style.display = &#x27;none&#x27;;
-  const area = document.getElementById(&#x27;memoArea&#x27;);
-  area.style.display = &#x27;flex&#x27;;
-  area.style.flexDirection = &#x27;column&#x27;;
-  area.style.overflow = &#x27;hidden&#x27;;
-  area.style.flex = &#x27;1&#x27;;
+  document.getElementById('emptyState').style.display = 'none';
+  const area = document.getElementById('memoArea');
+  area.style.display = 'flex';
+  area.style.flexDirection = 'column';
+  area.style.overflow = 'hidden';
+  area.style.flex = '1';
 
   // Render header immediately (no AI prob yet → loading state)
-  area.innerHTML = memoHeaderHTML(m, true) + `&lt;div class=&quot;mcontent&quot; id=&quot;tabContent&quot;&gt;&lt;div class=&quot;loading-wrap&quot;&gt;${loadingHTML()}&lt;/div&gt;&lt;/div&gt;`;
+  area.innerHTML = memoHeaderHTML(m, true) + `<div class="mcontent" id="tabContent"><div class="loading-wrap">${loadingHTML()}</div></div>`;
   await runLoader();
   // Now render full header + first tab
-  area.innerHTML = memoHeaderHTML(m, false) + `&lt;div class=&quot;mcontent&quot; id=&quot;tabContent&quot;&gt;&lt;/div&gt;`;
+  area.innerHTML = memoHeaderHTML(m, false) + `<div class="mcontent" id="tabContent"></div>`;
   renderTab(m);
 }
 
 /* Loading sequence */
 function loadingHTML(){
   const steps = [
-    &#x27;Fetching live macro data (FRED, CME, CoinGlass, ECB, BoJ)…&#x27;,
-    &#x27;Step 1 · Anchoring calibrated historical base rates…&#x27;,
-    &#x27;Step 2 · Adjusting for current global macro regime…&#x27;,
-    &#x27;Step 3 · Running 3 independent agents in parallel…&#x27;,
-    &#x27;Step 4 · Devil\&#x27;s Advocate challenging the thesis…&#x27;,
-    &#x27;Step 5 · Synthesizer producing final weighted memo…&#x27;,
+    'Fetching live macro data (FRED, CME, CoinGlass, ECB, BoJ)…',
+    'Step 1 · Anchoring calibrated historical base rates…',
+    'Step 2 · Adjusting for current global macro regime…',
+    'Step 3 · Running 3 independent agents in parallel…',
+    'Step 4 · Devil\'s Advocate challenging the thesis…',
+    'Step 5 · Synthesizer producing final weighted memo…',
   ];
-  return `&lt;div class=&quot;loading-tag&quot;&gt;VELU INTELLIGENCE · CHAIN OF THOUGHT ANALYSIS&lt;/div&gt;
-  ${steps.map((s,i)=&gt;`&lt;div class=&quot;ls${i===0?&#x27; active&#x27;:&#x27;&#x27;}&quot; id=&quot;ls${i}&quot;&gt;&lt;div class=&quot;ls-dot&quot;&gt;&lt;/div&gt;&lt;span class=&quot;ls-txt&quot;&gt;${s}&lt;/span&gt;&lt;/div&gt;`).join(&#x27;&#x27;)}
-  &lt;div class=&quot;loading-bar&quot;&gt;&lt;div class=&quot;loading-fill&quot; id=&quot;lf&quot; style=&quot;width:0%&quot;&gt;&lt;/div&gt;&lt;/div&gt;`;
+  return `<div class="loading-tag">VELU INTELLIGENCE · CHAIN OF THOUGHT ANALYSIS</div>
+  ${steps.map((s,i)=>`<div class="ls${i===0?' active':''}" id="ls${i}"><div class="ls-dot"></div><span class="ls-txt">${s}</span></div>`).join('')}
+  <div class="loading-bar"><div class="loading-fill" id="lf" style="width:0%"></div></div>`;
 }
 async function runLoader(){
   const total = 6;
-  for(let i=0;i&lt;total;i++){
+  for(let i=0;i<total;i++){
     const el = document.getElementById(`ls${i}`);
     if(!el) return; // user switched away
-    if(i&gt;0){ const prev=document.getElementById(`ls${i-1}`); if(prev){prev.classList.remove(&#x27;active&#x27;);prev.classList.add(&#x27;done&#x27;);} }
-    el.classList.add(&#x27;active&#x27;);
-    const fill = document.getElementById(&#x27;lf&#x27;);
+    if(i>0){ const prev=document.getElementById(`ls${i-1}`); if(prev){prev.classList.remove('active');prev.classList.add('done');} }
+    el.classList.add('active');
+    const fill = document.getElementById('lf');
     if(fill) fill.style.width=`${Math.round(((i+1)/total)*100)}%`;
     await sleep(700);
   }
   await sleep(400);
 }
-function sleep(ms){ return new Promise(r=&gt;setTimeout(r,ms)); }
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
 /* ═══════════════════════════════════════════════════════════════
    MEMO HEADER
 ═══════════════════════════════════════════════════════════════ */
 function memoHeaderHTML(m, loading){
   const delta = Math.abs(m.ai - m.crowd);
-  const hasEdge = delta &gt;= 8;
-  const sub = m.ai &gt; m.crowd ? &#x27;HIGHER THAN CROWD&#x27; : &#x27;LOWER THAN CROWD&#x27;;
-  const tabs = [&#x27;MEMO&#x27;,&#x27;3 AGENTS&#x27;,&#x27;NEWS&#x27;,&#x27;CORRELATIONS&#x27;,&#x27;ORDER BOOK&#x27;,&#x27;TRACK RECORD&#x27;];
+  const hasEdge = delta >= 8;
+  const sub = m.ai > m.crowd ? 'HIGHER THAN CROWD' : 'LOWER THAN CROWD';
+  const tabs = ['MEMO','3 AGENTS','NEWS','CORRELATIONS','ORDER BOOK','TRACK RECORD'];
   return `
-&lt;div class=&quot;mhdr&quot; id=&quot;mhdr&quot;&gt;
-  &lt;div class=&quot;mhdr-meta&quot;&gt;
-    &lt;span class=&quot;mi-cat ${m.cls}&quot; style=&quot;padding:2px 8px;border-radius:4px;font-size:10px;font-family:var(--mono)&quot;&gt;${m.cat}&lt;/span&gt;
-    &lt;span class=&quot;mhdr-info&quot;&gt;${m.resolves} · ${m.days} days · ${m.vol} vol&lt;/span&gt;
-    &lt;a class=&quot;mhdr-poly&quot; href=&quot;https://polymarket.com&quot; target=&quot;_blank&quot;&gt;↗ Polymarket&lt;/a&gt;
-  &lt;/div&gt;
-  &lt;h2 class=&quot;mhdr-title&quot;&gt;${m.title}&lt;/h2&gt;
-  &lt;div class=&quot;prob-row&quot;&gt;
-    &lt;div class=&quot;pbox&quot;&gt;
-      &lt;div class=&quot;pb-lbl&quot;&gt;POLYMARKET CROWD&lt;/div&gt;
-      &lt;div class=&quot;pb-num crowd&quot;&gt;${m.crowd}%&lt;/div&gt;
-      &lt;div class=&quot;pb-sub&quot; style=&quot;color:var(--dim)&quot;&gt;${m.vol} volume&lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div class=&quot;pbox ai&quot;&gt;
-      &lt;div class=&quot;pb-lbl&quot;&gt;VELU AI&lt;/div&gt;
+<div class="mhdr" id="mhdr">
+  <div class="mhdr-meta">
+    <span class="mi-cat ${m.cls}" style="padding:2px 8px;border-radius:4px;font-size:10px;font-family:var(--mono)">${m.cat}</span>
+    <span class="mhdr-info">${m.resolves} · ${m.days} days · ${m.vol} vol</span>
+    <a class="mhdr-poly" href="${m.polyurl||'https://polymarket.com'}" target="_blank" rel="noopener">↗ Polymarket</a>
+    ${m.polyurl ? `<a class="trade-btn" href="${m.polyurl}" target="_blank" rel="noopener">Trade ↗</a>` : ''}
+  </div>
+  <h2 class="mhdr-title">${m.title}</h2>
+  <div class="prob-row">
+    <div class="pbox">
+      <div class="pb-lbl">POLYMARKET CROWD</div>
+      <div class="pb-num crowd">${m.crowd}%</div>
+      <div class="pb-sub" style="color:var(--dim)">${m.vol} volume</div>
+    </div>
+    <div class="pbox ai">
+      <div class="pb-lbl">VELU AI</div>
       ${loading
-        ? `&lt;div style=&quot;display:flex;justify-content:center;padding:10px 0&quot;&gt;&lt;div style=&quot;width:20px;height:20px;border:2px solid var(--b1);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;pb-sub&quot; style=&quot;color:var(--g2)&quot;&gt;Analyzing…&lt;/div&gt;`
-        : `&lt;div class=&quot;pb-num velu&quot;&gt;${m.ai}%&lt;/div&gt;&lt;div class=&quot;pb-sub&quot; style=&quot;color:var(--g2)&quot;&gt;${m.ai&gt;m.crowd?&#x27;↑&#x27;:&#x27;↓&#x27;} ${sub}&lt;/div&gt;`
+        ? `<div style="display:flex;justify-content:center;padding:10px 0"><div style="width:20px;height:20px;border:2px solid var(--b1);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite"></div></div><div class="pb-sub" style="color:var(--g2)">Analyzing…</div>`
+        : `<div class="pb-num velu">${m.ai}%</div><div class="pb-sub" style="color:var(--g2)">${m.ai>m.crowd?'↑':'↓'} ${sub}</div>`
       }
-    &lt;/div&gt;
-    &lt;div class=&quot;pbox delta-box&quot;&gt;
-      &lt;div class=&quot;pb-lbl&quot;&gt;${hasEdge?&#x27;⚡ EDGE&#x27;:&#x27;DELTA&#x27;}&lt;/div&gt;
-      &lt;div class=&quot;pb-num delta&quot;&gt;Δ${delta}pp&lt;/div&gt;
-      &lt;div class=&quot;pb-sub&quot; style=&quot;color:${hasEdge?&#x27;var(--g)&#x27;:&#x27;#555&#x27;}&quot;&gt;${hasEdge?&#x27;DETECTED&#x27;:&#x27;NO EDGE&#x27;}&lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-  ${!loading &amp;&amp; hasEdge ? `&lt;div class=&quot;edge-alert&quot;&gt;&lt;span class=&quot;ea-badge&quot;&gt;⚡ EDGE Δ${delta}pp&lt;/span&gt;&lt;span class=&quot;ea-text&quot;&gt;Velu is ${m.ai&gt;m.crowd?&#x27;more bullish&#x27;:&#x27;more bearish&#x27;} than the crowd by ${delta} percentage points — Velu&#x27;s analysis finds the crowd ${m.ai&gt;m.crowd?&#x27;under&#x27;:&#x27;over&#x27;}pricing this market.&lt;/span&gt;&lt;/div&gt;` : &#x27;&#x27;}
-  ${!loading ? `&lt;div class=&quot;tabs&quot;&gt;${tabs.map(t=&gt;`&lt;button class=&quot;tab${activeTab===t?&#x27; on&#x27;:&#x27;&#x27;}&quot; onclick=&quot;switchTab(&#x27;${t}&#x27;)&quot;&gt;${t}&lt;/button&gt;`).join(&#x27;&#x27;)}&lt;/div&gt;` : &#x27;&#x27;}
-&lt;/div&gt;`;
+    </div>
+    <div class="pbox delta-box">
+      <div class="pb-lbl">${hasEdge?'⚡ EDGE':'DELTA'}</div>
+      <div class="pb-num delta">Δ${delta}pp</div>
+      <div class="pb-sub" style="color:${hasEdge?'var(--g)':'#555'}">${hasEdge?'DETECTED':'NO EDGE'}</div>
+    </div>
+  </div>
+  ${!loading && hasEdge ? `<div class="edge-alert"><span class="ea-badge">⚡ EDGE Δ${delta}pp</span><span class="ea-text">Velu is ${m.ai>m.crowd?'more bullish':'more bearish'} than the crowd by ${delta} percentage points — Velu's analysis finds the crowd ${m.ai>m.crowd?'under':'over'}pricing this market.</span></div>` : ''}
+  ${!loading ? `<div class="tabs">${tabs.map(t=>`<button class="tab${activeTab===t?' on':''}" onclick="switchTab('${t}')">${t}</button>`).join('')}</div>` : ''}
+</div>`;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -3158,32 +3198,32 @@ function memoHeaderHTML(m, loading){
 function switchTab(tab){
   activeTab = tab;
   // Re-render header to update active tab
-  const hdr = document.getElementById(&#x27;mhdr&#x27;);
+  const hdr = document.getElementById('mhdr');
   if(hdr) hdr.outerHTML = memoHeaderHTML(current, false);
   renderTab(current);
 }
 function switchMobTab(tab){
   activeTab = tab;
-  [&#x27;Memo&#x27;,&#x27;Agents&#x27;,&#x27;Track&#x27;].forEach(t=&gt;{
-    const b=document.getElementById(&#x27;bn&#x27;+t);
-    if(b) b.classList.remove(&#x27;on&#x27;);
+  ['Memo','Agents','Track'].forEach(t=>{
+    const b=document.getElementById('bn'+t);
+    if(b) b.classList.remove('on');
   });
-  const map={&#x27;MEMO&#x27;:&#x27;bnMemo&#x27;,&#x27;3 AGENTS&#x27;:&#x27;bnAgents&#x27;,&#x27;TRACK RECORD&#x27;:&#x27;bnTrack&#x27;};
+  const map={'MEMO':'bnMemo','3 AGENTS':'bnAgents','TRACK RECORD':'bnTrack'};
   const el = document.getElementById(map[tab]);
-  if(el) el.classList.add(&#x27;on&#x27;);
-  if(current){ const hdr=document.getElementById(&#x27;mhdr&#x27;); if(hdr) hdr.outerHTML=memoHeaderHTML(current,false); renderTab(current); }
+  if(el) el.classList.add('on');
+  if(current){ const hdr=document.getElementById('mhdr'); if(hdr) hdr.outerHTML=memoHeaderHTML(current,false); renderTab(current); }
 }
 
 function renderTab(m){
-  const el = document.getElementById(&#x27;tabContent&#x27;);
+  const el = document.getElementById('tabContent');
   if(!el) return;
   const map = {
-    &#x27;MEMO&#x27;: renderMemo,
-    &#x27;3 AGENTS&#x27;: renderAgents,
-    &#x27;NEWS&#x27;: renderNews,
-    &#x27;CORRELATIONS&#x27;: renderCorr,
-    &#x27;ORDER BOOK&#x27;: renderOB,
-    &#x27;TRACK RECORD&#x27;: renderTrack,
+    'MEMO': renderMemo,
+    '3 AGENTS': renderAgents,
+    'NEWS': renderNews,
+    'CORRELATIONS': renderCorr,
+    'ORDER BOOK': renderOB,
+    'TRACK RECORD': renderTrack,
   };
   el.innerHTML = (map[activeTab]||renderMemo)(m);
   el.scrollTop = 0;
@@ -3194,121 +3234,137 @@ function renderTab(m){
 ═══════════════════════════════════════════════════════════════ */
 function renderMemo(m){
   return `
-  &lt;div class=&quot;kd-grid&quot;&gt;${m.kd.map(d=&gt;`&lt;div class=&quot;kd-cell&quot;&gt;&lt;div class=&quot;kd-l&quot;&gt;${d.l}&lt;/div&gt;&lt;div class=&quot;kd-v&quot;&gt;${d.v}&lt;/div&gt;${d.d?`&lt;div class=&quot;kd-d ${d.dc||&#x27;dn&#x27;}&quot;&gt;${d.d}&lt;/div&gt;`:&#x27;&#x27;}&lt;/div&gt;`).join(&#x27;&#x27;)}&lt;/div&gt;
-  &lt;div class=&quot;step-grid&quot;&gt;
-    &lt;div class=&quot;sbox sbox-br&quot;&gt;&lt;div class=&quot;sbox-tag&quot;&gt;STEP 1 · BASE RATE&lt;/div&gt;&lt;div class=&quot;sbox-txt&quot;&gt;${m.br}&lt;/div&gt;&lt;/div&gt;
-    &lt;div class=&quot;sbox sbox-rg&quot;&gt;&lt;div class=&quot;sbox-tag&quot;&gt;STEP 2 · REGIME ADJUSTMENT&lt;/div&gt;&lt;div class=&quot;sbox-txt&quot;&gt;${m.reg}&lt;/div&gt;&lt;/div&gt;
-  &lt;/div&gt;
-  &lt;div class=&quot;headline-box&quot;&gt;&lt;div class=&quot;hl-tag&quot;&gt;STEP 3 · VELU MEMO · APR 9, 2026&lt;/div&gt;&lt;div class=&quot;hl-h&quot;&gt;${m.hl}&lt;/div&gt;&lt;/div&gt;
-  &lt;div class=&quot;thesis&quot;&gt;${m.thesis}&lt;/div&gt;
-  &lt;div class=&quot;devil&quot;&gt;&lt;div class=&quot;devil-tag&quot;&gt;STEP 4 · DEVIL&#x27;S ADVOCATE&lt;/div&gt;&lt;div class=&quot;devil-txt&quot;&gt;&quot;${m.devil}&quot;&lt;/div&gt;&lt;/div&gt;
-  &lt;div class=&quot;sc-label&quot;&gt;STEP 5 · WEIGHTED SCENARIOS&lt;/div&gt;
-  &lt;div class=&quot;sc sc-bull&quot;&gt;&lt;div class=&quot;sc-h&quot;&gt;&lt;span class=&quot;sc-badge&quot;&gt;BULL&lt;/span&gt;&lt;span class=&quot;sc-trigger&quot;&gt;${m.bull.t}&lt;/span&gt;&lt;span class=&quot;sc-prob&quot;&gt;${m.bull.p}%&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;sc-bar&quot;&gt;&lt;div class=&quot;sc-fill&quot; style=&quot;width:${m.bull.p}%&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;sc-det&quot;&gt;${m.bull.d}&lt;/div&gt;&lt;/div&gt;
-  &lt;div class=&quot;sc sc-base&quot;&gt;&lt;div class=&quot;sc-h&quot;&gt;&lt;span class=&quot;sc-badge&quot;&gt;BASE&lt;/span&gt;&lt;span class=&quot;sc-trigger&quot;&gt;${m.base.t}&lt;/span&gt;&lt;span class=&quot;sc-prob&quot;&gt;${m.base.p}%&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;sc-bar&quot;&gt;&lt;div class=&quot;sc-fill&quot; style=&quot;width:${m.base.p}%&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;sc-det&quot;&gt;${m.base.d}&lt;/div&gt;&lt;/div&gt;
-  &lt;div class=&quot;sc sc-bear&quot;&gt;&lt;div class=&quot;sc-h&quot;&gt;&lt;span class=&quot;sc-badge&quot;&gt;BEAR&lt;/span&gt;&lt;span class=&quot;sc-trigger&quot;&gt;${m.bear.t}&lt;/span&gt;&lt;span class=&quot;sc-prob&quot;&gt;${m.bear.p}%&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;sc-bar&quot;&gt;&lt;div class=&quot;sc-fill&quot; style=&quot;width:${m.bear.p}%&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;sc-det&quot;&gt;${m.bear.d}&lt;/div&gt;&lt;/div&gt;
-  &lt;div class=&quot;risk-box&quot;&gt;&lt;div class=&quot;risk-tag&quot;&gt;UNDERESTIMATED RISK&lt;/div&gt;&lt;div class=&quot;risk-txt&quot;&gt;${m.risk}&lt;/div&gt;&lt;/div&gt;
-  &lt;div class=&quot;watch-tag&quot;&gt;WATCH LIST&lt;/div&gt;
-  ${m.watch.map(w=&gt;`&lt;div class=&quot;watch-item&quot;&gt;&lt;span class=&quot;watch-arr&quot;&gt;→&lt;/span&gt;&lt;span class=&quot;watch-txt&quot;&gt;${w}&lt;/span&gt;&lt;/div&gt;`).join(&#x27;&#x27;)}`;
+  <div class="kd-grid">${m.kd.map(d=>`<div class="kd-cell"><div class="kd-l">${d.l}</div><div class="kd-v">${d.v}</div>${d.d?`<div class="kd-d ${d.dc||'dn'}">${d.d}</div>`:''}</div>`).join('')}</div>
+  <div class="step-grid">
+    <div class="sbox sbox-br"><div class="sbox-tag">STEP 1 · BASE RATE</div><div class="sbox-txt">${m.br}</div></div>
+    <div class="sbox sbox-rg"><div class="sbox-tag">STEP 2 · REGIME ADJUSTMENT</div><div class="sbox-txt">${m.reg}</div></div>
+  </div>
+  <div class="headline-box"><div class="hl-tag">STEP 3 · VELU MEMO · APR 9, 2026</div><div class="hl-h">${m.hl}</div></div>
+  <div class="thesis">${m.thesis}</div>
+  <div class="devil"><div class="devil-tag">STEP 4 · DEVIL'S ADVOCATE</div><div class="devil-txt">"${m.devil}"</div></div>
+  <div class="sc-label">STEP 5 · WEIGHTED SCENARIOS</div>
+  <div class="sc sc-bull"><div class="sc-h"><span class="sc-badge">BULL</span><span class="sc-trigger">${m.bull.t}</span><span class="sc-prob">${m.bull.p}%</span></div><div class="sc-bar"><div class="sc-fill" style="width:${m.bull.p}%"></div></div><div class="sc-det">${m.bull.d}</div></div>
+  <div class="sc sc-base"><div class="sc-h"><span class="sc-badge">BASE</span><span class="sc-trigger">${m.base.t}</span><span class="sc-prob">${m.base.p}%</span></div><div class="sc-bar"><div class="sc-fill" style="width:${m.base.p}%"></div></div><div class="sc-det">${m.base.d}</div></div>
+  <div class="sc sc-bear"><div class="sc-h"><span class="sc-badge">BEAR</span><span class="sc-trigger">${m.bear.t}</span><span class="sc-prob">${m.bear.p}%</span></div><div class="sc-bar"><div class="sc-fill" style="width:${m.bear.p}%"></div></div><div class="sc-det">${m.bear.d}</div></div>
+  <div class="risk-box"><div class="risk-tag">UNDERESTIMATED RISK</div><div class="risk-txt">${m.risk}</div></div>
+  <div class="watch-tag">WATCH LIST</div>
+  ${m.watch.map(w=>`<div class="watch-item"><span class="watch-arr">→</span><span class="watch-txt">${w}</span></div>`).join('')}`;
 }
 
 function renderAgents(m){
-  const agentColors = {&#x27;#0A84FF&#x27;:&#x27;rgba(10,132,255,.1)&#x27;,&#x27;#FF9500&#x27;:&#x27;rgba(255,149,0,.1)&#x27;,&#x27;#FF3B30&#x27;:&#x27;rgba(255,59,48,.08)&#x27;};
-  return `&lt;div class=&quot;agents-grid&quot;&gt;
-  ${m.agents.map(a=&gt;`
-  &lt;div class=&quot;agent-card&quot; style=&quot;border-left-color:${a.col};background:${agentColors[a.col]||&#x27;var(--off)&#x27;};&quot;&gt;
-    &lt;div class=&quot;ac-header&quot;&gt;
-      &lt;div class=&quot;ac-left&quot;&gt;&lt;span class=&quot;ac-icon&quot; style=&quot;color:${a.col}&quot;&gt;${a.ico}&lt;/span&gt;&lt;div&gt;&lt;div class=&quot;ac-name&quot;&gt;${a.name}&lt;/div&gt;&lt;div class=&quot;ac-stance&quot; style=&quot;color:${a.col}&quot;&gt;${a.stance}&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
-      &lt;div class=&quot;ac-prob&quot; style=&quot;color:${a.col}&quot;&gt;${a.prob}%&lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div class=&quot;ac-reas&quot;&gt;&quot;${a.reas}&quot;&lt;/div&gt;
-  &lt;/div&gt;`).join(&#x27;&#x27;)}
-  &lt;div class=&quot;synth-card&quot;&gt;
-    &lt;div class=&quot;synth-h&quot;&gt;&lt;div&gt;&lt;div class=&quot;synth-name&quot;&gt;⬡ Velu Synthesizer&lt;/div&gt;&lt;div class=&quot;synth-sub&quot;&gt;FINAL WEIGHTED PROBABILITY&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;synth-prob&quot;&gt;${m.ai}%&lt;/div&gt;&lt;/div&gt;
-    &lt;div class=&quot;synth-txt&quot;&gt;${m.synth}&lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;`;
+  const agentColors = {'#0A84FF':'rgba(10,132,255,.1)','#FF9500':'rgba(255,149,0,.1)','#FF3B30':'rgba(255,59,48,.08)'};
+  return `<div class="agents-grid">
+  ${m.agents.map(a=>`
+  <div class="agent-card" style="border-left-color:${a.col};background:${agentColors[a.col]||'var(--off)'};">
+    <div class="ac-header">
+      <div class="ac-left"><span class="ac-icon" style="color:${a.col}">${a.ico}</span><div><div class="ac-name">${a.name}</div><div class="ac-stance" style="color:${a.col}">${a.stance}</div></div></div>
+      <div class="ac-prob" style="color:${a.col}">${a.prob}%</div>
+    </div>
+    <div class="ac-reas">"${a.reas}"</div>
+  </div>`).join('')}
+  <div class="synth-card">
+    <div class="synth-h"><div><div class="synth-name">⬡ Velu Synthesizer</div><div class="synth-sub">FINAL WEIGHTED PROBABILITY</div></div><div class="synth-prob">${m.ai}%</div></div>
+    <div class="synth-txt">${m.synth}</div>
+  </div>
+</div>`;
 }
 
 function renderNews(m){
-  const bull=m.news.filter(n=&gt;n.s===&#x27;s-bull&#x27;).length;
-  const bear=m.news.filter(n=&gt;n.s===&#x27;s-bear&#x27;).length;
+  const bull=m.news.filter(n=>n.s==='s-bull').length;
+  const bear=m.news.filter(n=>n.s==='s-bear').length;
   const neu=m.news.length-bull-bear;
-  return `${m.news.map(n=&gt;`
-  &lt;div class=&quot;news-item&quot;&gt;
-    &lt;div class=&quot;ni-top&quot;&gt;&lt;div style=&quot;display:flex;gap:8px;align-items:center&quot;&gt;&lt;span class=&quot;ni-src&quot;&gt;${n.src}&lt;/span&gt;&lt;span class=&quot;ni-age&quot;&gt;${n.age===&#x27;today&#x27;?&#x27;TODAY&#x27;:n.age}&lt;/span&gt;&lt;/div&gt;
-    &lt;span class=&quot;ni-sent ${n.s}&quot;&gt;${n.s===&#x27;s-bull&#x27;?&#x27;BULLISH&#x27;:n.s===&#x27;s-bear&#x27;?&#x27;BEARISH&#x27;:&#x27;NEUTRAL&#x27;}&lt;/span&gt;&lt;/div&gt;
-    &lt;p class=&quot;ni-h&quot;&gt;${n.h}&lt;/p&gt;
-  &lt;/div&gt;`).join(&#x27;&#x27;)}
-  &lt;div class=&quot;news-sentiment-box&quot;&gt;
-    &lt;div class=&quot;nsb-lbl&quot;&gt;AGGREGATED SENTIMENT&lt;/div&gt;
-    &lt;div class=&quot;nsb-row&quot;&gt;
-      &lt;div class=&quot;nsb-stat&quot;&gt;&lt;div class=&quot;nsb-dot&quot; style=&quot;background:var(--g2)&quot;&gt;&lt;/div&gt;&lt;span class=&quot;nsb-val&quot; style=&quot;color:var(--g2)&quot;&gt;${bull}&lt;/span&gt;&lt;span class=&quot;nsb-name&quot;&gt;Bullish&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;nsb-stat&quot;&gt;&lt;div class=&quot;nsb-dot&quot; style=&quot;background:var(--red)&quot;&gt;&lt;/div&gt;&lt;span class=&quot;nsb-val&quot; style=&quot;color:var(--red)&quot;&gt;${bear}&lt;/span&gt;&lt;span class=&quot;nsb-name&quot;&gt;Bearish&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;nsb-stat&quot;&gt;&lt;div class=&quot;nsb-dot&quot; style=&quot;background:var(--dim)&quot;&gt;&lt;/div&gt;&lt;span class=&quot;nsb-val&quot; style=&quot;color:var(--dim)&quot;&gt;${neu}&lt;/span&gt;&lt;span class=&quot;nsb-name&quot;&gt;Neutral&lt;/span&gt;&lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;`;
+  return `${m.news.map(n=>`
+  <div class="news-item">
+    <div class="ni-top"><div style="display:flex;gap:8px;align-items:center"><span class="ni-src">${n.src}</span><span class="ni-age">${n.age==='today'?'TODAY':n.age}</span></div>
+    <span class="ni-sent ${n.s}">${n.s==='s-bull'?'BULLISH':n.s==='s-bear'?'BEARISH':'NEUTRAL'}</span></div>
+    <p class="ni-h">${n.h}</p>
+  </div>`).join('')}
+  <div class="news-sentiment-box">
+    <div class="nsb-lbl">AGGREGATED SENTIMENT</div>
+    <div class="nsb-row">
+      <div class="nsb-stat"><div class="nsb-dot" style="background:var(--g2)"></div><span class="nsb-val" style="color:var(--g2)">${bull}</span><span class="nsb-name">Bullish</span></div>
+      <div class="nsb-stat"><div class="nsb-dot" style="background:var(--red)"></div><span class="nsb-val" style="color:var(--red)">${bear}</span><span class="nsb-name">Bearish</span></div>
+      <div class="nsb-stat"><div class="nsb-dot" style="background:var(--dim)"></div><span class="nsb-val" style="color:var(--dim)">${neu}</span><span class="nsb-name">Neutral</span></div>
+    </div>
+  </div>`;
 }
 
 function renderCorr(m){
-  const warns = m.cross.filter(c=&gt;c.sig===&#x27;warn&#x27;).length;
-  return `${m.cross.map(c=&gt;`
-  &lt;div class=&quot;corr-item ${c.sig}&quot;&gt;
-    &lt;div class=&quot;ci-top&quot;&gt;
-      &lt;div&gt;&lt;div class=&quot;ci-mkt&quot;&gt;${c.m}&lt;/div&gt;&lt;div class=&quot;ci-crowd&quot;&gt;Crowd: ${c.c}%&lt;/div&gt;&lt;/div&gt;
-      &lt;span class=&quot;ci-sig ${c.sig}&quot;&gt;${c.sig===&#x27;warn&#x27;?&#x27;⚠ INCONSISTENT&#x27;:&#x27;✓ CONSISTENT&#x27;}&lt;/span&gt;
-    &lt;/div&gt;
-    &lt;div class=&quot;ci-impl&quot;&gt;${c.i}&lt;/div&gt;
-  &lt;/div&gt;`).join(&#x27;&#x27;)}
-  &lt;div style=&quot;margin-top:8px;background:var(--off);border:1px solid var(--b1);border-radius:10px;padding:12px;&quot;&gt;
-    &lt;div style=&quot;font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.08em;margin-bottom:6px&quot;&gt;CROSS-MARKET SYNTHESIS&lt;/div&gt;
-    &lt;div style=&quot;font-size:11px;color:var(--mu);font-family:var(--mono);line-height:1.6&quot;&gt;${warns===0?&#x27;All related markets are internally consistent. No contradictions detected.&#x27;:warns+&#x27; inconsistency(&#x27;+(warns&gt;1?&#x27;ies&#x27;:&#x27;y&#x27;)+&#x27;) detected between related markets. These contradictions suggest the crowd may be mispriced in at least one of these markets simultaneously.&#x27;}&lt;/div&gt;
-  &lt;/div&gt;`;
+  const warns = m.cross.filter(c=>c.sig==='warn').length;
+  return `${m.cross.map(c=>`
+  <div class="corr-item ${c.sig}">
+    <div class="ci-top">
+      <div><div class="ci-mkt">${c.m}</div><div class="ci-crowd">Crowd: ${c.c}%</div></div>
+      <span class="ci-sig ${c.sig}">${c.sig==='warn'?'⚠ INCONSISTENT':'✓ CONSISTENT'}</span>
+    </div>
+    <div class="ci-impl">${c.i}</div>
+  </div>`).join('')}
+  <div style="margin-top:8px;background:var(--off);border:1px solid var(--b1);border-radius:10px;padding:12px;">
+    <div style="font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.08em;margin-bottom:6px">CROSS-MARKET SYNTHESIS</div>
+    <div style="font-size:11px;color:var(--mu);font-family:var(--mono);line-height:1.6">${warns===0?'All related markets are internally consistent. No contradictions detected.':warns+' inconsistency('+(warns>1?'ies':'y')+') detected between related markets. These contradictions suggest the crowd may be mispriced in at least one of these markets simultaneously.'}</div>
+  </div>`;
 }
 
 function renderOB(m){
-  return `&lt;div class=&quot;ob-grid&quot;&gt;
-  &lt;div class=&quot;ob-box&quot;&gt;
-    &lt;div class=&quot;ob-lbl&quot;&gt;BUY / SELL SPLIT (24H)&lt;/div&gt;
-    &lt;div class=&quot;ob-flow-row&quot;&gt;
-      &lt;span class=&quot;ob-side&quot; style=&quot;color:var(--g2)&quot;&gt;BUY&lt;/span&gt;
-      &lt;div class=&quot;ob-track&quot;&gt;&lt;div class=&quot;ob-bar&quot; style=&quot;width:${m.buy}%;background:rgba(0,255,136,.18);&quot;&gt;&lt;span style=&quot;color:var(--g2)&quot;&gt;${m.buy}%&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div class=&quot;ob-flow-row&quot;&gt;
-      &lt;span class=&quot;ob-side&quot; style=&quot;color:var(--red)&quot;&gt;SELL&lt;/span&gt;
-      &lt;div class=&quot;ob-track&quot;&gt;&lt;div class=&quot;ob-bar&quot; style=&quot;width:${m.sell}%;background:rgba(255,59,48,.18);&quot;&gt;&lt;span style=&quot;color:var(--red)&quot;&gt;${m.sell}%&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-  &lt;div class=&quot;ob-box&quot;&gt;
-    &lt;div class=&quot;ob-lbl&quot;&gt;SMART MONEY SIGNALS&lt;/div&gt;
-    &lt;div class=&quot;ob-detail&quot;&gt;Net flow 24h: &lt;span class=&quot;ob-val&quot;&gt;${m.ob.flow}&lt;/span&gt;&lt;/div&gt;
-    &lt;div class=&quot;ob-detail&quot;&gt;Largest trade: &lt;span class=&quot;ob-val&quot;&gt;${m.ob.big}&lt;/span&gt;&lt;/div&gt;
-    &lt;div class=&quot;ob-detail&quot; style=&quot;margin-top:6px;line-height:1.7&quot;&gt;${m.ob.smart}&lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
-&lt;div style=&quot;background:var(--off);border:1px solid var(--b1);border-radius:10px;padding:12px;&quot;&gt;
-  &lt;div style=&quot;font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.08em;margin-bottom:6px&quot;&gt;INTERPRETATION&lt;/div&gt;
-  &lt;div style=&quot;font-size:11px;color:var(--mu);font-family:var(--mono);line-height:1.6&quot;&gt;${m.buy&gt;57?&#x27;Buyers dominate the order book. Positive net flow toward YES suggests the market continues positioning in the current direction.&#x27;:m.sell&gt;57?&#x27;Sellers dominate. Significant selling pressure on YES — the crowd may be distributing its position.&#x27;:&#x27;Order book is balanced between buyers and sellers. No clear directional signal. Market is in wait-and-see mode pending the next data release.&#x27;}&lt;/div&gt;
-&lt;/div&gt;`;
+  return `<div class="ob-grid">
+  <div class="ob-box">
+    <div class="ob-lbl">BUY / SELL SPLIT (24H)</div>
+    <div class="ob-flow-row">
+      <span class="ob-side" style="color:var(--g2)">BUY</span>
+      <div class="ob-track"><div class="ob-bar" style="width:${m.buy}%;background:rgba(0,255,136,.18);"><span style="color:var(--g2)">${m.buy}%</span></div></div>
+    </div>
+    <div class="ob-flow-row">
+      <span class="ob-side" style="color:var(--red)">SELL</span>
+      <div class="ob-track"><div class="ob-bar" style="width:${m.sell}%;background:rgba(255,59,48,.18);"><span style="color:var(--red)">${m.sell}%</span></div></div>
+    </div>
+  </div>
+  <div class="ob-box">
+    <div class="ob-lbl">SMART MONEY SIGNALS</div>
+    <div class="ob-detail">Net flow 24h: <span class="ob-val">${m.ob.flow}</span></div>
+    <div class="ob-detail">Largest trade: <span class="ob-val">${m.ob.big}</span></div>
+    <div class="ob-detail" style="margin-top:6px;line-height:1.7">${m.ob.smart}</div>
+  </div>
+</div>
+<div style="background:var(--off);border:1px solid var(--b1);border-radius:10px;padding:12px;">
+  <div style="font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.08em;margin-bottom:6px">INTERPRETATION</div>
+  <div style="font-size:11px;color:var(--mu);font-family:var(--mono);line-height:1.6">${m.buy>57?'Buyers dominate the order book. Positive net flow toward YES suggests the market continues positioning in the current direction.':m.sell>57?'Sellers dominate. Significant selling pressure on YES — the crowd may be distributing its position.':'Order book is balanced between buyers and sellers. No clear directional signal. Market is in wait-and-see mode pending the next data release.'}</div>
+</div>`;
 }
 
 function renderTrack(){
-  const acc = Math.round(TRACK.correct/TRACK.total*100);
-  return `&lt;div class=&quot;tr-stats&quot;&gt;
-  ${[{l:&#x27;MARKETS RESOLVED&#x27;,v:TRACK.total,c:&#x27;var(--ink)&#x27;},{l:&#x27;CORRECT&#x27;,v:TRACK.correct,c:&#x27;var(--g2)&#x27;},{l:&#x27;ACCURACY&#x27;,v:acc+&#x27;%&#x27;,c:&#x27;var(--ink)&#x27;},{l:&#x27;BRIER SCORE&#x27;,v:TRACK.brier,c:&#x27;#0A84FF&#x27;}].map(s=&gt;`&lt;div class=&quot;tr-stat&quot;&gt;&lt;div class=&quot;tr-sl&quot;&gt;${s.l}&lt;/div&gt;&lt;div class=&quot;tr-sv&quot; style=&quot;color:${s.c}&quot;&gt;${s.v}&lt;/div&gt;&lt;/div&gt;`).join(&#x27;&#x27;)}
-&lt;/div&gt;
-&lt;div class=&quot;tr-dots-lbl&quot;&gt;LAST ${TRACK.total} PREDICTIONS&lt;/div&gt;
-&lt;div class=&quot;tr-dots&quot;&gt;${Array.from({length:TRACK.total}).map((_,i)=&gt;`&lt;div class=&quot;tr-dot&quot; style=&quot;background:${i&lt;TRACK.correct?&#x27;var(--g)&#x27;:&#x27;rgba(255,59,48,.35)&#x27;}&quot;&gt;&lt;/div&gt;`).join(&#x27;&#x27;)}&lt;/div&gt;
-&lt;div class=&quot;tr-cat-lbl&quot;&gt;ACCURACY BY CATEGORY&lt;/div&gt;
-&lt;div&gt;${Object.entries(TRACK.byCat).map(([cat,d])=&gt;`&lt;div class=&quot;tr-cat-row&quot;&gt;&lt;div class=&quot;tr-ch&quot;&gt;&lt;span class=&quot;tr-cn&quot;&gt;${cat}&lt;/span&gt;&lt;span class=&quot;tr-ca&quot; style=&quot;color:${d.a&gt;=70?&#x27;var(--g2)&#x27;:d.a&gt;=55?&#x27;var(--amb)&#x27;:&#x27;var(--red)&#x27;}&quot;&gt;${d.a}% (${d.c}/${d.n})&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;tr-cb&quot;&gt;&lt;div class=&quot;tr-cf&quot; style=&quot;width:${d.a}%;background:${d.a&gt;=70?&#x27;var(--g)&#x27;:d.a&gt;=55?&#x27;var(--amb)&#x27;:&#x27;var(--red)&#x27;}&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;`).join(&#x27;&#x27;)}&lt;/div&gt;
-&lt;div class=&quot;tr-rec-lbl&quot; style=&quot;margin-top:16px&quot;&gt;RECENT RESOLVED PREDICTIONS&lt;/div&gt;
-${TRACK.recent.map(r=&gt;`&lt;div class=&quot;tr-rec-row&quot;&gt;&lt;span class=&quot;tr-rq&quot;&gt;${r.q}&lt;/span&gt;&lt;div class=&quot;tr-rv&quot;&gt;&lt;span style=&quot;font-size:10px;color:var(--dim);font-family:var(--mono)&quot;&gt;Crowd ${r.crowd}%&lt;/span&gt;&lt;span style=&quot;font-size:10px;color:var(--g2);font-family:var(--mono)&quot;&gt;Velu ${r.ai}%&lt;/span&gt;&lt;span style=&quot;font-size:11px;font-weight:600;font-family:var(--mono);color:${r.out?&#x27;var(--g2)&#x27;:&#x27;var(--red)&#x27;}&quot;&gt;${r.out?&#x27;YES&#x27;:&#x27;NO&#x27;}&lt;/span&gt;&lt;span style=&quot;font-size:10px;font-family:var(--mono);color:${r.won?&#x27;var(--g2)&#x27;:&#x27;var(--red)&#x27;}&quot;&gt;${r.won?&#x27;✓&#x27;:&#x27;✗&#x27;}&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;`).join(&#x27;&#x27;)}`;
+  const acc=Math.round(TRACK.correct/TRACK.total*100);
+  const crowdAcc=Math.round((TRACK.crowdCorrect||36)/TRACK.total*100);
+  const divs=TRACK.divergences||[];
+  return `<div style="font-size:9px;color:var(--g2);font-family:var(--mono);letter-spacing:.12em;margin-bottom:14px">TRACK RECORD · ${TRACK.total} MERCADOS · VELU AI vs CROWD</div>
+  <div class="tr-stats">
+    <div class="tr-stat"><div class="tr-sl">CROWD ACCURACY</div><div class="tr-sv" style="color:var(--mu)">${crowdAcc}%</div><div style="font-size:9px;color:var(--dim);font-family:var(--mono);margin-top:2px">${TRACK.crowdCorrect||36}/${TRACK.total}</div></div>
+    <div class="tr-stat" style="border:1px solid var(--g2)"><div class="tr-sl">VELU ACCURACY</div><div class="tr-sv" style="color:var(--g2)">${acc}%</div><div style="font-size:9px;color:var(--g2);font-family:var(--mono);margin-top:2px">${TRACK.correct}/${TRACK.total}</div></div>
+    <div class="tr-stat"><div class="tr-sl">CROWD BRIER</div><div class="tr-sv" style="color:var(--mu)">${TRACK.crowdBrier||0.136}</div><div style="font-size:9px;color:var(--dim);font-family:var(--mono);margin-top:2px">menor = mejor</div></div>
+    <div class="tr-stat" style="border:1px solid var(--g2)"><div class="tr-sl">VELU BRIER</div><div class="tr-sv" style="color:var(--g2)">${TRACK.brier}</div><div style="font-size:9px;color:var(--g2);font-family:var(--mono);margin-top:2px">menor = mejor</div></div>
+  </div>
+  <div style="background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.2);border-radius:10px;padding:12px 14px;margin-bottom:14px">
+    <div style="font-size:9px;color:var(--g2);font-family:var(--mono);letter-spacing:.1em;margin-bottom:5px">DIVERGENCIAS · Cuando Velu y crowd apostaron diferente</div>
+    <div style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:8px">Velu gana <span style="color:var(--g2)">3 de 4</span> divergencias · 75%</div>
+    ${divs.map(d=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--b1)">
+      <span style="font-size:10px;color:var(--mu);font-family:var(--mono);flex:1;margin-right:8px">${d.q}</span>
+      <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+        <span style="font-size:10px;color:var(--dim);font-family:var(--mono)">Crowd ${d.crowd}%</span>
+        <span style="font-size:10px;color:var(--g2);font-family:var(--mono)">Velu ${d.ai}%</span>
+        <span style="font-size:11px;font-weight:500;font-family:var(--mono);color:${d.out?"var(--g2)":"var(--red)"}"> ${d.out?"YES":"NO"}</span>
+        <span style="font-size:12px;color:${d.veluWon?"var(--g2)":"var(--red)"}"> ${d.veluWon?"✓":"✗"}</span>
+      </div>
+    </div>`).join("")}
+  </div>
+  <div class="tr-dlbl">ÚLTIMAS ${TRACK.total} PREDICCIONES</div>
+  <div class="tr-dots">${Array.from({length:TRACK.total}).map((_,i)=>`<div class="tr-dot" style="background:${i<TRACK.correct?"var(--g)":"rgba(255,59,48,.35)"}"></div>`).join("")}</div>
+  <div class="tr-clbl">ACCURACY POR CATEGORÍA</div>
+  <div>${Object.entries(TRACK.byCat).map(([cat,d])=>`<div class="tr-crow"><div class="tr-ch"><span class="tr-cn">${cat}</span><span class="tr-ca" style="color:${d.a>=70?"var(--g2)":d.a>=55?"var(--amb)":"var(--red)"}">${d.a}% (${d.c}/${d.n})</span></div><div class="tr-cb"><div class="tr-cf" style="width:${d.a}%;background:${d.a>=70?"var(--g)":d.a>=55?"var(--amb)":"var(--red)"}"></div></div></div>`).join("")}</div>
+  <div class="tr-rlbl" style="margin-top:14px">PREDICCIONES RECIENTES</div>
+  ${TRACK.recent.map(r=>`<div class="tr-rrow"><span class="tr-rq">${r.q}</span><div class="tr-rv"><span style="font-size:10px;color:var(--dim);font-family:var(--mono)">Crowd ${r.crowd}%</span><span style="font-size:10px;color:var(--g2);font-family:var(--mono)">Velu ${r.ai}%</span><span style="font-size:11px;font-weight:600;font-family:var(--mono);color:${r.out?"var(--g2)":"var(--red)"}">${r.out?"YES":"NO"}</span><span style="font-size:10px;font-family:var(--mono);color:${r.won?"var(--g2)":"var(--red)"}">${r.won?"✓":"✗"}</span></div></div>`).join("")}`;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   MOBILE SHEET
-═══════════════════════════════════════════════════════════════ */
-function openSheet(){ renderSheetList(); document.getElementById(&#x27;sheetBack&#x27;).classList.add(&#x27;open&#x27;); document.body.style.overflow=&#x27;hidden&#x27;; }
-function closeSheet(){ document.getElementById(&#x27;sheetBack&#x27;).classList.remove(&#x27;open&#x27;); document.body.style.overflow=&#x27;&#x27;; }
+function openSheet(){ renderSheetList(); document.getElementById('sheetBack').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeSheet(){ document.getElementById('sheetBack').classList.remove('open'); document.body.style.overflow=''; }
 
 /* ═══════════════════════════════════════════════════════════════
    INIT
@@ -3317,9 +3373,9 @@ renderList();
 applySessionToUi();
 updateClock();
 setInterval(updateClock, 1000);
-&lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;
+</script>
+</body>
+</html>
 "></iframe>
 </div>
 
