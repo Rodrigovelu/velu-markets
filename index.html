@@ -578,6 +578,20 @@ button { cursor: pointer; border: none; background: none; font-family: var(--san
   .ob-btn{width:100%;}
 }
 
+
+/* Country Dropdown */
+.ob-country-wrap{position:relative;margin-bottom:8px;}
+.ob-country-search-wrap{display:flex;align-items:center;gap:10px;border:1px solid var(--b1);border-radius:10px;padding:10px 14px;background:var(--bg2);transition:border-color .15s;}
+.ob-country-search-wrap:focus-within{border-color:var(--g2);}
+.ob-country-flag{font-size:22px;flex-shrink:0;}
+.ob-country-input{flex:1;background:transparent;border:none;outline:none;font-size:14px;color:var(--ink);font-family:var(--sans);}
+.ob-country-input::placeholder{color:var(--dim);}
+.ob-country-dropdown{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--bg);border:1px solid var(--b1);border-radius:10px;max-height:220px;overflow-y:auto;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,.12);}
+.ob-country-dropdown.open{display:block;}
+.ob-country-opt{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;font-size:13px;color:var(--ink);transition:background .1s;}
+.ob-country-opt:hover{background:var(--bg2);}
+.ob-country-opt .cflag{font-size:18px;}
+
 </style>
 
 <style id="velu-premium-ux-override">
@@ -1079,7 +1093,15 @@ body{
 
     <div class="ob-body">
       <div class="ob-screen active" data-ob-step="1">
-        <div class="ob-label">What best describes you?</div>
+        <div class="ob-label">Where are you based?</div>
+        <div class="ob-country-wrap">
+          <div class="ob-country-search-wrap">
+            <span class="ob-country-flag" id="obSelectedFlag">🌐</span>
+            <input type="text" id="obCountryInput" class="ob-country-input" placeholder="Search country..." autocomplete="off" oninput="filterCountries(this.value)" onfocus="showCountryDropdown()">
+          </div>
+          <div class="ob-country-dropdown" id="obCountryDropdown"></div>
+        </div>
+        <div class="ob-label" style="margin-top:24px">What best describes you?</div>
         <div class="ob-grid" id="obRoleGrid">
           <button class="ob-card" type="button" data-ob-group="role" data-value="Investor">
             <div class="ob-card-title">Investor</div>
@@ -1713,7 +1735,7 @@ const DEMO_USERS_KEY = 'veluUsers';
 
 window.__veluOnboarding = {
   step: 1,
-  data: { role: '', level: '', interest: '', capital: '' },
+  data: { role: '', level: '', interest: '', capital: '', country: '' },
   pendingUserEmail: null
 };
 
@@ -1823,7 +1845,7 @@ function buildSummary(profile) {
 window.resetOnboardingState = function resetOnboardingState() {
   window.__veluOnboarding = {
     step: 1,
-    data: { role: '', level: '', interest: '', capital: '' },
+    data: { role: '', level: '', interest: '', capital: '', country: '' },
     pendingUserEmail: null
   };
   document.querySelectorAll('[data-ob-group]').forEach(card => card.classList.remove('active'));
@@ -1851,7 +1873,7 @@ function updateOnboardingUi() {
   finishBtn.style.display = step === 5 ? '' : 'none';
 
   const requirements = {
-    1: !!state.data.role,
+    1: !!state.data.role && !!state.data.country,
     2: !!state.data.level,
     3: !!state.data.interest,
     4: !!state.data.capital,
@@ -1961,7 +1983,7 @@ async function completeOnboarding() {
         profile_type: state.data.role && state.data.level
           ? `${state.data.level} ${state.data.role}`
           : 'Velu User',
-        country: ''
+        country: state.data.country || ''
       })
     });
     console.log('Profile saved, status:', res.status);
@@ -3537,6 +3559,107 @@ setInterval(updateClock, 1000);
     veluApp.init();
     resetOnboardingState();
   });
+
+/* Country Selector */
+const COUNTRIES = [
+  {code:'US',name:'United States',flag:'🇺🇸'},
+  {code:'MX',name:'Mexico',flag:'🇲🇽'},
+  {code:'GB',name:'United Kingdom',flag:'🇬🇧'},
+  {code:'CA',name:'Canada',flag:'🇨🇦'},
+  {code:'AU',name:'Australia',flag:'🇦🇺'},
+  {code:'DE',name:'Germany',flag:'🇩🇪'},
+  {code:'FR',name:'France',flag:'🇫🇷'},
+  {code:'SG',name:'Singapore',flag:'🇸🇬'},
+  {code:'AE',name:'United Arab Emirates',flag:'🇦🇪'},
+  {code:'CH',name:'Switzerland',flag:'🇨🇭'},
+  {code:'NL',name:'Netherlands',flag:'🇳🇱'},
+  {code:'BR',name:'Brazil',flag:'🇧🇷'},
+  {code:'JP',name:'Japan',flag:'🇯🇵'},
+  {code:'KR',name:'South Korea',flag:'🇰🇷'},
+  {code:'IN',name:'India',flag:'🇮🇳'},
+  {code:'ES',name:'Spain',flag:'🇪🇸'},
+  {code:'IT',name:'Italy',flag:'🇮🇹'},
+  {code:'AR',name:'Argentina',flag:'🇦🇷'},
+  {code:'CO',name:'Colombia',flag:'🇨🇴'},
+  {code:'CL',name:'Chile',flag:'🇨🇱'},
+  {code:'PT',name:'Portugal',flag:'🇵🇹'},
+  {code:'SE',name:'Sweden',flag:'🇸🇪'},
+  {code:'NO',name:'Norway',flag:'🇳🇴'},
+  {code:'PL',name:'Poland',flag:'🇵🇱'},
+  {code:'ZA',name:'South Africa',flag:'🇿🇦'},
+  {code:'NG',name:'Nigeria',flag:'🇳🇬'},
+  {code:'TR',name:'Turkey',flag:'🇹🇷'},
+  {code:'SA',name:'Saudi Arabia',flag:'🇸🇦'},
+  {code:'IL',name:'Israel',flag:'🇮🇱'},
+  {code:'HK',name:'Hong Kong',flag:'🇭🇰'},
+  {code:'TW',name:'Taiwan',flag:'🇹🇼'},
+  {code:'TH',name:'Thailand',flag:'🇹🇭'},
+  {code:'ID',name:'Indonesia',flag:'🇮🇩'},
+  {code:'PH',name:'Philippines',flag:'🇵🇭'},
+  {code:'MY',name:'Malaysia',flag:'🇲🇾'},
+  {code:'NZ',name:'New Zealand',flag:'🇳🇿'},
+  {code:'AT',name:'Austria',flag:'🇦🇹'},
+  {code:'BE',name:'Belgium',flag:'🇧🇪'},
+  {code:'PE',name:'Peru',flag:'🇵🇪'},
+  {code:'UY',name:'Uruguay',flag:'🇺🇾'},
+  {code:'EC',name:'Ecuador',flag:'🇪🇨'},
+  {code:'GT',name:'Guatemala',flag:'🇬🇹'},
+  {code:'CR',name:'Costa Rica',flag:'🇨🇷'},
+  {code:'PA',name:'Panama',flag:'🇵🇦'},
+  {code:'DO',name:'Dominican Republic',flag:'🇩🇴'},
+  {code:'OTHER',name:'Other',flag:'🌐'},
+];
+
+let _filteredCountries = [...COUNTRIES];
+
+function renderCountryDropdown(list) {
+  const dd = document.getElementById('obCountryDropdown');
+  if (!dd) return;
+  if (list.length === 0) {
+    dd.innerHTML = '<div class="ob-country-opt" style="color:var(--dim);cursor:default">No results</div>';
+    return;
+  }
+  dd.innerHTML = list.map(function(c) {
+    return '<div class="ob-country-opt" onclick="selectCountry(' +
+      JSON.stringify(c.code) + ',' + JSON.stringify(c.name) + ',' + JSON.stringify(c.flag) + ')">' +
+      '<span class="cflag">' + c.flag + '</span><span>' + c.name + '</span></div>';
+  }).join('');
+}
+
+function showCountryDropdown() {
+  renderCountryDropdown(_filteredCountries);
+  const dd = document.getElementById('obCountryDropdown');
+  if (dd) dd.classList.add('open');
+}
+
+function filterCountries(query) {
+  const q = query.toLowerCase().trim();
+  _filteredCountries = q
+    ? COUNTRIES.filter(function(c) { return c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q); })
+    : [...COUNTRIES];
+  renderCountryDropdown(_filteredCountries);
+  const dd = document.getElementById('obCountryDropdown');
+  if (dd) dd.classList.add('open');
+}
+
+function selectCountry(code, name, flag) {
+  window.__veluOnboarding.data.country = name;
+  const input = document.getElementById('obCountryInput');
+  const flagEl = document.getElementById('obSelectedFlag');
+  const dd = document.getElementById('obCountryDropdown');
+  if (input) input.value = name;
+  if (flagEl) flagEl.textContent = flag;
+  if (dd) dd.classList.remove('open');
+  updateOnboardingUi();
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.ob-country-wrap')) {
+    const dd = document.getElementById('obCountryDropdown');
+    if (dd) dd.classList.remove('open');
+  }
+});
+
 </script>
 </body>
 </html>
