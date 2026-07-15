@@ -1920,7 +1920,7 @@ function onboardingBack() {
   }
 }
 
-function completeOnboarding() {
+async function completeOnboarding() {
   const state = window.__veluOnboarding;
   const existing = getUserByEmail(state.pendingUserEmail);
   if (!existing) return;
@@ -1930,8 +1930,38 @@ function completeOnboarding() {
     onboardingCompleted: true,
     profile: { ...state.data }
   });
-
   setSession(updated);
+
+  // Guardar perfil en Supabase
+  const SUPABASE_URL = 'https://osrjmchajyrgdlucniid.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_uL4sQ_T3HiCD6ZZ20D5thw_sc_gTK5F';
+
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/profiles`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        email: state.pendingUserEmail,
+        full_name: existing.name || '',
+        role: state.data.role || '',
+        experience_level: state.data.level || '',
+        interests: state.data.interest ? [state.data.interest] : [],
+        capital_range: state.data.capital || '',
+        profile_type: state.data.role && state.data.level
+          ? `${state.data.level} ${state.data.role}`
+          : 'Velu User',
+        country: state.data.country || ''
+      })
+    });
+  } catch (err) {
+    console.error('Profile save error:', err);
+  }
+
   closeOnboarding();
   goToTerminal(true);
 }
