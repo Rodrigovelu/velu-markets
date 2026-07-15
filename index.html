@@ -2013,32 +2013,69 @@ async function submitLogin() {
   return false;
 }
 
+const SUPABASE_URL = 'https://osrjmchajyrgdlucniid.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_uL4sQ_T3HiCD6ZZ20D5thw_sc_gTK5F';
+
 async function submitSignup() {
-  const name = document.getElementById('su-name')?.value.trim() || '';
-  const email = document.getElementById('su-email')?.value.trim() || '';
-  const pw = document.getElementById('su-pw')?.value || '';
-  let valid = true;
+  const name  = document.getElementById('su-name').value.trim();
+  const email = document.getElementById('su-em').value.trim();
+  const pw    = document.getElementById('su-pw').value;
+  let ok = true;
 
-  clearErr('su-name-err');
-  clearErr('su-email-err');
-  clearErr('su-pw-err');
-  const banner = document.getElementById('su-banner');
-  if (banner) { banner.classList.remove('show'); banner.textContent = ''; }
+  clearErr('su-name-err'); clearErr('su-em-err'); clearErr('su-pw-err');
 
-  if (name.length < 2) { showErr('su-name-err', 'Please enter your full name.'); valid = false; }
-  if (!isEmail(email)) { showErr('su-email-err', 'Please enter a valid email address.'); valid = false; }
-  if (pw.length < 8) { showErr('su-pw-err', 'Password must be at least 8 characters.'); valid = false; }
-  if (!valid) return false;
+  if (name.length < 2)  { showErr('su-name-err', 'Please enter your full name.'); ok = false; }
+  if (!isEmail(email))  { showErr('su-em-err', 'Please enter a valid email.'); ok = false; }
+  if (pw.length < 8)    { showErr('su-pw-err', 'Password must be at least 8 characters.'); ok = false; }
+  if (!ok) return;
 
   setLoading('su-btn', true);
-  await waitMs(500);
-  setLoading('su-btn', false);
 
-  if (getUserByEmail(email)) {
-    showBanner('su', 'An account with this email already exists. Log in instead.');
-    return false;
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        email: email,
+        plan: 'free',
+        source: 'signup_modal'
+      })
+    });
+
+    if (!res.ok && res.status !== 409) {
+      throw new Error('Insert failed');
+    }
+
+    // Obtener posición en la lista
+    const countRes = await fetch(`${SUPABASE_URL}/rest/v1/waitlist?select=count`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'count=exact'
+      }
+    });
+    const total = countRes.headers.get('content-range')?.split('/')[1] || '—';
+
+    setLoading('su-btn', false);
+    document.getElementById('suEmail').textContent = email;
+    
+    // Mostrar número en waitlist
+    const posEl = document.getElementById('waitlistPos');
+    if (posEl) posEl.textContent = total;
+
+    document.getElementById('suForm').classList.add('hide');
+    document.getElementById('suSuccess').classList.add('show');
+
+  } catch (err) {
+    setLoading('su-btn', false);
+    showErr('su-banner', 'Something went wrong. Try again.');
   }
-
+}
   const createdUser = upsertUser({
     name,
     email,
