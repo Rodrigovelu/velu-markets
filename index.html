@@ -1876,53 +1876,12 @@ function updateOnboardingUi() {
   }
 }
 
-function openOnboarding(user) {
-  resetOnboardingState();
-  window.__veluOnboarding.pendingUserEmail = user.email;
-
-  const existing = normalizeUser(user);
-  if (existing.profile?.role) window.__veluOnboarding.data.role = existing.profile.role;
-  if (existing.profile?.level) window.__veluOnboarding.data.level = existing.profile.level;
-  if (existing.profile?.interest) window.__veluOnboarding.data.interest = existing.profile.interest;
-  if (existing.profile?.capital) window.__veluOnboarding.data.capital = existing.profile.capital;
-
-  document.querySelectorAll('[data-ob-group]').forEach(card => {
-    const group = card.getAttribute('data-ob-group');
-    const value = card.getAttribute('data-value');
-    if (window.__veluOnboarding.data[group] === value) card.classList.add('active');
-  });
-
-  updateOnboardingUi();
-  const modal = document.getElementById('onboardingModal');
-  modal.classList.add('open');
-  modal.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeOnboarding() {
-  const modal = document.getElementById('onboardingModal');
-  if (!modal) return;
-  modal.classList.remove('open');
-  modal.setAttribute('aria-hidden', 'true');
-}
-
-function onboardingNext() {
-  if (window.__veluOnboarding.step < 5) {
-    window.__veluOnboarding.step += 1;
-    updateOnboardingUi();
-  }
-}
-
-function onboardingBack() {
-  if (window.__veluOnboarding.step > 1) {
-    window.__veluOnboarding.step -= 1;
-    updateOnboardingUi();
-  }
-}
-
 async function completeOnboarding() {
   const state = window.__veluOnboarding;
+  console.log('completeOnboarding called', state);
+
   const existing = getUserByEmail(state.pendingUserEmail);
+  console.log('existing user', existing);
   if (!existing) return;
 
   const updated = upsertUser({
@@ -1932,12 +1891,17 @@ async function completeOnboarding() {
   });
   setSession(updated);
 
-  // Guardar perfil en Supabase
   const SUPABASE_URL = 'https://osrjmchajyrgdlucniid.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_uL4sQ_T3HiCD6ZZ20D5thw_sc_gTK5F';
 
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/profiles`, {
+    console.log('Sending to Supabase:', {
+      email: state.pendingUserEmail,
+      role: state.data.role,
+      level: state.data.level
+    });
+
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/profiles`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -1958,6 +1922,11 @@ async function completeOnboarding() {
         country: state.data.country || ''
       })
     });
+
+    console.log('Supabase response status:', res.status);
+    const text = await res.text();
+    console.log('Supabase response body:', text);
+
   } catch (err) {
     console.error('Profile save error:', err);
   }
