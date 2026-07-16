@@ -619,6 +619,41 @@ button { cursor: pointer; border: none; background: none; font-family: var(--san
 .ob-country-opt.selected{background:#f0fff8;color:#00AA55;}
 .ob-cflag{font-size:20px;flex-shrink:0;}
 
+
+/* ── EQUITY LANDING: FEATURES GRID ── */
+.feats{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.feat-card{padding:28px 24px;background:var(--w);border:1px solid var(--b1);border-radius:16px;transition:border-color .2s, transform .2s;}
+.feat-card:hover{border-color:var(--g2);transform:translateY(-2px);}
+.feat-ico{font-size:24px;margin-bottom:14px;color:var(--ink);}
+.feat-h{font-size:17px;font-weight:650;margin-bottom:8px;letter-spacing:-.01em;}
+.feat-p{font-size:14px;color:var(--mu);line-height:1.6;}
+
+/* ── EQUITY LANDING: SCREENER PREVIEW ── */
+.screener-preview{max-width:760px;margin:0 auto;background:var(--w);border:1px solid var(--b1);border-radius:16px;overflow:hidden;}
+.sp-row{display:grid;grid-template-columns:2fr 90px 90px 60px 100px;align-items:center;padding:16px 22px;border-bottom:1px solid var(--sm);}
+.sp-row:last-child{border-bottom:none;}
+.sp-head{font-family:var(--mono);font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;background:var(--off);}
+.sp-co{display:flex;flex-direction:column;gap:2px;}
+.sp-tk{font-family:var(--mono);font-weight:650;font-size:15px;color:var(--ink);}
+.sp-nm{font-size:12px;color:var(--dim);}
+.sp-px{font-family:var(--mono);font-weight:600;font-size:14px;}
+.sp-dn{font-family:var(--mono);font-size:13px;color:var(--red);}
+.sp-pe{font-family:var(--mono);font-size:13px;color:var(--mu);}
+.sp-sig{font-family:var(--mono);font-size:11px;font-weight:650;padding:5px 10px;border-radius:6px;text-align:center;letter-spacing:.04em;}
+.sig-buy{background:rgba(0,204,106,.12);color:var(--g2);}
+.sig-hold{background:rgba(255,149,0,.12);color:var(--amb);}
+.sig-lock{background:var(--off);color:var(--dim);cursor:pointer;}
+.sp-locked{opacity:.6;}
+.sp-locked .sp-tk{letter-spacing:.1em;}
+
+@media (max-width:768px){
+  .feats{grid-template-columns:1fr;}
+  .sp-row{grid-template-columns:1.5fr 70px 70px;font-size:12px;}
+  .sp-row .sp-pe, .sp-head span:nth-child(4){display:none;}
+  .sp-sig{display:none;}
+  .sp-head span:nth-child(5){display:none;}
+}
+
 </style>
 
 <style id="velu-premium-ux-override">
@@ -1309,7 +1344,7 @@ body{
     <div class="nav-links">
       <a class="nl" href="#how">How it works</a>
       <a class="nl" href="#features">Features</a>
-      <a class="nl" href="#markets">Markets</a>
+      <a class="nl" href="#markets">Screener</a>
       <a class="nl" href="#pricing">Pricing</a>
       <div class="nd"></div>
       <button class="btn-li" onclick="openLogin()">Log in</button>
@@ -1326,27 +1361,26 @@ body{
   <div class="hero-left">
     <div class="eyebrow">
       <div class="ey-dot"></div>
-      <span class="ey-txt">LIVE · 8 ACTIVE MARKETS · APR 9, 2026</span>
+      <span class="ey-txt">LIVE · EQUITY INTELLIGENCE · REAL-TIME DATA</span>
     </div>
     <h1 class="hero-h1">
-      Prediction markets,<br>analyzed by <em>AI</em>
+      The stocks the market<br>is <em>punishing</em>
     </h1>
     <p class="hero-p">
-      Velu reads Polymarket probabilities, fetches live data from 12 global sources, and runs three independent AI agents to find where the crowd is wrong.
+      Velu scans thousands of stocks for the ones trading far below fair value, then runs three independent AI agents to tell you whether to buy, hold, or sell — with a clear verdict, not just data.
     </p>
     <div class="hero-cta">
-      <button class="cta-su" onclick="openSignup()">Sign up — it's free</button>
+      <button class="cta-su" onclick="openSignup()">Start free</button>
       <button class="cta-li" onclick="openLogin()">Log in</button>
     </div>
     <div class="hero-stats">
-      <div><div class="stat-n">66%</div><div class="stat-l">Historical accuracy</div></div>
-      <div><div class="stat-n">47</div><div class="stat-l">Resolved markets</div></div>
-      <div><div class="stat-n">Δ9pp</div><div class="stat-l">Avg. edge vs crowd</div></div>
-      <div><div class="stat-n">0.14</div><div class="stat-l">Brier Score</div></div>
+      <div><div class="stat-n">3</div><div class="stat-l">AI agents per call</div></div>
+      <div><div class="stat-n">Live</div><div class="stat-l">Real-time market data</div></div>
+      <div><div class="stat-n">Buy/Hold/Sell</div><div class="stat-l">Clear verdict</div></div>
+      <div><div class="stat-n">20%+</div><div class="stat-l">Punishment threshold</div></div>
     </div>
   </div>
 
-  <!-- Terminal preview -->
   <div class="hero-right">
     <div class="preview">
       <div class="prev-bar">
@@ -1355,32 +1389,31 @@ body{
       </div>
       <div class="prev-body">
         <div class="prev-meta">
-          <span class="prev-cat pc-macro">MACRO</span>
-          <span class="prev-info">USA · Jun 30, 2026 · $22M vol</span>
+          <span class="prev-cat pc-macro">TECHNOLOGY</span>
+          <span class="prev-info">MRVL · $234B cap · −42% from high</span>
         </div>
-        <p class="prev-title">Will the US enter recession before June 30, 2026?</p>
+        <p class="prev-title">Marvell Technology — punished, but is it fair?</p>
         <div class="prev-probs">
           <div class="pbox">
-            <p class="pbox-lbl" style="color:#777">POLYMARKET</p>
-            <p class="pbox-n" style="color:#fff">32%</p>
-            <p class="pbox-sub" style="color:#555">$22M volume</p>
+            <p class="pbox-lbl" style="color:#777">CURRENT</p>
+            <p class="pbox-n" style="color:#fff">$68</p>
+            <p class="pbox-sub" style="color:#555">−42% from high</p>
           </div>
           <div class="pbox pbox-g">
-            <p class="pbox-lbl" style="color:#00FF88">VELU AI</p>
-            <p class="pbox-n" style="color:#00FF88">41%</p>
-            <p class="pbox-sub" style="color:#00CC6A">↑ BEARISH</p>
+            <p class="pbox-lbl" style="color:#00FF88">VELU TARGET</p>
+            <p class="pbox-n" style="color:#00FF88">$92</p>
+            <p class="pbox-sub" style="color:#00CC6A">↑ +35% upside</p>
           </div>
         </div>
         <div class="prev-edge">
-          <p class="edge-lbl">⚡ EDGE DETECTED · Δ9pp</p>
-          <p class="edge-txt">"Crowd at 32% is below Goldman (35%) and JPMorgan (40%). GDPNow fell from +2.4% to +0.8% in 10 weeks."</p>
+          <p class="edge-lbl">⚡ EDGE DETECTED · BUY</p>
+          <p class="edge-txt">"Selloff driven by sector rotation, not fundamentals. Data-center revenue up 28% YoY, custom silicon backlog intact. Market overreacted."</p>
         </div>
         <div class="prev-agents">
-          <div class="agent"><p class="ag-ico" style="color:#0A84FF">◈</p><p class="ag-n">Macro</p><p class="ag-p" style="color:#0A84FF">48%</p></div>
-          <div class="agent"><p class="ag-ico" style="color:#FF9500">◆</p><p class="ag-n">Quant</p><p class="ag-p" style="color:#FF9500">43%</p></div>
-          <div class="agent"><p class="ag-ico" style="color:#FF3B30">◉</p><p class="ag-n">Tail Risk</p><p class="ag-p" style="color:#FF3B30">31%</p></div>
+          <div class="agent"><p class="ag-ico" style="color:#0A84FF">◈</p><p class="ag-nm">Macro</p><p class="ag-vd" style="color:#00FF88">BULLISH</p></div>
+          <div class="agent"><p class="ag-ico" style="color:#FF9500">◆</p><p class="ag-nm">Quant</p><p class="ag-vd" style="color:#00FF88">BULLISH</p></div>
+          <div class="agent"><p class="ag-ico" style="color:#FF3B30">◉</p><p class="ag-nm">Tail Risk</p><p class="ag-vd" style="color:#FF9500">NEUTRAL</p></div>
         </div>
-        <p class="prev-credit">Powered by Velu · 3 agents · Chain of Thought</p>
       </div>
     </div>
   </div>
@@ -1391,32 +1424,23 @@ body{
 <!-- How it works -->
 <section class="section bg-off" id="how">
   <div class="sec-inner">
-    <p class="sec-tag">HOW IT WORKS</p>
-    <h2 class="sec-h">From market to memo in seconds</h2>
-    <p class="sec-p">Four AI calls in parallel, live data from 12 global sources, explicit reasoning at every step.</p>
+    <p class="sec-tag" style="text-align:center">HOW IT WORKS</p>
+    <h2 class="sec-h" style="text-align:center">From ticker to verdict in seconds</h2>
     <div class="steps">
       <div class="step">
-        <span class="step-n">STEP 01</span>
-        <h4 class="step-h">Select a market</h4>
-        <p class="step-p">Choose from active Polymarket prediction markets. Velu pulls live crowd probability and 24h velocity in real time.</p>
-        <div class="step-arr">→</div>
+        <div class="step-n">01</div>
+        <h3 class="step-h">Scan for the punished</h3>
+        <p class="step-p">The screener finds stocks trading 20%+ below their 52-week high — but only those whose fundamentals don't justify the drop.</p>
       </div>
       <div class="step">
-        <span class="step-n">STEP 02</span>
-        <h4 class="step-h">Live data fetch</h4>
-        <p class="step-p">FRED, CME FedWatch, CoinGlass, ECB, Bank of Japan, World Gold Council — 70+ macro indicators in under 2 seconds.</p>
-        <div class="step-arr">→</div>
+        <div class="step-n">02</div>
+        <h3 class="step-h">Three agents debate</h3>
+        <p class="step-p">A Macro Structuralist, a Quantitative analyst, and a Tail Risk agent each analyze the stock independently and take a stance.</p>
       </div>
       <div class="step">
-        <span class="step-n">STEP 03</span>
-        <h4 class="step-h">Three agents analyze</h4>
-        <p class="step-p">Macro Structuralist, Quantitative, and Tail Risk each run independently with their own framework and probability.</p>
-        <div class="step-arr">→</div>
-      </div>
-      <div class="step">
-        <span class="step-n">STEP 04</span>
-        <h4 class="step-h">Synthesizer + Memo</h4>
-        <p class="step-p">Velu weighs all three analyses, runs a Devil's Advocate pass, and produces the final memo with the explicit edge.</p>
+        <div class="step-n">03</div>
+        <h3 class="step-h">Get a clear verdict</h3>
+        <p class="step-p">Buy, Hold, or Sell — with a 12-month price target, conviction level, and bull/base/bear scenarios. You decide from there.</p>
       </div>
     </div>
   </div>
@@ -1425,68 +1449,39 @@ body{
 <!-- Features bento -->
 <section class="section" id="features">
   <div class="sec-inner">
-    <p class="sec-tag">8 ROBUSTNESS FEATURES</p>
-    <h2 class="sec-h">Why Velu is different</h2>
-    <p class="sec-p">Not a chatbot. A structured intelligence system with verifiable reasoning at every layer.</p>
-    <div class="bento">
-      <div class="bc gtint wide">
-        <span class="bc-num">01</span>
-        <div class="bc-ico">📡</div>
-        <h3 class="bc-h">Live global data APIs</h3>
-        <p class="bc-p">FRED (Fed), CME FedWatch, CoinGlass, ECB rates, Bank of Japan, World Gold Council, CoinGecko, Twelve Data, Atlanta Fed GDPNow. Velu never guesses a number it can look up.</p>
-        <div class="api-pills">
-          <span class="api-pill">FRED</span><span class="api-pill">CME</span><span class="api-pill">ECB</span>
-          <span class="api-pill">BoJ</span><span class="api-pill">WGC</span><span class="api-pill">CoinGlass</span>
-          <span class="api-pill">GDPNow</span><span class="api-pill">CoinGecko</span>
-        </div>
+    <p class="sec-tag" style="text-align:center">WHY VELU</p>
+    <h2 class="sec-h" style="text-align:center">Not data. Not opinions. A verdict.</h2>
+    <p class="sec-p" style="text-align:center;margin:12px auto 48px;max-width:600px">Other tools give you charts and leave the thinking to you. Velu does the analysis and tells you what it concludes — then shows its work.</p>
+    <div class="feats">
+      <div class="feat-card">
+        <div class="feat-ico">⚡</div>
+        <h3 class="feat-h">The Edge Screener</h3>
+        <p class="feat-p">Automatically surfaces stocks the market has oversold relative to their fundamentals. Your daily list of asymmetric opportunities.</p>
       </div>
-      <div class="bc dark">
-        <span class="bc-num">02</span>
-        <div class="bc-ico">👹</div>
-        <h3 class="bc-h">Devil's Advocate</h3>
-        <p class="bc-p">A second AI call actively tries to refute the main thesis. The final probability only stands if it survives the critique.</p>
+      <div class="feat-card">
+        <div class="feat-ico">◈</div>
+        <h3 class="feat-h">Three-agent analysis</h3>
+        <p class="feat-p">Every stock is analyzed from three angles — macro positioning, quantitative valuation, and downside risk — before a verdict is reached.</p>
       </div>
-      <div class="bc">
-        <span class="bc-num">03</span>
-        <div class="bc-ico">📊</div>
-        <h3 class="bc-h">Calibrated base rates</h3>
-        <p class="bc-p">The Fed has never cut with PCE above 2.5% since 1990 except COVID. BTC is up in 100% of post-halving 6-month windows. Every analysis anchors to verifiable history.</p>
+      <div class="feat-card">
+        <div class="feat-ico">◎</div>
+        <h3 class="feat-h">Clear Buy/Hold/Sell</h3>
+        <p class="feat-p">No hedging, no "it depends." A directional call with conviction level, price target, and the reasoning behind it.</p>
       </div>
-      <div class="bc">
-        <span class="bc-num">04</span>
-        <div class="bc-ico">🏆</div>
-        <h3 class="bc-h">Public track record</h3>
-        <p class="bc-p">Every prediction is saved. Brier Score computed automatically when markets resolve. 66% accuracy across 47 markets. Nothing is hidden.</p>
+      <div class="feat-card">
+        <div class="feat-ico">⊹</div>
+        <h3 class="feat-h">Scenario modeling</h3>
+        <p class="feat-p">Bull, base, and bear cases with probabilities and price targets for each — so you understand the full distribution, not just the point estimate.</p>
       </div>
-      <div class="bc">
-        <span class="bc-num">05</span>
-        <div class="bc-ico">🗞️</div>
-        <h3 class="bc-h">Real-time news signals</h3>
-        <p class="bc-p">Bloomberg, Goldman Sachs, JPMorgan, CoinGlass. Last 48 hours of relevant headlines classified by sentiment and incorporated into every analysis.</p>
+      <div class="feat-card">
+        <div class="feat-ico">◇</div>
+        <h3 class="feat-h">Live market data</h3>
+        <p class="feat-p">Real-time prices, P/E, margins, ROE, and 52-week ranges pulled fresh on every analysis. Never stale.</p>
       </div>
-      <div class="bc">
-        <span class="bc-num">06</span>
-        <div class="bc-ico">📈</div>
-        <h3 class="bc-h">Order book dynamics</h3>
-        <p class="bc-p">Not just the crowd probability — also its 24h velocity, net buy/sell flow, and institutional smart money signals from Polymarket's CLOB API.</p>
-      </div>
-      <div class="bc">
-        <span class="bc-num">07</span>
-        <div class="bc-ico">🔗</div>
-        <h3 class="bc-h">Cross-market correlations</h3>
-        <p class="bc-p">Velu detects inconsistencies between related markets. 98% Fed pause and 32% recession simultaneously? The system flags the implicit contradiction.</p>
-      </div>
-      <div class="bc gtint">
-        <span class="bc-num">08</span>
-        <div class="bc-ico">🤖</div>
-        <h3 class="bc-h">3-agent expert panel</h3>
-        <div class="mini-ags">
-          <div class="ma-row"><span class="ma-lbl" style="color:#0A84FF">◈ Macro · 48%</span><div class="ma-bar"><div class="ma-fill" style="width:48%;background:#0A84FF"></div></div></div>
-          <div class="ma-row"><span class="ma-lbl" style="color:#FF9500">◆ Quant · 43%</span><div class="ma-bar"><div class="ma-fill" style="width:43%;background:#FF9500"></div></div></div>
-          <div class="ma-row"><span class="ma-lbl" style="color:#FF3B30">◉ Tail Risk · 31%</span><div class="ma-bar"><div class="ma-fill" style="width:31%;background:#FF3B30"></div></div></div>
-          <div class="ma-row"><span class="ma-lbl" style="color:var(--g2)">⬡ Velu · 41%</span><div class="ma-bar"><div class="ma-fill" style="width:41%;background:var(--g)"></div></div></div>
-        </div>
-        <p class="bc-p" style="margin-top:11px;font-size:12px;">When agents converge → high conviction. When they diverge → genuine uncertainty. That divergence is signal.</p>
+      <div class="feat-card">
+        <div class="feat-ico">▨</div>
+        <h3 class="feat-h">Devil's advocate</h3>
+        <p class="feat-p">The Tail Risk agent actively argues against the thesis, surfacing what could go wrong before you commit capital.</p>
       </div>
     </div>
   </div>
@@ -1495,65 +1490,37 @@ body{
 <!-- Markets preview -->
 <section class="section bg-off" id="markets">
   <div class="sec-inner">
-    <p class="sec-tag">ACTIVE MARKETS</p>
-    <h2 class="sec-h">Global prediction markets, analyzed</h2>
-    <p class="sec-p">US Federal Reserve, global equities, crypto, commodities, and macro events across the world's major financial markets.</p>
-    <div class="mkts">
-      <div class="mkt" onclick="openSignup()">
-        <div class="mkt-top"><span class="mcat c-fed">FED POLICY</span><span class="mkt-days">28 days</span></div>
-        <p class="mkt-title">Will the Fed hold rates unchanged at the May 2026 meeting?</p>
-        <div class="mkt-bars">
-          <div class="mbar-row"><span class="mbar-lbl" style="color:var(--dim)">Crowd</span><div class="mbar-track"><div class="mbar-fill" style="width:98%;background:var(--b2)"></div></div><span class="mbar-val" style="color:var(--mu)">98%</span></div>
-          <div class="mbar-row"><span class="mbar-lbl" style="color:var(--g2)">Velu</span><div class="mbar-track"><div class="mbar-fill" style="width:97%;background:var(--g)"></div></div><span class="mbar-val" style="color:var(--g2)">97%</span></div>
-        </div>
+    <p class="sec-tag" style="text-align:center">THE EDGE SCREENER</p>
+    <h2 class="sec-h" style="text-align:center">Today's most punished stocks</h2>
+    <p class="sec-p" style="text-align:center;margin:12px auto 48px;max-width:600px">A live sample of what the screener surfaces. Sign up to see the full list and run analysis on any of them.</p>
+    <div class="screener-preview">
+      <div class="sp-row sp-head">
+        <span>Company</span><span>Price</span><span>From High</span><span>P/E</span><span>Signal</span>
       </div>
-      <div class="mkt" onclick="openSignup()">
-        <div class="mkt-top"><span class="mcat c-btc">CRYPTO</span><span class="mkt-days">174 days</span></div>
-        <p class="mkt-title">Will Bitcoin exceed $80,000 before September 30, 2026?</p>
-        <div class="mkt-bars">
-          <div class="mbar-row"><span class="mbar-lbl" style="color:var(--dim)">Crowd</span><div class="mbar-track"><div class="mbar-fill" style="width:12%;background:var(--b2)"></div></div><span class="mbar-val" style="color:var(--mu)">12%</span></div>
-          <div class="mbar-row"><span class="mbar-lbl" style="color:var(--g2)">Velu</span><div class="mbar-track"><div class="mbar-fill" style="width:31%;background:var(--g)"></div></div><span class="mbar-val" style="color:var(--g2)">31%</span></div>
-        </div>
-        <div class="mkt-edge"><div class="medge-dot"></div><span class="medge-txt">⚡ Edge detected · Δ19pp</span></div>
+      <div class="sp-row">
+        <div class="sp-co"><span class="sp-tk">MRVL</span><span class="sp-nm">Marvell Technology</span></div>
+        <span class="sp-px">$68.42</span><span class="sp-dn">−42%</span><span class="sp-pe">24.1</span>
+        <span class="sp-sig sig-buy">BUY</span>
       </div>
-      <div class="mkt" onclick="openSignup()">
-        <div class="mkt-top"><span class="mcat c-mac">MACRO</span><span class="mkt-days urg">82 days</span></div>
-        <p class="mkt-title">Will the US enter recession before June 30, 2026?</p>
-        <div class="mkt-bars">
-          <div class="mbar-row"><span class="mbar-lbl" style="color:var(--dim)">Crowd</span><div class="mbar-track"><div class="mbar-fill" style="width:32%;background:var(--b2)"></div></div><span class="mbar-val" style="color:var(--mu)">32%</span></div>
-          <div class="mbar-row"><span class="mbar-lbl" style="color:var(--g2)">Velu</span><div class="mbar-track"><div class="mbar-fill" style="width:41%;background:var(--g)"></div></div><span class="mbar-val" style="color:var(--g2)">41%</span></div>
-        </div>
-        <div class="mkt-edge"><div class="medge-dot"></div><span class="medge-txt">◆ Edge detected · Δ9pp</span></div>
+      <div class="sp-row">
+        <div class="sp-co"><span class="sp-tk">PYPL</span><span class="sp-nm">PayPal Holdings</span></div>
+        <span class="sp-px">$61.80</span><span class="sp-dn">−38%</span><span class="sp-pe">16.3</span>
+        <span class="sp-sig sig-buy">BUY</span>
       </div>
-      <div class="mkt" onclick="openSignup()">
-        <div class="mkt-top"><span class="mcat c-cmd">COMMODITIES</span><span class="mkt-days">266 days</span></div>
-        <p class="mkt-title">Will gold outperform Bitcoin in total return during 2026?</p>
-        <div class="mkt-bars">
-          <div class="mbar-row"><span class="mbar-lbl" style="color:var(--dim)">Crowd</span><div class="mbar-track"><div class="mbar-fill" style="width:55%;background:var(--b2)"></div></div><span class="mbar-val" style="color:var(--mu)">55%</span></div>
-          <div class="mbar-row"><span class="mbar-lbl" style="color:var(--g2)">Velu</span><div class="mbar-track"><div class="mbar-fill" style="width:64%;background:var(--g)"></div></div><span class="mbar-val" style="color:var(--g2)">64%</span></div>
-        </div>
-        <div class="mkt-edge"><div class="medge-dot"></div><span class="medge-txt">◆ Edge detected · Δ9pp</span></div>
+      <div class="sp-row">
+        <div class="sp-co"><span class="sp-tk">NKE</span><span class="sp-nm">Nike Inc.</span></div>
+        <span class="sp-px">$74.15</span><span class="sp-dn">−34%</span><span class="sp-pe">21.7</span>
+        <span class="sp-sig sig-hold">HOLD</span>
       </div>
-      <div class="mkt" onclick="openSignup()">
-        <div class="mkt-top"><span class="mcat c-eq">EQUITIES</span><span class="mkt-days">49 days</span></div>
-        <p class="mkt-title">Will NVIDIA beat Q1 FY2026 consensus EPS?</p>
-        <div class="mkt-bars">
-          <div class="mbar-row"><span class="mbar-lbl" style="color:var(--dim)">Crowd</span><div class="mbar-track"><div class="mbar-fill" style="width:97%;background:var(--b2)"></div></div><span class="mbar-val" style="color:var(--mu)">97%</span></div>
-          <div class="mbar-row"><span class="mbar-lbl" style="color:var(--g2)">Velu</span><div class="mbar-track"><div class="mbar-fill" style="width:95%;background:var(--g)"></div></div><span class="mbar-val" style="color:var(--g2)">95%</span></div>
-        </div>
-      </div>
-      <div class="mkt" onclick="openSignup()">
-        <div class="mkt-top"><span class="mcat c-mac">MACRO</span><span class="mkt-days">266 days</span></div>
-        <p class="mkt-title">Will US monthly CPI exceed 0.8% in any month of 2026?</p>
-        <div class="mkt-bars">
-          <div class="mbar-row"><span class="mbar-lbl" style="color:var(--dim)">Crowd</span><div class="mbar-track"><div class="mbar-fill" style="width:96%;background:var(--b2)"></div></div><span class="mbar-val" style="color:var(--mu)">96%</span></div>
-          <div class="mbar-row"><span class="mbar-lbl" style="color:var(--g2)">Velu</span><div class="mbar-track"><div class="mbar-fill" style="width:97%;background:var(--g)"></div></div><span class="mbar-val" style="color:var(--g2)">97%</span></div>
-        </div>
+      <div class="sp-row sp-locked">
+        <div class="sp-co"><span class="sp-tk">•••</span><span class="sp-nm">12 more opportunities</span></div>
+        <span class="sp-px">—</span><span class="sp-dn">—</span><span class="sp-pe">—</span>
+        <span class="sp-sig sig-lock">🔒 Sign up</span>
       </div>
     </div>
-    <p style="text-align:center;margin-top:28px;font-size:13px;color:var(--dim);">
-      <button onclick="openSignup()" style="color:var(--g2);font-weight:600;font-size:13px;font-family:var(--sans);cursor:pointer;background:none;border:none;">Sign up to see full AI analysis →</button>
-    </p>
+    <div style="text-align:center;margin-top:32px">
+      <button class="cta-su" onclick="openSignup()">See the full screener free</button>
+    </div>
   </div>
 </section>
 
@@ -1561,56 +1528,58 @@ body{
 <section class="section" id="pricing">
   <div class="sec-inner">
     <p class="sec-tag" style="text-align:center">PRICING</p>
-    <h2 class="sec-h" style="text-align:center">Simple, transparent pricing</h2>
-    <p class="sec-p" style="text-align:center;margin:12px auto 48px">Start free. Upgrade when you need more.</p>
+    <h2 class="sec-h" style="text-align:center">Start free. Upgrade when it pays for itself.</h2>
+    <p class="sec-p" style="text-align:center;margin:12px auto 48px">One good call covers a year of Velu.</p>
     <div class="plans">
+
       <div class="plan">
         <p class="plan-name">Free</p>
         <div class="plan-price"><span class="price-n">$0</span></div>
-        <p class="plan-desc">Explore Velu Markets</p>
+        <p class="plan-desc">Explore the edge</p>
         <div class="plan-feats">
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">5 active markets</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Live Polymarket consensus</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">3 AI analyses per day</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Historical base rates</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Public track record</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Top 3 punished stocks</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">3 full analyses per month</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Buy / Hold / Sell verdict</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">5 ticker searches per day</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">15-min delayed data</span></div>
         </div>
-        <button class="plan-btn pbt-s" onclick="openSignup()">Get started free</button>
+        <button class="plan-btn pbt-s" onclick="openSignup()">Start free</button>
       </div>
+
       <div class="plan feat">
         <div class="plan-accent"></div>
         <span class="plan-badge pb-f">Most popular</span>
         <p class="plan-name">Pro</p>
-        <div class="plan-price"><span class="price-n green">$15</span><span class="price-period">/month</span></div>
-        <p class="plan-desc">For active traders and analysts</p>
+        <div class="plan-price"><span class="price-n green">$29</span><span class="price-period">/month</span></div>
+        <p class="plan-desc">For active investors</p>
         <div class="plan-feats">
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">All active markets</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Full screener — all 15 stocks</span></div>
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Unlimited AI analyses</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Devil's Advocate included</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Order book dynamics</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Cross-market correlations</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Real-time news signals</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Divergence push alerts</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Unlimited ticker search</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Bull / base / bear scenarios</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">New-opportunity alerts</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Real-time market data</span></div>
         </div>
-        <button class="plan-btn pbt-p" onclick="openSignup()">Get Pro</button>
+        <button class="plan-btn pbt-f" onclick="openSignup()">Start free trial</button>
+        <p style="text-align:center;font-size:11px;color:var(--dim);margin-top:10px">$290/year — save 2 months</p>
       </div>
+
       <div class="plan">
-        <span class="plan-badge pb-o">Institutional</span>
         <p class="plan-name">Terminal</p>
-        <div class="plan-price"><span class="price-n">$49</span><span class="price-period">/month</span></div>
-        <p class="plan-desc">For funds and professional traders</p>
+        <div class="plan-price"><span class="price-n">$99</span><span class="price-period">/month</span></div>
+        <p class="plan-desc">For professionals</p>
         <div class="plan-feats">
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Everything in Pro</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Full 3-agent AI panel</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Velu synthesizer with conviction weighting</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Probability API feed</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Historical CSV export</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Priority support</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Historical screener data</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Export analysis to PDF</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">API access</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Dedicated support</span></div>
         </div>
         <button class="plan-btn pbt-s" onclick="openSignup()">Get Terminal</button>
+        <p style="text-align:center;font-size:11px;color:var(--dim);margin-top:10px">$990/year — save 2 months</p>
       </div>
+
     </div>
-    <p class="price-note">Secure payments via Stripe · Cancel anytime · USD billing</p>
   </div>
 </section>
 
@@ -1639,7 +1608,7 @@ body{
       <a class="f-link" href="#">Contact</a>
     </div>
     <div class="f-legal">
-      Powered by Claude · Polymarket · FRED · ECB · BoJ<br>
+      Powered by Claude · Financial Modeling Prep · Real-time market data<br>
       Not financial advice. For informational purposes only.
     </div>
   </div>
@@ -2212,7 +2181,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Thank you for joining early. You are among the first users accessing Velu Markets, and we are building this terminal with a strong focus on quality, clarity, and long-term product depth.
       </p>
       <ul class="early-points">
-        <li>We will soon expand the number of Polymarket markets available across the terminal.</li>
+        <li>We will soon expand coverage across more global exchanges and asset classes across the terminal.</li>
         <li>New features are already in development to make analysis faster, sharper, and more actionable.</li>
         <li>Your early access places you at the front of what Velu Markets is becoming.</li>
       </ul>
@@ -2224,1210 +2193,634 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>
 
 <div id="unifiedTerminalView" aria-hidden="true">
-  <iframe id="terminalFrame" title="Velu Markets Terminal" srcdoc="<!DOCTYPE html>
-<html lang="en">
+  <iframe id="terminalFrame" title="Velu Equity Terminal" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
-<title>Velu Markets — Terminal Beta</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>Velu Markets — Equity Intelligence Terminal</title>
 <style>
-/* ── TOKENS ─────────────────────────────────────────────────── */
-:root{
-  --w:#FFFFFF; --off:#F7F7F5; --sm:#EFEFEC;
-  --b1:#E2E2DC; --b2:#CECEC5; --b3:#BCBCB2;
-  --ink:#0A0A08; --i2:#1C1C18; --i3:#2A2A24; --i4:#383830;
-  --mu:#6B6B60; --dim:#9A9A8E; --fa:#C8C8BE;
-  --g:#00FF88; --g2:#00CC6A; --g3:rgba(0,255,136,.08);
-  --red:#FF3B30; --amb:#FF9500; --blu:#0A84FF;
-  --sans:'DM Sans',system-ui,sans-serif;
-  --mono:'IBM Plex Mono','Courier New',monospace;
-  --serif:'Playfair Display',Georgia,serif;
-  --ease:cubic-bezier(.16,1,.3,1);
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;overflow:hidden;}
-body{background:var(--w);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;}
-button{cursor:pointer;border:none;background:none;font-family:var(--sans);}
-a{text-decoration:none;color:inherit;}
-::-webkit-scrollbar{width:4px;height:4px;}
-::-webkit-scrollbar-track{background:var(--off);}
-::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
+  :root {
+    --bg: #0A0B0D;
+    --bg2: #111317;
+    --panel: #16181D;
+    --panel2: #1C1F26;
+    --b1: #24272F;
+    --b2: #2E323C;
+    --ink: #F2F4F8;
+    --mu: #9BA1AE;
+    --dim: #5E6472;
+    --g: #00E5A0;
+    --g2: #00B37E;
+    --red: #FF4D4D;
+    --amber: #FFB020;
+    --blue: #4D9FFF;
+    --mono: 'SF Mono', 'JetBrains Mono', 'Roboto Mono', monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--b2); border-radius: 4px; }
 
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
-@keyframes dotPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.6}}
+  /* ── TOP BAR ─────────────────────────────────── */
+  .topbar {
+    display: flex; align-items: center; gap: 20px;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--b1);
+    background: var(--bg2);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo {
+    font-family: var(--mono);
+    font-weight: 700; font-size: 16px;
+    letter-spacing: -0.02em;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .logo-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--g); box-shadow: 0 0 12px var(--g); }
+  .logo-sub { color: var(--dim); font-size: 10px; letter-spacing: 0.15em; font-weight: 400; }
 
-/* ══════════════════════════════════════════════════════════════
-   SHELL — sticky header + flex body
-══════════════════════════════════════════════════════════════ */
-.shell{display:flex;flex-direction:column;height:100dvh;overflow:hidden;}
+  .search-wrap { flex: 1; max-width: 520px; position: relative; }
+  .search-input {
+    width: 100%;
+    background: var(--panel);
+    border: 1px solid var(--b1);
+    border-radius: 10px;
+    padding: 11px 16px 11px 42px;
+    color: var(--ink);
+    font-size: 14px;
+    font-family: var(--mono);
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .search-input:focus { border-color: var(--g2); box-shadow: 0 0 0 3px rgba(0,229,160,.1); }
+  .search-input::placeholder { color: var(--dim); font-family: var(--sans); }
+  .search-ico {
+    position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+    color: var(--dim); font-size: 16px;
+  }
+  .topbar-right { display: flex; align-items: center; gap: 16px; margin-left: auto; }
+  .clock { font-family: var(--mono); font-size: 12px; color: var(--mu); }
+  .status-live {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--g); font-family: var(--mono);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--g); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-/* ── TOP BAR ───────────────────────────────────────────────── */
-.topbar{
-  flex-shrink:0;
-  background:rgba(248,250,247,.82);
-  backdrop-filter:blur(18px);
-  border-bottom:1px solid rgba(12,18,16,.06);
-  box-shadow:0 10px 30px rgba(8,10,9,.04);
-}
-.topbar-inner{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 20px;height:50px;gap:16px;
-}
-.tb-logo{
-  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size:20px;font-weight:800;color:var(--ink);letter-spacing:-.05em;white-space:nowrap;
-}
-.tb-center{display:flex;align-items:center;gap:12px;flex:1;max-width:440px;}
-.tb-beta{
-  font-size:9px;font-family:var(--mono);font-weight:700;
-  background:rgba(140,255,69,.14);color:#35561f;
-  padding:4px 10px;border-radius:999px;letter-spacing:.10em;white-space:nowrap;
-}
-.tb-live{display:flex;align-items:center;gap:6px;}
-.tb-live-dot{width:6px;height:6px;background:var(--g);border-radius:50%;animation:pulse 1.5s ease-in-out infinite;flex-shrink:0;}
-.tb-live-txt{font-size:10px;color:#6d766f;font-family:var(--mono);white-space:nowrap;}
-.tb-right{display:flex;align-items:center;gap:14px;flex-shrink:0;}
-.tb-time{font-size:11px;color:#6d766f;font-family:var(--mono);white-space:nowrap;}
-.tb-plan{
-  font-size:9px;font-family:var(--mono);padding:4px 10px;border-radius:999px;
-  background:#ffffff;color:#6d766f;border:1px solid rgba(12,18,16,.06);white-space:nowrap;
-  box-shadow:0 8px 20px rgba(8,10,9,.04);
-}
-.tb-home{
-  font-size:12px;color:#555;font-family:var(--mono);
-  cursor:pointer;transition:color .15s;white-space:nowrap;
-}
-.tb-home:hover{color:var(--g);}
+  /* ── LAYOUT ──────────────────────────────────── */
+  .container { display: flex; min-height: calc(100vh - 60px); }
+  .main { flex: 1; padding: 24px; max-width: 100%; overflow-x: hidden; }
 
-.user-menu{display:flex;align-items:center;gap:10px;flex-shrink:0;}
-.user-chip{font-size:10px;font-family:var(--mono);padding:4px 8px;border-radius:999px;background:var(--i3);color:var(--w);max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.tb-logout{font-size:11px;color:#888;font-family:var(--mono);cursor:pointer;transition:color .15s;white-space:nowrap;}
-.tb-logout:hover{color:var(--g);}
-.auth-gate{position:fixed;inset:0;z-index:120;background:rgba(10,10,8,.92);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:24px;}
-.auth-gate.show{display:flex;}
-.auth-card{max-width:460px;width:100%;background:var(--w);border-radius:24px;padding:32px;box-shadow:0 30px 80px rgba(0,0,0,.25);}
-.auth-eyebrow{font-size:10px;color:var(--g2);font-family:var(--mono);letter-spacing:.12em;margin-bottom:10px;}
-.auth-title{font-family:var(--serif);font-size:34px;line-height:1.1;margin-bottom:10px;}
-.auth-copy{font-size:14px;color:var(--mu);line-height:1.7;margin-bottom:22px;}
-.auth-actions{display:flex;gap:10px;flex-wrap:wrap;}
-.auth-primary,.auth-secondary{padding:12px 18px;border-radius:10px;font-size:14px;font-weight:600;}
-.auth-primary{background:var(--g);color:var(--ink);}
-.auth-secondary{border:1px solid var(--b2);color:var(--ink);background:transparent;}
-@media(max-width:640px){.tb-right{gap:8px}.tb-time{display:none}.user-chip{max-width:110px}.tb-home{display:none}}
+  /* ── SECTION HEADERS ─────────────────────────── */
+  .section-head {
+    display: flex; align-items: baseline; gap: 12px;
+    margin-bottom: 4px;
+  }
+  .section-title {
+    font-size: 20px; font-weight: 650; letter-spacing: -0.02em;
+  }
+  .section-kicker {
+    font-family: var(--mono); font-size: 10px;
+    color: var(--g); letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .section-desc { color: var(--mu); font-size: 13px; margin-bottom: 20px; max-width: 620px; }
 
+  /* ── SCREENER TABLE ──────────────────────────── */
+  .screener {
+    background: var(--panel);
+    border: 1px solid var(--b1);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .screener-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--b1);
+    background: var(--bg2);
+  }
+  .screener-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .screener-badge {
+    font-family: var(--mono); font-size: 10px;
+    padding: 3px 8px; border-radius: 5px;
+    background: rgba(0,229,160,.1); color: var(--g);
+    letter-spacing: 0.05em;
+  }
+  .refresh-btn {
+    font-family: var(--mono); font-size: 11px;
+    padding: 7px 14px; border-radius: 8px;
+    background: var(--panel2); border: 1px solid var(--b2);
+    color: var(--mu); cursor: pointer; transition: all .15s;
+  }
+  .refresh-btn:hover { color: var(--ink); border-color: var(--g2); }
 
-/* ── TICKER ────────────────────────────────────────────────── */
-.ticker{
-  flex-shrink:0;height:30px;overflow:hidden;
-  background:rgba(255,255,255,.72);border-bottom:1px solid rgba(12,18,16,.05);
-  display:flex;align-items:center;
-}
-.ticker-inner{display:flex;animation:ticker 36s linear infinite;width:max-content;}
-.tick{display:flex;align-items:center;gap:6px;padding:0 18px;border-right:1px solid rgba(12,18,16,.05);white-space:nowrap;}
-.ts{font-size:9px;color:#6d766f;font-family:var(--mono);}
-.tv{font-size:10px;color:var(--ink);font-weight:600;font-family:var(--mono);}
-.tu{font-size:9px;color:var(--g);font-family:var(--mono);}
-.td{font-size:9px;color:var(--red);font-family:var(--mono);}
+  .stock-row {
+    display: grid;
+    grid-template-columns: 48px 1.5fr 90px 100px 80px 110px 90px;
+    align-items: center;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--b1);
+    cursor: pointer;
+    transition: background .12s;
+  }
+  .stock-row:last-child { border-bottom: none; }
+  .stock-row:hover { background: var(--panel2); }
+  .stock-row.header {
+    cursor: default;
+    background: transparent;
+    font-family: var(--mono);
+    font-size: 10px; color: var(--dim);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 10px 20px;
+  }
+  .stock-row.header:hover { background: transparent; }
+  .rank { font-family: var(--mono); font-size: 12px; color: var(--dim); }
+  .stock-sym { display: flex; flex-direction: column; gap: 2px; }
+  .sym-ticker { font-weight: 650; font-size: 15px; font-family: var(--mono); }
+  .sym-name { font-size: 11px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+  .stock-price { font-family: var(--mono); font-weight: 600; }
+  .stock-change { font-family: var(--mono); font-size: 13px; }
+  .up { color: var(--g); }
+  .down { color: var(--red); }
+  .punish-bar-wrap { display: flex; align-items: center; gap: 8px; }
+  .punish-bar { height: 5px; border-radius: 3px; background: var(--red); flex-shrink: 0; }
+  .punish-val { font-family: var(--mono); font-size: 12px; color: var(--red); }
+  .stock-pe { font-family: var(--mono); font-size: 13px; color: var(--mu); }
+  .mini-verdict {
+    font-family: var(--mono); font-size: 10px; font-weight: 600;
+    padding: 4px 10px; border-radius: 6px; text-align: center;
+    letter-spacing: 0.05em;
+  }
 
-/* ── BODY: sidebar + main ──────────────────────────────────── */
-.t-body{flex:1;display:flex;overflow:hidden;min-height:0;}
+  /* ── LOADING ─────────────────────────────────── */
+  .loading {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 60px 20px; gap: 16px;
+  }
+  .spinner {
+    width: 32px; height: 32px;
+    border: 3px solid var(--b1); border-top-color: var(--g);
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-txt { font-family: var(--mono); font-size: 12px; color: var(--mu); letter-spacing: 0.05em; }
 
-/* ── SIDEBAR ───────────────────────────────────────────────── */
-.sidebar{
-  width:292px;flex-shrink:0;
-  background:rgba(255,255,255,.78);
-  backdrop-filter:blur(16px);
-  border-right:1px solid rgba(12,18,16,.06);
-  display:flex;flex-direction:column;overflow:hidden;
-  box-shadow:0 18px 40px rgba(8,10,9,.05);
-}
-.sb-search{padding:10px 12px;border-bottom:1px solid var(--b1);}
-.sb-input{
-  width:100%;background:rgba(255,255,255,.92);border:1px solid rgba(12,18,16,.07);
-  border-radius:16px;padding:12px 14px;font-size:12px;
-  font-family:var(--mono);color:var(--ink);outline:none;transition:border-color .15s, box-shadow .15s;
-  box-shadow:0 8px 20px rgba(8,10,9,.04);
-}
-.sb-input:focus{border-color:var(--g2);}
-.sb-filters{padding:7px 12px;border-bottom:1px solid var(--b1);display:flex;gap:4px;flex-wrap:wrap;}
-.sb-filter{
-  font-size:10px;padding:6px 10px;border-radius:999px;font-family:var(--mono);
-  cursor:pointer;background:rgba(255,255,255,.82);color:var(--dim);border:1px solid rgba(12,18,16,.06);
-  transition:all .12s; box-shadow:0 8px 20px rgba(8,10,9,.03);
-}
-.sb-filter.on{background:#080a09;color:#8cff45;border-color:#080a09;}
-.sb-head{
-  padding:6px 14px;border-bottom:1px solid var(--b1);
-  display:flex;justify-content:space-between;align-items:center;
-}
-.sb-head-label{font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.1em;}
-.sb-head-stat{font-size:9px;color:var(--fa);font-family:var(--mono);}
-.sb-list{flex:1;overflow-y:auto;}
-.sb-footer{padding:8px 12px;border-top:1px solid var(--b1);}
-.sb-credits{font-size:9px;color:var(--fa);font-family:var(--mono);line-height:1.9;}
+  /* ── ANALYSIS PANEL (modal) ──────────────────── */
+  .analysis-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.7); backdrop-filter: blur(6px);
+    z-index: 200; padding: 40px 20px; overflow-y: auto;
+  }
+  .analysis-backdrop.open { display: flex; justify-content: center; align-items: flex-start; }
+  .analysis-panel {
+    background: var(--panel);
+    border: 1px solid var(--b2);
+    border-radius: 18px;
+    max-width: 860px; width: 100%;
+    overflow: hidden;
+    animation: slideup .3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes slideup { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Market list item */
-.mitem{
-  padding:14px 16px;cursor:pointer;border-bottom:1px solid rgba(12,18,16,.05);
-  border-left:3px solid transparent;transition:all .16s ease;
-  margin:8px 10px;border-radius:18px;background:rgba(255,255,255,.72);
-  box-shadow:0 8px 20px rgba(8,10,9,.04);
-}
-.mitem:hover{background:#fff; transform:translateY(-1px);}
-.mitem.on{
-  background:linear-gradient(180deg,#ffffff 0%, #fbfdf9 100%);
-  border-left-color:var(--g2);
-  box-shadow:0 18px 40px rgba(8,10,9,.08);
-}
-.mi-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
-.mi-cat{font-size:9px;padding:1px 6px;border-radius:3px;font-family:var(--mono);font-weight:500;}
-.mi-badges{display:flex;gap:4px;align-items:center;}
-.mi-edge{font-size:9px;color:var(--g2);font-family:var(--mono);font-weight:600;}
-.mi-urgent{font-size:9px;color:var(--red);font-family:var(--mono);}
-.mi-title{
-  font-size:11px;color:var(--ink);line-height:1.38;margin-bottom:8px;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-}
-.mi-probs{display:flex;gap:8px;}
-.mi-prob{flex:1;}
-.mi-ph{display:flex;justify-content:space-between;margin-bottom:3px;}
-.mi-pl{font-size:8px;color:var(--dim);font-family:var(--mono);}
-.mi-pv{font-size:10px;font-weight:600;font-family:var(--mono);}
-.mi-bar{height:2px;background:var(--b1);border-radius:1px;overflow:hidden;}
-.mi-bf{height:100%;border-radius:1px;transition:width .8s var(--ease);}
+  .ap-head {
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--b1);
+    background: var(--bg2);
+    position: relative;
+  }
+  .ap-close {
+    position: absolute; top: 20px; right: 24px;
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--panel2); border: 1px solid var(--b2);
+    color: var(--mu); cursor: pointer; font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .ap-close:hover { color: var(--ink); border-color: var(--red); }
+  .ap-ticker-row { display: flex; align-items: baseline; gap: 14px; margin-bottom: 6px; }
+  .ap-ticker { font-family: var(--mono); font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+  .ap-name { color: var(--mu); font-size: 15px; }
+  .ap-price-row { display: flex; align-items: baseline; gap: 12px; }
+  .ap-price { font-family: var(--mono); font-size: 22px; font-weight: 600; }
+  .ap-change { font-family: var(--mono); font-size: 15px; }
 
-/* category color helpers */
-.cat-fed{background:rgba(10,132,255,.1);color:#0A84FF;}
-.cat-btc{background:rgba(255,149,0,.1);color:#FF9500;}
-.cat-mac{background:rgba(10,132,255,.07);color:#40AAFF;}
-.cat-eq{background:rgba(52,199,89,.1);color:#34C759;}
-.cat-cmd{background:rgba(255,59,48,.08);color:#FF3B30;}
+  .ap-verdict-bar {
+    display: flex; align-items: center; gap: 20px;
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--b1);
+  }
+  .verdict-big {
+    font-family: var(--mono); font-size: 24px; font-weight: 700;
+    padding: 10px 24px; border-radius: 12px; letter-spacing: 0.02em;
+  }
+  .v-buy { background: rgba(0,229,160,.12); color: var(--g); border: 1px solid rgba(0,229,160,.3); }
+  .v-hold { background: rgba(255,176,32,.12); color: var(--amber); border: 1px solid rgba(255,176,32,.3); }
+  .v-sell { background: rgba(255,77,77,.12); color: var(--red); border: 1px solid rgba(255,77,77,.3); }
+  .verdict-meta { display: flex; flex-direction: column; gap: 4px; }
+  .vm-label { font-family: var(--mono); font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; }
+  .vm-value { font-size: 15px; font-weight: 600; }
+  .ap-target { margin-left: auto; text-align: right; }
+  .target-price { font-family: var(--mono); font-size: 22px; font-weight: 700; }
+  .target-upside { font-family: var(--mono); font-size: 13px; }
 
-/* ── MAIN PANEL ────────────────────────────────────────────── */
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden;
-background:
-  radial-gradient(circle at top right, rgba(140,255,69,.08), transparent 22%),
-  linear-gradient(180deg,#fbfcfa 0%, #f4f6f3 100%);}
+  .ap-body { padding: 24px 28px; }
+  .ap-thesis {
+    font-size: 15px; line-height: 1.6; color: var(--ink);
+    padding: 18px 20px; background: var(--bg2);
+    border-radius: 12px; border-left: 3px solid var(--g);
+    margin-bottom: 24px;
+  }
+  .ap-section-label {
+    font-family: var(--mono); font-size: 11px; color: var(--g);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 14px;
+  }
 
-/* Empty state */
-.empty{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:12px;padding:40px;
-  color:#6d766f;
-}
-.empty-icon{font-size:36px;opacity:.1;color:var(--ink);font-family:var(--mono);}
-.empty-txt{font-size:12px;color:var(--fa);font-family:var(--mono);letter-spacing:.12em;text-align:center;line-height:2.2;}
+  .agents-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+  .agent-card {
+    padding: 16px 18px; background: var(--bg2);
+    border: 1px solid var(--b1); border-radius: 12px;
+  }
+  .agent-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .agent-icon { font-size: 16px; }
+  .agent-name { font-weight: 600; font-size: 14px; }
+  .agent-stance {
+    font-family: var(--mono); font-size: 10px; font-weight: 600;
+    padding: 3px 9px; border-radius: 5px; margin-left: auto;
+    letter-spacing: 0.05em;
+  }
+  .st-bullish { background: rgba(0,229,160,.1); color: var(--g); }
+  .st-bearish { background: rgba(255,77,77,.1); color: var(--red); }
+  .st-neutral { background: rgba(155,161,174,.1); color: var(--mu); }
+  .agent-reason { font-size: 13px; color: var(--mu); line-height: 1.55; }
 
-/* Memo header */
-.mhdr{
-  flex-shrink:0;padding:18px 24px 4px;
-  border-bottom:1px solid rgba(12,18,16,.06);
-  background:rgba(255,255,255,.82);
-  backdrop-filter:blur(18px);
-  animation:fadeUp .3s var(--ease) both;
-}
-.mhdr-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px;}
-.mhdr-info{font-size:11px;color:var(--dim);font-family:var(--mono);}
-.mhdr-poly{font-size:10px;color:var(--dim);font-family:var(--mono);transition:color .15s;}
-.mhdr-poly:hover{color:var(--g2);}
-.mhdr-title{font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;font-size:30px;font-weight:800;color:var(--ink);line-height:1.04;margin-bottom:16px;letter-spacing:-.06em;}
+  .scenarios { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+  .scenario {
+    padding: 16px; border-radius: 12px; border: 1px solid var(--b1);
+    background: var(--bg2);
+  }
+  .scenario-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .scenario-label { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.05em; }
+  .scenario-prob { font-family: var(--mono); font-size: 18px; font-weight: 700; }
+  .sc-bull .scenario-label, .sc-bull .scenario-prob { color: var(--g); }
+  .sc-base .scenario-label, .sc-base .scenario-prob { color: var(--mu); }
+  .sc-bear .scenario-label, .sc-bear .scenario-prob { color: var(--red); }
+  .scenario-txt { font-size: 12px; color: var(--mu); line-height: 1.5; }
 
-/* Probability row */
-.prob-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
-.pbox{
-  background:rgba(255,255,255,.88);border:1px solid rgba(12,18,16,.06);
-  border-radius:18px;padding:16px 16px;text-align:center;
-  box-shadow:0 10px 24px rgba(8,10,9,.05);
-}
-.pbox.ai{
-  border-color:rgba(140,255,69,.65);
-  background:linear-gradient(135deg, rgba(140,255,69,.22), rgba(140,255,69,.08));
-}
-.pbox.delta-box{background:var(--ink);}
-.pb-lbl{font-size:9px;font-family:var(--mono);letter-spacing:.1em;margin-bottom:5px;}
-.pbox .pb-lbl{color:var(--dim);}
-.pbox.ai .pb-lbl{color:var(--g2);}
-.pbox.delta-box .pb-lbl{color:#555;}
-.pb-num{font-size:38px;font-weight:700;font-family:var(--mono);line-height:1;}
-.pb-num.crowd{color:var(--ink);}
-.pb-num.velu{color:var(--g2);}
-.pb-num.delta{color:var(--w);}
-.pb-sub{font-size:10px;font-family:var(--mono);margin-top:4px;}
+  .metrics-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin-bottom: 28px;
+  }
+  .metric {
+    padding: 14px 16px; background: var(--bg2);
+    border: 1px solid var(--b1); border-radius: 10px;
+  }
+  .metric-label { font-family: var(--mono); font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .metric-value { font-family: var(--mono); font-size: 16px; font-weight: 600; }
 
-/* Edge alert */
-.edge-alert{
-  background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.2);
-  border-left:3px solid var(--g2);border-radius:0 9px 9px 0;
-  padding:8px 13px;margin-bottom:10px;
-  display:flex;align-items:flex-start;gap:8px;
-}
-.beta-note{
-  margin: 14px 24px 0;
-  background: linear-gradient(135deg, rgba(10,10,8,.98), rgba(28,28,24,.98));
-  border: 1px solid rgba(0,255,136,.18);
-  border-left: 4px solid var(--g2);
-  border-radius: 14px;
-  padding: 16px 18px;
-  box-shadow: 0 18px 40px rgba(0,0,0,.10);
-}
-.beta-note-top{
-  display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;
-}
-.beta-note-badge{
-  font-size:10px;font-family:var(--mono);letter-spacing:.12em;
-  padding:4px 8px;border-radius:999px;background:rgba(0,255,136,.12);color:var(--g);
-  font-weight:600;
-}
-.beta-note-title{
-  font-size:12px;font-family:var(--mono);color:#d6d6ce;letter-spacing:.04em;
-}
-.beta-note-text{
-  font-size:12px;line-height:1.75;color:#a9a99c;font-family:var(--mono);
-}
-.ea-badge{font-size:10px;color:var(--g2);font-family:var(--mono);font-weight:600;flex-shrink:0;white-space:nowrap;}
-.ea-text{font-size:11px;color:var(--mu);font-family:var(--mono);line-height:1.5;}
+  .watch-list { display: flex; flex-direction: column; gap: 10px; }
+  .watch-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 13px; color: var(--mu); line-height: 1.5;
+  }
+  .watch-bullet { color: var(--g); flex-shrink: 0; margin-top: 2px; }
 
-/* Tabs */
-.tabs{display:flex;border-top:1px solid rgba(12,18,16,.06);overflow-x:auto;scrollbar-width:none;background:rgba(255,255,255,.42);}
-.tabs::-webkit-scrollbar{display:none;}
-.tab{
-  padding:11px 16px;font-size:10px;font-family:var(--mono);letter-spacing:.07em;
-  color:var(--dim);cursor:pointer;border:none;background:transparent;
-  border-bottom:2px solid transparent;white-space:nowrap;transition:all .12s;flex-shrink:0;
-  border-radius:12px 12px 0 0;
-}
-.tab:hover{color:var(--ink);}
-.tab.on{color:var(--ink);border-bottom-color:var(--g2); background:rgba(255,255,255,.72);}
+  .edge-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 11px;
+    padding: 5px 12px; border-radius: 7px;
+    background: rgba(0,229,160,.08); color: var(--g);
+    border: 1px solid rgba(0,229,160,.2);
+    margin-bottom: 20px;
+  }
 
-/* Scrollable content area */
-.mcontent{flex:1;overflow-y:auto;padding:20px 24px;animation:slideIn .25s var(--ease) both;}
+  .error-box {
+    padding: 40px; text-align: center; color: var(--mu);
+  }
+  .error-box .err-ico { font-size: 32px; margin-bottom: 12px; }
 
-/* ══════════════════════════════════════════════════════════════
-   TAB CONTENT ATOMS
-══════════════════════════════════════════════════════════════ */
-
-/* Key data grid */
-.kd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(12,18,16,.05);border-radius:20px;overflow:hidden;margin-bottom:18px;box-shadow:0 10px 24px rgba(8,10,9,.04);}
-.kd-cell{background:rgba(255,255,255,.82);padding:11px 13px;}
-.kd-l{font-size:9px;color:var(--dim);font-family:var(--mono);margin-bottom:2px;letter-spacing:.04em;}
-.kd-v{font-size:13px;font-weight:600;color:var(--ink);font-family:var(--mono);}
-.kd-d{font-size:10px;font-family:var(--mono);margin-top:2px;}
-.du{color:var(--g2);}.dd{color:var(--red);}.dn{color:var(--dim);}
-
-/* Step boxes */
-.step-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
-.sbox{padding:14px 16px;border-radius:18px;border-left:3px solid;box-shadow:0 8px 20px rgba(8,10,9,.04);}
-.sbox-tag{font-size:8px;font-family:var(--mono);letter-spacing:.1em;margin-bottom:5px;font-weight:600;}
-.sbox-txt{font-size:11px;color:var(--mu);font-family:var(--mono);line-height:1.65;}
-.sbox-br{background:rgba(10,132,255,.05);border-left-color:#0A84FF;}.sbox-br .sbox-tag{color:#0A84FF;}
-.sbox-rg{background:rgba(0,255,136,.04);border-left-color:var(--g2);}.sbox-rg .sbox-tag{color:var(--g2);}
-
-/* Headline */
-.headline-box{border-top:1px solid rgba(12,18,16,.06);border-bottom:1px solid rgba(12,18,16,.06);padding:14px 0;margin-bottom:16px;}
-.hl-tag{font-size:9px;color:var(--g2);font-family:var(--mono);letter-spacing:.12em;margin-bottom:5px;}
-.hl-h{font-family:var(--serif);font-size:17px;font-weight:700;color:var(--ink);line-height:1.32;}
-
-/* Thesis */
-.thesis{font-size:12px;color:var(--mu);font-family:var(--mono);line-height:1.85;margin-bottom:14px;}
-
-/* Devil */
-.devil{background:rgba(255,59,48,.04);border-left:3px solid var(--red);border-radius:0 16px 16px 0;padding:14px 16px;margin-bottom:16px;box-shadow:0 8px 20px rgba(8,10,9,.04);}
-.devil-tag{font-size:8px;color:var(--red);font-family:var(--mono);letter-spacing:.1em;margin-bottom:4px;}
-.devil-txt{font-size:11px;color:var(--mu);font-family:var(--mono);line-height:1.6;font-style:italic;}
-
-/* Scenarios */
-.sc-label{font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.1em;margin-bottom:10px;}
-.sc{margin-bottom:13px;}
-.sc-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;}
-.sc-badge{font-size:10px;font-weight:600;font-family:var(--mono);}
-.sc-trigger{font-size:10px;color:var(--mu);font-family:var(--mono);}
-.sc-prob{font-size:13px;font-weight:600;font-family:var(--mono);}
-.sc-bar{height:4px;background:var(--b1);border-radius:2px;margin-bottom:4px;overflow:hidden;}
-.sc-fill{height:100%;border-radius:2px;transition:width 1s var(--ease);}
-.sc-det{font-size:10px;color:var(--dim);font-family:var(--mono);line-height:1.55;}
-.sc-bull .sc-badge,.sc-bull .sc-prob{color:var(--g2);}.sc-bull .sc-fill{background:var(--g);}
-.sc-base .sc-badge,.sc-base .sc-prob{color:var(--amb);}.sc-base .sc-fill{background:var(--amb);}
-.sc-bear .sc-badge,.sc-bear .sc-prob{color:var(--red);}.sc-bear .sc-fill{background:var(--red);}
-
-/* Risk */
-.risk-box{background:rgba(255,59,48,.04);border-left:3px solid var(--red);border-radius:0 16px 16px 0;padding:14px 16px;margin-bottom:16px;box-shadow:0 8px 20px rgba(8,10,9,.04);}
-.risk-tag{font-size:8px;color:var(--red);font-family:var(--mono);letter-spacing:.1em;margin-bottom:4px;}
-.risk-txt{font-size:11px;color:var(--mu);font-family:var(--mono);line-height:1.6;}
-
-/* Watch */
-.watch-tag{font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.1em;margin-bottom:8px;}
-.watch-item{display:flex;gap:8px;margin-bottom:6px;}
-.watch-arr{color:var(--g2);font-family:var(--mono);font-size:11px;flex-shrink:0;}
-.watch-txt{font-size:11px;color:var(--mu);font-family:var(--mono);line-height:1.45;}
-
-/* Agents tab */
-.agents-grid{display:flex;flex-direction:column;gap:12px;}
-.agent-card{
-  border:1px solid rgba(12,18,16,.06);border-left:3px solid;
-  border-radius:0 20px 20px 0;padding:16px 18px;background:rgba(255,255,255,.86);
-  box-shadow:0 10px 24px rgba(8,10,9,.05);
-}
-.ac-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
-.ac-left{display:flex;gap:10px;align-items:center;}
-.ac-icon{font-size:16px;font-family:var(--mono);}
-.ac-name{font-size:13px;font-weight:600;color:var(--ink);font-family:var(--mono);}
-.ac-stance{font-size:10px;font-family:var(--mono);margin-top:2px;}
-.ac-prob{font-size:28px;font-weight:600;font-family:var(--mono);}
-.ac-reas{font-size:11px;color:var(--mu);font-family:var(--mono);line-height:1.65;font-style:italic;}
-.synth-card{
-  background:linear-gradient(180deg,#101312 0%, #070808 100%);
-  border-radius:18px;padding:18px 20px;margin-top:4px;
-  box-shadow:0 18px 40px rgba(8,10,9,.12);
-}
-.synth-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
-.synth-name{font-size:13px;font-weight:600;color:var(--w);font-family:var(--mono);}
-.synth-sub{font-size:9px;color:#555;font-family:var(--mono);letter-spacing:.08em;}
-.synth-prob{font-size:30px;font-weight:600;color:var(--g);font-family:var(--mono);}
-.synth-txt{font-size:11px;color:#666;font-family:var(--mono);line-height:1.65;}
-
-/* News tab */
-.news-item{border-bottom:1px solid rgba(12,18,16,.06);padding:14px 0;}
-.ni-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
-.ni-src{font-size:11px;font-weight:600;color:var(--ink);font-family:var(--mono);}
-.ni-age{font-size:10px;color:var(--fa);font-family:var(--mono);}
-.ni-sent{font-size:9px;padding:1px 8px;border-radius:3px;font-family:var(--mono);font-weight:500;}
-.s-bull{background:rgba(0,255,136,.1);color:var(--g2);}
-.s-bear{background:rgba(255,59,48,.1);color:var(--red);}
-.s-neu{background:var(--sm);color:var(--dim);}
-.ni-h{font-size:12px;color:var(--mu);font-family:var(--mono);line-height:1.45;}
-.news-sentiment-box{margin-top:16px;background:rgba(255,255,255,.86);border:1px solid rgba(12,18,16,.06);border-radius:20px;padding:16px;box-shadow:0 10px 24px rgba(8,10,9,.05);}
-.nsb-lbl{font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.08em;margin-bottom:8px;}
-.nsb-row{display:flex;gap:16px;}
-.nsb-stat{display:flex;align-items:center;gap:5px;}
-.nsb-dot{width:8px;height:8px;border-radius:50%;}
-.nsb-val{font-size:13px;font-weight:600;font-family:var(--mono);}
-.nsb-name{font-size:10px;color:var(--dim);font-family:var(--mono);}
-
-/* Correlations tab */
-.corr-item{
-  border:1px solid rgba(12,18,16,.06);border-radius:18px;padding:14px 16px;margin-bottom:10px;
-  background:rgba(255,255,255,.82);box-shadow:0 8px 20px rgba(8,10,9,.04);
-}
-.corr-item.warn{border-color:rgba(255,149,0,.3);background:rgba(255,149,0,.02);}
-.corr-item.ok{border-color:rgba(0,255,136,.2);background:rgba(0,255,136,.02);}
-.ci-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
-.ci-mkt{font-size:11px;color:var(--ink);font-family:var(--mono);font-weight:500;flex:1;margin-right:10px;}
-.ci-crowd{font-size:10px;color:var(--dim);font-family:var(--mono);margin-top:2px;}
-.ci-sig{font-size:10px;font-family:var(--mono);font-weight:600;padding:2px 8px;border-radius:4px;white-space:nowrap;flex-shrink:0;}
-.ci-sig.warn{color:var(--amb);background:rgba(255,149,0,.1);}
-.ci-sig.ok{color:var(--g2);background:rgba(0,255,136,.1);}
-.ci-impl{font-size:11px;color:var(--mu);font-family:var(--mono);line-height:1.5;}
-
-/* Order book tab */
-.ob-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
-.ob-box{background:rgba(255,255,255,.86);border:1px solid rgba(12,18,16,.06);border-radius:20px;padding:16px;box-shadow:0 10px 24px rgba(8,10,9,.04);}
-.ob-lbl{font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.08em;margin-bottom:10px;}
-.ob-flow-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-.ob-side{font-size:10px;font-family:var(--mono);width:28px;flex-shrink:0;}
-.ob-track{flex:1;height:20px;background:var(--b1);border-radius:4px;overflow:hidden;}
-.ob-bar{height:100%;display:flex;align-items:center;justify-content:flex-end;padding-right:7px;border-radius:4px;}
-.ob-bar span{font-size:10px;font-weight:600;font-family:var(--mono);}
-.ob-detail{font-size:10px;color:var(--dim);font-family:var(--mono);line-height:1.7;margin-top:4px;}
-.ob-val{font-weight:600;color:var(--ink);}
-
-/* Track record tab */
-.tr-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
-.tr-stat{
-  background:rgba(255,255,255,.84);border:1px solid rgba(12,18,16,.06);border-radius:18px;padding:14px;text-align:center;
-  box-shadow:0 8px 20px rgba(8,10,9,.04);
-}
-.tr-sl{font-size:9px;color:var(--dim);font-family:var(--mono);margin-bottom:4px;line-height:1.4;}
-.tr-sv{font-size:22px;font-weight:600;font-family:var(--mono);}
-.tr-dots-lbl{font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.08em;margin-bottom:8px;}
-.tr-dots{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:16px;}
-.tr-dot{width:10px;height:10px;border-radius:2px;}
-.tr-cat-lbl{font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.08em;margin-bottom:8px;}
-.tr-cat-row{margin-bottom:9px;}
-.tr-ch{display:flex;justify-content:space-between;margin-bottom:3px;}
-.tr-cn{font-size:10px;font-family:var(--mono);color:var(--mu);}
-.tr-ca{font-size:11px;font-weight:600;font-family:var(--mono);}
-.tr-cb{height:4px;background:var(--b1);border-radius:2px;overflow:hidden;}
-.tr-cf{height:100%;border-radius:2px;}
-.tr-rec-lbl{font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.08em;margin-bottom:8px;}
-.tr-rec-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--b1);}
-.tr-rq{font-size:10px;color:var(--mu);font-family:var(--mono);flex:1;margin-right:12px;}
-.tr-rv{display:flex;gap:8px;align-items:center;flex-shrink:0;}
-
-/* Loading */
-.loading-wrap{padding:40px 24px;}
-.loading-tag{font-size:10px;color:var(--g2);font-family:var(--mono);letter-spacing:.12em;margin-bottom:24px;}
-.ls{display:flex;gap:12px;align-items:center;margin-bottom:14px;opacity:.18;transition:opacity .4s ease;}
-.ls.active{opacity:1;}.ls.done{opacity:.45;}
-.ls-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--b1);}
-.ls.active .ls-dot{background:var(--g);animation:dotPulse 1s ease-in-out infinite;}
-.ls.done .ls-dot{background:var(--g2);}
-.ls-txt{font-size:12px;color:var(--mu);font-family:var(--mono);}
-.loading-bar{height:2px;background:var(--b1);border-radius:1px;overflow:hidden;margin-top:28px;}
-.loading-fill{height:100%;background:var(--g);border-radius:1px;transition:width 1s ease;}
-
-/* ── MOBILE BOTTOM NAV ─────────────────────────────────────── */
-.bot-nav{
-  display:none;flex-shrink:0;background:var(--w);
-  border-top:1px solid var(--b1);height:56px;
-  padding-bottom:env(safe-area-inset-bottom);
-}
-.bot-inner{display:grid;grid-template-columns:repeat(4,1fr);height:100%;}
-.bn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;border:none;background:transparent;border-top:2px solid transparent;transition:all .12s;}
-.bn.on{border-top-color:var(--g2);}
-.bn-ico{font-size:18px;}
-.bn-lbl{font-size:9px;font-family:var(--mono);color:var(--dim);}
-.bn.on .bn-lbl{color:var(--g2);}
-
-/* Mobile market sheet */
-.sheet-back{display:none;position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.28);backdrop-filter:blur(4px);}
-.sheet-back.open{display:block;}
-.sheet{position:absolute;bottom:56px;left:0;right:0;background:var(--off);border-top:1px solid var(--b1);border-radius:16px 16px 0 0;max-height:80dvh;overflow-y:auto;}
-.sheet-handle{width:34px;height:4px;background:var(--b2);border-radius:2px;margin:12px auto 8px;}
-
-/* ── RESPONSIVE ────────────────────────────────────────────── */
-@media(max-width:900px){.sidebar{width:226px;}}
-@media(max-width:640px){
-  .sidebar{display:none;}
-  .bot-nav{display:flex;}
-  .prob-row{grid-template-columns:1fr 1fr;}
-  .prob-row .delta-box{grid-column:1/-1;}
-  .kd-grid{grid-template-columns:1fr 1fr;}
-  .step-grid{grid-template-columns:1fr;}
-  .ob-grid{grid-template-columns:1fr;}
-  .tr-stats{grid-template-columns:1fr 1fr;}
-  .mhdr{padding:14px 16px 4px;}
-  .mcontent{padding:16px;}
-  .beta-note{margin:12px 16px 0;}
-  .tb-logo{font-size:17px;}
-  .tb-center{display:none;}
-}
-@media(max-width:400px){
-  .mhdr-title{font-size:16px;}
-  .pb-num{font-size:26px;}
-}
-@media(hover:none){.mitem{min-height:80px;}.tab{min-height:40px;}}
+  @media (max-width: 768px) {
+    .topbar { flex-wrap: wrap; gap: 12px; padding: 12px 16px; }
+    .search-wrap { order: 3; max-width: 100%; flex-basis: 100%; }
+    .main { padding: 16px; }
+    .stock-row { grid-template-columns: 32px 1.3fr 80px 90px; font-size: 13px; }
+    .stock-row .col-pe, .stock-row .col-punish, .stock-row .col-verdict { display: none; }
+    .scenarios { grid-template-columns: 1fr; }
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    .ap-verdict-bar { flex-wrap: wrap; }
+    .ap-target { margin-left: 0; width: 100%; text-align: left; }
+  }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════
-     MOBILE SHEET (market list overlay)
-══════════════════════════════════════════════════ -->
-<div class="sheet-back" id="sheetBack" onclick="closeSheet()">
-  <div class="sheet" onclick="event.stopPropagation()">
-    <div class="sheet-handle"></div>
-    <div id="sheetList"></div>
+<div class=&quot;topbar&quot;>
+  <div class=&quot;logo&quot;>
+    <span class=&quot;logo-dot&quot;></span>
+    VELU
+    <span class=&quot;logo-sub&quot;>EQUITY INTELLIGENCE</span>
+  </div>
+  <div class=&quot;search-wrap&quot;>
+    <span class=&quot;search-ico&quot;>⌕</span>
+    <input
+      type=&quot;text&quot;
+      class=&quot;search-input&quot;
+      id=&quot;tickerSearch&quot;
+      placeholder=&quot;Search any ticker — AAPL, MRVL, NVDA...&quot;
+      autocomplete=&quot;off&quot;
+      onkeydown=&quot;if(event.key==='Enter')analyzeTicker(this.value)&quot;
+    >
+  </div>
+  <div class=&quot;topbar-right&quot;>
+    <div class=&quot;status-live&quot;><span class=&quot;status-dot&quot;></span> Live</div>
+    <div class=&quot;clock&quot; id=&quot;clock&quot;>--:--:--</div>
+    <button onclick=&quot;window.parent.postMessage('velu-exit','*')&quot; style=&quot;font-family:var(--mono);font-size:11px;padding:7px 14px;border-radius:8px;background:var(--panel2);border:1px solid var(--b2);color:var(--mu);cursor:pointer;&quot;>← Home</button>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     SHELL
-══════════════════════════════════════════════════ -->
-<div class="shell">
+<div class=&quot;container&quot;>
+  <div class=&quot;main&quot;>
 
-  <!-- Top bar -->
-  <div class="topbar">
-    <div class="topbar-inner">
-      <span class="tb-logo">Velu Markets</span>
-      <div class="tb-center">
-        <span class="tb-beta">BETA</span>
-        <div class="tb-live">
-          <div class="tb-live-dot"></div>
-          <span class="tb-live-txt">8 MARKETS · APR 9, 2026</span>
+    <div class=&quot;section-kicker&quot;>The Edge Screener</div>
+    <div class=&quot;section-head&quot;>
+      <h1 class=&quot;section-title&quot;>Stocks the market is punishing</h1>
+    </div>
+    <p class=&quot;section-desc&quot;>
+      Companies trading 20%+ below their 52-week high, but with fundamentals that don't justify the sell-off.
+      Where the crowd overreacts, there's an edge. Click any stock for a full 3-agent analysis.
+    </p>
+
+    <div class=&quot;screener&quot;>
+      <div class=&quot;screener-head&quot;>
+        <div class=&quot;screener-title&quot;>
+          ⚡ Punishment Screener
+          <span class=&quot;screener-badge&quot; id=&quot;screenerCount&quot;>SCANNING...</span>
+        </div>
+        <button class=&quot;refresh-btn&quot; onclick=&quot;loadScreener()&quot;>↻ Refresh</button>
+      </div>
+      <div id=&quot;screenerBody&quot;>
+        <div class=&quot;loading&quot;>
+          <div class=&quot;spinner&quot;></div>
+          <div class=&quot;loading-txt&quot;>Scanning 500+ stocks for mispriced opportunities...</div>
         </div>
       </div>
-      <div class="tb-right">
-        <span class="tb-plan">FREE</span>
-        <span class="tb-time" id="clock">--:--:--</span>
-        <div class="user-menu">
-          <span class="user-chip" id="userChip">Guest</span>
-          <span class="tb-logout" onclick="logoutAndReturn()">Log out</span>
-        </div>
-        <span class="tb-home" onclick="if(parent&&parent.showHome) parent.showHome(true)">← Home</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Ticker -->
-  <div class="ticker">
-    <div class="ticker-inner">
-      <div class="tick"><span class="ts">S&P 500</span><span class="tv">5,074</span><span class="td">−3.5%</span></div>
-      <div class="tick"><span class="ts">NASDAQ</span><span class="tv">17,842</span><span class="td">−4.2%</span></div>
-      <div class="tick"><span class="ts">DOW</span><span class="tv">38,314</span><span class="td">−2.8%</span></div>
-      <div class="tick"><span class="ts">BTC/USD</span><span class="tv">68,780</span><span class="td">−2.1%</span></div>
-      <div class="tick"><span class="ts">ETH/USD</span><span class="tv">1,580</span><span class="td">−3.2%</span></div>
-      <div class="tick"><span class="ts">GOLD</span><span class="tv">3,108</span><span class="tu">+0.6%</span></div>
-      <div class="tick"><span class="ts">WTI OIL</span><span class="tv">61.42</span><span class="td">−3.8%</span></div>
-      <div class="tick"><span class="ts">EUR/USD</span><span class="tv">1.0942</span><span class="tu">+0.4%</span></div>
-      <div class="tick"><span class="ts">USD/JPY</span><span class="tv">148.32</span><span class="td">−0.8%</span></div>
-      <div class="tick"><span class="ts">10Y UST</span><span class="tv">4.38%</span><span class="tu">+2bp</span></div>
-      <div class="tick"><span class="ts">VIX</span><span class="tv">24.1</span><span class="tu">+3.2</span></div>
-      <div class="tick"><span class="ts">DAX</span><span class="tv">21,140</span><span class="td">−1.9%</span></div>
-      <div class="tick"><span class="ts">NIKKEI</span><span class="tv">34,208</span><span class="td">−3.9%</span></div>
-      <div class="tick"><span class="ts">FTSE</span><span class="tv">7,842</span><span class="td">−1.4%</span></div>
-      <!-- dupe -->
-      <div class="tick"><span class="ts">S&P 500</span><span class="tv">5,074</span><span class="td">−3.5%</span></div>
-      <div class="tick"><span class="ts">NASDAQ</span><span class="tv">17,842</span><span class="td">−4.2%</span></div>
-      <div class="tick"><span class="ts">BTC/USD</span><span class="tv">68,780</span><span class="td">−2.1%</span></div>
-      <div class="tick"><span class="ts">GOLD</span><span class="tv">3,108</span><span class="tu">+0.6%</span></div>
-      <div class="tick"><span class="ts">EUR/USD</span><span class="tv">1.0942</span><span class="tu">+0.4%</span></div>
-      <div class="tick"><span class="ts">10Y UST</span><span class="tv">4.38%</span><span class="tu">+2bp</span></div>
-      <div class="tick"><span class="ts">VIX</span><span class="tv">24.1</span><span class="tu">+3.2</span></div>
-    </div>
-  </div>
-
-  <!-- Body -->
-  <div class="t-body">
-
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <div class="sb-search">
-        <input class="sb-input" type="text" placeholder="Search markets…" id="srch" oninput="renderList()">
-      </div>
-      <div class="sb-filters">
-        <button class="sb-filter on" data-c="ALL" onclick="setFilter(this)">All</button>
-        <button class="sb-filter" data-c="FED" onclick="setFilter(this)">Fed</button>
-        <button class="sb-filter" data-c="CRYPTO" onclick="setFilter(this)">Crypto</button>
-        <button class="sb-filter" data-c="MACRO" onclick="setFilter(this)">Macro</button>
-      </div>
-      <div class="sb-head">
-        <span class="sb-head-label">MARKETS</span>
-        <span class="sb-head-stat">66% accuracy · 47 resolved</span>
-      </div>
-      <div class="sb-list" id="sbList"></div>
-      <div class="sb-footer">
-        <div class="sb-credits">FRED · CME · CoinGlass · ECB<br>BoJ · WGC · CoinGecko · GDPNow<br>Velu AI · Chain of Thought © 2026</div>
-      </div>
-    </div>
-
-    <!-- Main -->
-    <div class="main" id="main">
-      <div class="empty" id="emptyState">
-        <div class="empty-icon">⬡</div>
-        <div class="empty-txt">SELECT A MARKET<br>TO RUN VELU ANALYSIS<br><span style="font-size:10px;opacity:.6">8 features · 3 AI agents · Chain of Thought</span></div>
-      </div>
-      <div id="memoArea" style="display:none;flex:1;flex-direction:column;overflow:hidden;"></div>
     </div>
 
   </div>
+</div>
 
-  <!-- Mobile bottom nav -->
-  <div class="bot-nav">
-    <div class="bot-inner">
-      <button class="bn" onclick="openSheet()"><span class="bn-ico">☰</span><span class="bn-lbl">MARKETS</span></button>
-      <button class="bn on" id="bnMemo"   onclick="switchMobTab('MEMO')"><span class="bn-ico">📋</span><span class="bn-lbl">MEMO</span></button>
-      <button class="bn" id="bnAgents" onclick="switchMobTab('3 AGENTS')"><span class="bn-ico">🤖</span><span class="bn-lbl">AGENTS</span></button>
-      <button class="bn" id="bnTrack"  onclick="switchMobTab('TRACK RECORD')"><span class="bn-ico">🏆</span><span class="bn-lbl">TRACK</span></button>
-    </div>
-  </div>
-
-</div><!-- /shell -->
-
-<div class="auth-gate" id="authGate">
-  <div class="auth-card">
-    <div class="auth-eyebrow">ACCESS REQUIRED</div>
-    <div class="auth-title">Create your account first.</div>
-    <div class="auth-copy">Velu Markets is the home. Once you sign up or log in there, you unlock the terminal automatically.</div>
-    <div class="auth-actions">
-      <button class="auth-primary" onclick="if(parent&&parent.showHome) parent.showHome(true)">Go to home</button>
-      <button class="auth-secondary" onclick="if(parent&&parent.showHome) parent.showHome(true)">See plans</button>
-    </div>
-  </div>
+<!-- ANALYSIS MODAL -->
+<div class=&quot;analysis-backdrop&quot; id=&quot;analysisBackdrop&quot; onclick=&quot;if(event.target===this)closeAnalysis()&quot;>
+  <div class=&quot;analysis-panel&quot; id=&quot;analysisPanel&quot;></div>
 </div>
 
 <script>
-function getSession() {
-  try {
-    return parent && parent.getUnifiedSession ? parent.getUnifiedSession() : null;
-  } catch (_) {
-    return null;
-  }
-}
-
-function applySessionToUi() {
-  const session = getSession();
-  const chip = document.getElementById('userChip');
-
-  if (chip) {
-    chip.textContent = session?.user?.email || session?.user?.name || 'Velu User';
-  }
-
-  if (!session || !session.isAuthenticated) {
-    document.getElementById('authGate').classList.add('show');
-    return false;
-  }
-
-  document.getElementById('authGate').classList.remove('show');
-  return true;
-}
-
-function logoutAndReturn() {
-  if (parent && parent.showHome) parent.showHome(true);
-}
-
-function refreshUnifiedUser() {
-  applySessionToUi();
-}
-
+/* ── CLOCK ─────────────────────────────────────── */
 function updateClock() {
   const now = new Date();
   const el = document.getElementById('clock');
-  if (!el) return;
-  el.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  if (el) el.textContent = now.toLocaleTimeString('en-US', { hour12: false }) + ' ET';
 }
-
-/* ═══════════════════════════════════════════════════════════════
-   DATA
-═══════════════════════════════════════════════════════════════ */
-const MKTS = [
-  {
-    id:'fed', grp:'FED', cat:'FED POLICY', cls:'cat-fed',
-    title:'Will the Fed hold rates at the May 2026 meeting?',
-    crowd:98, ai:97, vol:'$57M', vol24h:'$2.1M', buy:54, sell:46,
-    days:28, resolves:'May 7, 2026', dx:-1,
-    kd:[{l:'PCE CORE',v:'2.8%',d:'vs 2.0% target',dc:'dd'},{l:'FEDWATCH',v:'98.2%',d:'CME official',dc:'dn'},{l:'RATE',v:'4.25–4.50%',d:null},{l:'NEXT MTG',v:'May 7',d:'28 days',dc:'dn'}],
-    news:[{src:'Bloomberg',h:'Powell signals patience as tariff inflation risk mounts',s:'s-neu',age:'3h'},{src:'WSJ',h:'Fed minutes show unanimous support for pause at March meeting',s:'s-neu',age:'1d'},{src:'Reuters',h:'CME FedWatch probability unchanged after strong jobs report',s:'s-neu',age:'2d'}],
-    cross:[{m:'US Recession <Jun?',c:32,i:'If recession hits, Fed would CUT — inconsistent with 98% pause',sig:'warn'},{m:'CPI ≥0.8% monthly?',c:96,i:'High inflation supports pause — consistent with crowd',sig:'ok'}],
-    ob:{flow:'+$420K YES (24h)',big:'$85K YES · 6h ago',smart:'Institutional buyer accumulating YES for 3 consecutive days'},
-    br:'Fed has NEVER cut with PCE >2.5% since 1990 except COVID emergency — historical base rate: 99% pause.',
-    reg:'April 2026 tariffs add +1.5–2pp CPI pressure (Goldman). Closes window further. Adjustment: zero change to base rate.',
-    hl:'Fed completely paralyzed: tariffs make any May move virtually impossible',
-    thesis:'The market at 98% is correctly priced. With PCE Core at 2.8% and tariffs adding structural inflationary pressure, the Fed has no political or economic room to move. The only deviation scenario would be a systemic dislocation (HY spreads >600bp; currently 385bp). Powell\'s March statement was explicitly data-dependent with no urgency.',
-    devil:'If Q1 GDP prints −0.8% or worse on April 30, the FOMC could face political pressure to act. But historically the Fed has preferred communication over emergency moves in moderate stress — 98% pause remains defensible.',
-    risk:'The market underestimates the risk that the Fed shifts forward guidance from "neutral" to "restrictive" without moving rates — that alone could send bonds down 3–5% in hours.',
-    bull:{p:97,t:'PCE holds, pause confirmed May 7',d:'Fifth consecutive hold. No data justifies a move. Powell conference will signal the path forward.'},
-    base:{p:2,t:'Surprise cut on rapid GDP deterioration',d:'Requires Q1 GDP < −0.8% on April 30 plus NFP < +50K in April.'},
-    bear:{p:1,t:'Emergency hike on tariff shock',d:'Practically impossible. Fed prefers communication over emergency hawkish moves.'},
-    watch:['PCE March — Wednesday April 30, 8:30am ET (most critical before FOMC)','NFP April — Friday May 2, 8:30am ET','Powell press conference — Wednesday May 7, 2:30pm ET'],
-    agents:[
-      {ico:'◈',name:'Macro Structuralist',col:'#0A84FF',prob:97,stance:'PAUSE',reas:'Structural inflation regime + tariff shock eliminates all room for action. Fifth hold is mechanically certain unless a systemic credit event forces the Fed\'s hand. HY spreads at 385bp — still 215bp from historical emergency threshold.'},
-      {ico:'◆',name:'Quantitative',col:'#FF9500',prob:98,stance:'PAUSE',reas:'Historical base rate: 99% pause with PCE >2.5%. CME FedWatch at 98.2%. Two independent sources converge. The 1pp divergence between my estimate and the market is statistical noise — within margin of error.'},
-      {ico:'◉',name:'Tail Risk',col:'#FF3B30',prob:91,stance:'PAUSE',reas:'Forward guidance risk: the Fed could shift rhetoric from "neutral" to "restrictive" without touching rates. That binary YES/NO question wouldn\'t capture this scenario, but it would cause significant market dislocations. I discount the pause probability slightly to account for this tail.'},
-    ],
-    synth:'Macro (97%) and Quant (98%) converge tightly. Tail Risk (91%) correctly identifies forward guidance as the underpriced risk. Final weighted probability: 97%. HIGH conviction — one of the clearest markets in the current set.',
-  },
-  {
-    id:'btc80', grp:'CRYPTO', cat:'CRYPTO', cls:'cat-btc',
-    title:'Will Bitcoin exceed $80,000 before September 30, 2026?',
-    crowd:12, ai:31, vol:'$6M', vol24h:'$380K', buy:38, sell:62,
-    days:174, resolves:'Sep 30, 2026', dx:19,
-    kd:[{l:'BTC TODAY',v:'$68,780',d:'−37% from ATH',dc:'dd'},{l:'TO $80K',v:'+16.3%',d:'174 days',dc:'dn'},{l:'FUNDING',v:'0.008%',d:'Neutral',dc:'dn'},{l:'ETF AUM',v:'$52B',d:'+$780M 7D',dc:'du'}],
-    news:[{src:'CoinDesk',h:'Bitcoin ETF inflows hit $471M, strongest weekly figure since February',s:'s-bull',age:'2d'},{src:'Bloomberg',h:'Tariff fears push crypto lower as risk-off sentiment spreads globally',s:'s-bear',age:'5h'},{src:'Reuters',h:'China tightens crypto enforcement ahead of trade talks with US',s:'s-bear',age:'1d'}],
-    cross:[{m:'US Recession <Jun?',c:32,i:'Recession would collapse BTC to $45–55K — strongly bearish for $80K',sig:'warn'},{m:'Gold beats BTC 2026?',c:55,i:'Crowd believes gold wins → implies BTC weakness → inconsistent with $80K thesis',sig:'warn'}],
-    ob:{flow:'−$28K YES (24h)',big:'$45K NO · 3h ago',smart:'Mixed flow. Small buyers in YES, large institutional seller in NO accumulating this week'},
-    br:'Post-halving: BTC +85%, +32%, +47% in 6mo (100% of 3 cases positive). Halving was 356 days ago — historically the "acceleration zone" for months 10–18.',
-    reg:'Tariffs + VIX 24.1 + 0.74 Nasdaq correlation apply −15pp discount to historical base. ETF AUM $52B with 6 positive-flow weeks partially offsets macro headwind.',
-    hl:'Crowd at 12% ignores the post-halving cycle: only +16% needed in 174 days',
-    thesis:'The crowd at 12% is significantly below the calibrated probability. BTC only needs +16.3% from $68,780 in 174 days — equivalent to 2.6 weeks of typical asset volatility. All three previous halvings produced positive returns in the subsequent 6 months (avg +55%). The macro headwind is legitimate but ETFs with $52B AUM and 6 consecutive positive-flow weeks create structural support that did not exist in previous halvings.',
-    devil:'In 2022, BTC fell 65% during high inflation. If stagflation is severe, institutional ETF holders will sell to cover losses in other positions. The post-halving base rate may not apply in a sustained macro stress environment — 2022 was also post-halving and produced no rally.',
-    risk:'The market is not pricing that months 10–12 post-halving are historically the strongest acceleration zone. The timing the crowd is ignoring is precisely when BTC has historically made its most powerful moves.',
-    bull:{p:31,t:'Tariff de-escalation triggers risk-on rally',d:'US-China deal or 90-day pause releases risk flows. BTC amplifies Nasdaq 1.5–2x. From $68,780, an 8% Nasdaq rally targets $82–85K BTC.'},
-    base:{p:52,t:'Consolidation $60K–$75K through Q3',d:'Mixed macro keeps BTC rangebound without a clear catalyst. ETFs provide support on dips but tariffs cap upside.'},
-    bear:{p:17,t:'US recession collapses risk assets below $50K',d:'Q1 and Q2 GDP both negative confirming technical recession. Institutional ETF selling cascades. BTC trades to $45–55K range.'},
-    watch:['Weekly BTC ETF flows — SoSoValue daily 9pm ET (most real-time institutional signal)','Q1 2026 GDP estimate — Wednesday April 30 (determines if recession narrative holds)','US-China tariff negotiation headlines — any official statement is the key trigger'],
-    agents:[
-      {ico:'◈',name:'Macro Structuralist',col:'#0A84FF',prob:25,stance:'BEARISH',reas:'The macro cycle is in deceleration. BTC\'s 0.74 correlation with Nasdaq makes it a pure risk asset that historically suffers in contractionary cycles. The post-halving base rate is real, but the macro headwind in 2022 also coincided with a post-halving period and produced no rally. I weight current regime heavily.'},
-      {ico:'◆',name:'Quantitative',col:'#FF9500',prob:38,stance:'BULLISH',reas:'Historical base rate: 100% of post-halving 6-month periods positive. Macro discount: −15pp. ETF structural support: +8pp. Net calibrated probability: 38%. The crowd at 12% is not anchored to any verifiable statistic — it\'s pure sentiment. There\'s a quantifiable edge here.'},
-      {ico:'◉',name:'Tail Risk',col:'#FF3B30',prob:29,stance:'NEUTRAL',reas:'The tail risk is bidirectional and asymmetric: a surprise tariff deal could send BTC to $90K+ in 72 hours. A severe recession could collapse it to $40K. The crowd at 12% underestimates BOTH tails — but especially the upside tail. The expected value of this market is significantly above 12%.'},
-    ],
-    synth:'All three agents land well above the crowd at 12% (range: 25–38%). The key divergence is how much weight to give the post-halving base rate vs. the current macro regime. Quant anchors to statistics; Macro weights the cycle. Final weighted: 31%. Clear edge over crowd — the 19pp gap is not noise.',
-  },
-  {
-    id:'rec', grp:'MACRO', cat:'MACRO', cls:'cat-mac',
-    title:'Will the US enter recession before June 30, 2026?',
-    crowd:32, ai:41, vol:'$22M', vol24h:'$1.8M', buy:61, sell:39,
-    days:82, resolves:'Jun 30, 2026', dx:9,
-    kd:[{l:'GDPNOW Q1',v:'+0.8%',d:'Atlanta Fed',dc:'dd'},{l:'PMI COMP.',v:'49.8',d:'3 months <50',dc:'dd'},{l:'GS PROB.',v:'35%',d:'↑ from 20%',dc:'dd'},{l:'SAHM RULE',v:'0.37%',d:'<0.5% threshold',dc:'dn'}],
-    news:[{src:'Goldman Sachs',h:'Recession probability raised to 35% on tariff shock, consumer confidence falls',s:'s-bear',age:'6d'},{src:'JPMorgan',h:'JPMorgan raises US recession odds to 40% for 2026, cuts GDP forecast',s:'s-bear',age:'5d'},{src:'WSJ',h:'Consumer confidence falls to lowest since July 2024 amid trade war fears',s:'s-bear',age:'2d'}],
-    cross:[{m:'Fed pause May?',c:98,i:'Fed paralyzed if recession + inflation hits simultaneously — stagflation is the worst case',sig:'warn'},{m:'CPI ≥0.8% monthly?',c:96,i:'Stagflation = recession + persistent inflation — amplifies the severity',sig:'warn'},{m:'BTC >$80K Sep?',c:12,i:'Crowd already pricing macro weakness in BTC — this is internally consistent',sig:'ok'}],
-    ob:{flow:'+$340K YES (24h)',big:'$120K YES · 8h ago',smart:'Strong institutional YES flow for 4 consecutive days. Possible information trading signal.'},
-    br:'PMI <50 for 3+ consecutive months + recently uninverted curve → recession probability in 6 months: 45% (NY Fed model, 1970–2025 data). Current PMI: 49.8 (3rd month below 50).',
-    reg:'April 2026 tariffs modeled at −1.2pp GDP impact for 2026 (Goldman Sachs). GDPNow fell from +2.4% (Q4 2025) to +0.8% for Q1 in 10 weeks — fastest deceleration since Q1 2020. Adjustment: +9pp above historical base rate.',
-    hl:'Crowd at 32% underestimates the deterioration speed: GDPNow already shows a virtual stall',
-    thesis:'The crowd at 32% is below institutional model averages of 37–40%. GDPNow dropped from +2.4% to +0.8% in 10 weeks — the sharpest Q1 deceleration since Q1 2020. PMI has been in contraction for 3 consecutive months. The Sahm Rule at 0.37% is below the 0.5% alarm threshold but accelerating upward. Note: the NBER takes 6–12 months to officially declare recessions, which creates timing risk for this market\'s June 30 resolution.',
-    devil:'Key counterargument: the NBER takes 6–12 months to officially declare a recession. Even if Q1 GDP prints slightly negative on April 30, the Polymarket market may not resolve YES before June 30. The crowd might be well-priced at 32% if interpreted strictly as "NBER declares recession before June 30" rather than "recession is occurring."',
-    risk:'The market underestimates "balance sheet recession" risk where corporations preemptively cut capex and hiring before official data confirms it — creating a self-fulfilling prophecy that accelerates the timeline.',
-    bull:{p:32,t:'Economy absorbs tariffs, Q1 GDP beats',d:'Resilient labor market (+228K NFP March) and consumer savings buffer the shock. Q1 GDP exceeds +1.5%, recession narrative collapses.'},
-    base:{p:41,t:'Q1 GDP near zero, NBER does not declare by June 30',d:'Q1 GDP in −0.3% to +0.5% range. NBER timing issue means market may not resolve YES even with recession underway.'},
-    bear:{p:27,t:'Q1 and Q2 GDP negative, technical recession confirmed',d:'Q1 GDP −0.8%+ (April 30). Fed forced into emergency action. Polymarket resolves YES before June 30.'},
-    watch:['Q1 GDP first estimate — Wednesday April 30, 8:30am ET (single most important data point)','Weekly initial jobless claims — every Thursday 8:30am ET (leading indicator)','ISM Manufacturing April — Thursday May 1 (alert if below 45 — signals severe deterioration)'],
-    agents:[
-      {ico:'◈',name:'Macro Structuralist',col:'#0A84FF',prob:48,stance:'BEARISH',reas:'Classic late-cycle pattern: recently uninverted curve, PMI in contraction, consumer confidence collapsing. This has preceded recession in 78% of historical cases since 1970. The tariff shock functions as an exogenous demand destruction event on top of existing cycle weakness. I place probability at 48%.'},
-      {ico:'◆',name:'Quantitative',col:'#FF9500',prob:43,stance:'BEARISH',reas:'Statistical base rate: 45%. Goldman at 35%, JPMorgan at 40%, institutional average: 37.5%. Sahm Rule at 0.37% and accelerating. GDPNow at 0.8%. All signals converge toward 40–45% range. My calibrated estimate: 43%.'},
-      {ico:'◉',name:'Tail Risk',col:'#FF3B30',prob:31,stance:'NEUTRAL',reas:'The NBER timing problem is real and materially changes the effective probability for THIS specific market. Even with a recession underway, Polymarket may not resolve YES by June 30. I adjust down to 31% specifically because of this resolution timing risk — not because I disagree on the macro trajectory.'},
-    ],
-    synth:'Important divergence: Macro (48%) and Quant (43%) see high recession probability, but Tail Risk (31%) correctly identifies the NBER timing problem specific to this Polymarket contract. Synthesis incorporates this distinction: probability of actual recession ~45%, but probability this contract resolves YES before June 30: 41%. Moderate edge over crowd at 32%.',
-  },
-  {
-    id:'gold', grp:'MACRO', cat:'COMMODITIES', cls:'cat-cmd',
-    title:'Will gold outperform Bitcoin in total return during 2026?',
-    crowd:55, ai:64, vol:'$730K', vol24h:'$42K', buy:58, sell:42,
-    days:266, resolves:'Dec 31, 2026', dx:9,
-    kd:[{l:'GOLD YTD',v:'+18.2%',d:'$3,108/oz',dc:'du'},{l:'BTC YTD',v:'−8.4%',d:'$68,780',dc:'dd'},{l:'CB BUYING Q1',v:'289 tonnes',d:'Record pace',dc:'du'},{l:'BTC–NDX ρ',v:'0.74',d:'90-day corr.',dc:'dn'}],
-    news:[{src:'World Gold Council',h:'Central bank gold buying on pace for second consecutive record year in 2026',s:'s-bull',age:'3d'},{src:'Bloomberg',h:'Gold hits $3,100 as tariff fears boost global safe-haven demand',s:'s-bull',age:'1d'},{src:'FT',h:'Bitcoin struggles as institutional investors rotate to gold amid macro uncertainty',s:'s-bear',age:'4d'}],
-    cross:[{m:'US Recession <Jun?',c:32,i:'Recession historically favors gold over BTC — supports gold wins thesis',sig:'ok'},{m:'BTC >$80K Sep?',c:12,i:'Weak crowd on BTC — consistent with gold outperforming in 2026',sig:'ok'},{m:'CPI ≥0.8% monthly?',c:96,i:'High persistent inflation = gold as structural hedge — strongly supports thesis',sig:'ok'}],
-    ob:{flow:'+$18K YES (24h)',big:'$22K YES · 1d ago',smart:'Low volume. Illiquid market. Order book signals should be weighted cautiously.'},
-    br:'In stagflation environments (inflation >3% + growth <1%), gold outperforms BTC in 100% of observed cases. 2022 reference: Gold −1%, BTC −65%. No exceptions found in data going back to 2010.',
-    reg:'Central banks bought 1,136 tonnes of gold in 2025 (record) and 289 tonnes in Q1 2026 alone. This structural demand creates price-inelastic buying that functions as a permanent put on gold prices. BTC has 0.74 correlation with Nasdaq — a pure risk asset that underperforms in stagflation by definition.',
-    hl:'Central bank structural buying and stagflation dynamics give gold a systematic advantage the crowd underestimates',
-    thesis:'The crowd at 55% underestimates two structural forces working simultaneously. First, systematic central bank buying (China, India, Turkey, Poland) creates inelastic demand at scale — 289 tonnes in Q1 2026 alone. Second, in stagflation environments gold outperforms risk assets in 100% of historical cases, while BTC with a 0.74 Nasdaq correlation is a textbook risk asset that suffers in stagflation by construction.',
-    devil:'A surprise US-China tariff deal announced overnight could reverse BTC sentiment in hours and push it above gold for the year before macro data justifies the move. The biggest risk to this thesis is a sudden political catalyst, not the economic fundamentals.',
-    risk:'The market underestimates how quickly a tariff deal could flip this trade. BTC can move +20% in days on a geopolitical headline. Gold does not. A surprise deal could make gold the loser for 2026 in weeks — before the data catches up.',
-    bull:{p:64,t:'Stagflation persists, CB purchases remain at record pace',d:'CPI stays above 3% while growth decelerates. Gold continues to appreciate with central bank structural demand as the floor.'},
-    base:{p:23,t:'BTC recovers to $85K+ in H2 on tariff resolution',d:'A US-China trade deal reactivates risk-on. BTC overtakes gold for the year. Requires a clear political catalyst before September.'},
-    bear:{p:13,t:'Liquidity crisis collapses both assets',d:'A Lehman-style event forces indiscriminate selling. Gold falls less (−15%) vs BTC (−40%+). Gold still wins relatively.'},
-    watch:['Monthly World Gold Council report — early May (final Q1 central bank purchase figures)','US-China tariff negotiations — any official statement is the single biggest trigger for this trade','Weekly GLD vs IBIT fund flows — as the institutional rotation barometer'],
-    agents:[
-      {ico:'◈',name:'Macro Structuralist',col:'#0A84FF',prob:70,stance:'GOLD WINS',reas:'The macro environment of stagflation is structurally gold-favorable by design. Central banks are systematically diversifying reserves away from the dollar toward gold — this is a secular trend, not cyclical. A single tariff deal doesn\'t reverse a multi-year structural shift in reserve allocation.'},
-      {ico:'◆',name:'Quantitative',col:'#FF9500',prob:62,stance:'GOLD WINS',reas:'Gold YTD: +18.2%. BTC YTD: −8.4%. For BTC to win 2026, it needs to outperform by ~27pp from here. Given 0.74 Nasdaq correlation and the macro backdrop, this requires a Nasdaq rally of ~35%+ from current levels. Not impossible, but statistically unlikely without a major regime change.'},
-      {ico:'◉',name:'Tail Risk',col:'#FF3B30',prob:58,stance:'NEUTRAL',reas:'The tail risk cuts both ways: a tariff deal sends BTC to $90K+ and gold loses. A financial crisis collapses BTC 50% while gold falls only 15%. Both tails favor gold. The bear tail (BTC wins) requires not just a tariff resolution but a complete risk-on regime shift. I stay at 58% for gold.'},
-    ],
-    synth:'Strong convergence across all three agents (58–70%) in favor of gold. The 12pp spread reflects different weights on the tariff resolution risk. Final weighted probability: 64%. Moderate but consistent edge over crowd at 55%. This market is underpriced for gold.',
-  },
-  {
-    id:'nvda', grp:'MACRO', cat:'EQUITIES', cls:'cat-eq',
-    title:'Will NVIDIA beat Q1 FY2026 consensus EPS?',
-    crowd:97, ai:95, vol:'$3M', vol24h:'$180K', buy:71, sell:29,
-    days:49, resolves:'May 28, 2026', dx:-2,
-    kd:[{l:'BEAT RATE',v:'8 of 8',d:'Last 8 quarters',dc:'du'},{l:'AVG EPS BEAT',v:'+12%',d:'Historical avg',dc:'du'},{l:'Q1 GUIDANCE',v:'$43B',d:'Conservative',dc:'dn'},{l:'OPTIONS IV',v:'±8%',d:'Post-earnings',dc:'dn'}],
-    news:[{src:'Bloomberg',h:'Microsoft Azure capex up 22% YoY — robust NVIDIA demand confirmed for Q1',s:'s-bull',age:'5d'},{src:'Reuters',h:'Commerce Dept reviewing additional chip export restrictions to China for H2 2026',s:'s-bear',age:'2d'},{src:'WSJ',h:'Meta increases AI infrastructure spending to $65B in 2026, NVIDIA primary beneficiary',s:'s-bull',age:'4d'}],
-    cross:[{m:'S&P 500 positive Q2?',c:52,i:'NVDA beat would support broader SPX — bidirectional positive relationship',sig:'ok'},{m:'US Recession <Jun?',c:32,i:'Recession would reduce enterprise AI spend but with a 6–12 month lag — not immediate',sig:'ok'}],
-    ob:{flow:'+$95K YES (24h)',big:'$35K YES · 12h ago',smart:'Consistent institutional YES accumulation. No contrarian positioning signals detected.'},
-    br:'NVIDIA beat rate: 8 of 8 last 8 quarters with average EPS beat of +12%. Implied historical probability: 94–96%. The market at 97% is within this range.',
-    reg:'Tariffs could affect chips exported to China ($3–4B revenue). But the $43B Q1 guidance already incorporates known restrictions — NVIDIA\'s finance team is conservative by design. Additional unanticipated restrictions are the only novel risk. Adjustment: −2pp for tail risk of surprise restrictions.',
-    hl:'8-for-8 beats and inelastic AI demand make a NVIDIA miss almost statistically impossible',
-    thesis:'With an 8/8 beat rate and average +12% EPS beat, the crowd at 97% is correctly calibrated. The $43B Q1 guidance was deliberately conservative — NVIDIA has guided below actual results in all 8 previous quarters. Hyperscaler GPU demand (Microsoft, Google, Meta, Amazon) is structurally inelastic in multi-year contracts that cannot be cancelled or reduced in a single quarter. The only realistic miss scenario involves unanticipated export restrictions announced in the final weeks of the quarter.',
-    devil:'The asymmetric risk here is not a miss — it\'s a "weak beat" that disappoints implicit expectations. If NVIDIA reports $46B (a +7% beat, below the historical average), the stock could fall −10% while Polymarket still resolves YES. The binary question doesn\'t capture this nuance — a YES resolution may coincide with a significant price decline.',
-    risk:'The market underestimates that even a technical beat could disappoint if Q2 guidance is below $49B. Implicit market expectations are significantly higher than the official consensus — a "weak beat" scenario could signal AI capex deceleration that spooks investors even with a YES resolution.',
-    bull:{p:95,t:'Beat >$47B with strong Q2 guidance',d:'EPS of $0.82–0.90 vs consensus $0.74. Q2 guide above $50B confirms secular AI demand narrative is intact.'},
-    base:{p:4,t:'Minimal beat $44–46B, inline Q2 guidance',d:'Barely exceeds consensus. Q2 guide in line with $46B expectations. Stock reacts flat to −5%, market resolves YES.'},
-    bear:{p:1,t:'Miss on unexpected China export restrictions',d:'New restrictions announced in final weeks of quarter impact $4B+ of unrecognizable revenue. The only realistic miss scenario.'},
-    watch:['Microsoft Azure and Google Cloud Q1 earnings this week — direct NVIDIA demand proxies','Commerce Department chip restriction announcements — any business day is a risk','NVIDIA Q1 earnings date — estimated May 28, 2026 after market close'],
-    agents:[
-      {ico:'◈',name:'Macro Structuralist',col:'#0A84FF',prob:93,stance:'BEAT',reas:'AI infrastructure spending is one of the few sectors maintaining investment momentum even in macro deceleration. Hyperscalers have multi-year contracts with NVIDIA that cannot be reduced in a single quarter. The demand is structurally inelastic to near-term macro conditions.'},
-      {ico:'◆',name:'Quantitative',col:'#FF9500',prob:96,stance:'BEAT',reas:'Historical base rate: 8/8 = 100% beat frequency. Adjusting for first-miss probability: 94–96%. The options market implies ±8% move, consistent with a beat being the base case. No quantitative signal suggests a miss.'},
-      {ico:'◉',name:'Tail Risk',col:'#FF3B30',prob:89,stance:'BEAT',reas:'The tail here is not a binary miss — it\'s a "weak beat" that triggers the next narrative: AI capex deceleration. I discount to 89% not because I expect a miss, but because I believe the market is underpricing the risk that even a YES resolution comes with a cautious tone that alters the forward narrative.'},
-    ],
-    synth:'High convergence across all three agents (89–96%). Tail Risk is the most conservative due to the "weak beat" narrative risk. This concern doesn\'t affect the binary YES/NO resolution but is worth flagging for positioning. Final probability: 95%. HIGH conviction.',
-  },
-  {
-    id:'btcwk', grp:'CRYPTO', cat:'CRYPTO', cls:'cat-btc',
-    title:'Will Bitcoin close above $70,000 this week?',
-    crowd:33, ai:39, vol:'$2M', vol24h:'$890K', buy:42, sell:58,
-    days:4, resolves:'Apr 13, 2026', dx:6,
-    kd:[{l:'BTC TODAY',v:'$68,780',d:'−1.7% from $70K',dc:'dd'},{l:'FUNDING',v:'0.008%',d:'Neutral',dc:'dn'},{l:'1-WK IV',v:'68% ann.',d:'Elevated',dc:'dd'},{l:'ETF TODAY',v:'+$94M',d:'6th pos. week',dc:'du'}],
-    news:[{src:'SoSoValue',h:'Bitcoin ETF net inflows $94M today — sixth consecutive week of positive flows',s:'s-bull',age:'6h'},{src:'Bloomberg',h:'JPMorgan and Wells Fargo earnings on Friday — key risk event for risk assets',s:'s-neu',age:'1d'},{src:'CoinGlass',h:'BTC open interest falls $2B as shorts build above $70K level',s:'s-bear',age:'8h'}],
-    cross:[{m:'BTC >$80K Sep?',c:12,i:'Failing to close above $70K this week makes the $80K target by September less likely',sig:'warn'}],
-    ob:{flow:'−$42K YES (24h)',big:'$18K NO · 2h ago',smart:'Slight institutional flow toward NO in last 12 hours. Possibly anticipating Friday risk-off from bank earnings.'},
-    br:'With BTC between −3% and +0% of target level and funding rate neutral (0.000–0.015%), historical probability of closing above the level in 5 days: approximately 40–45% — essentially a coin flip adjusted for momentum.',
-    reg:'Macro headwinds this week: JPMorgan and Wells Fargo earnings on Friday April 11 with significant uncertainty, VIX at 24.1, SPX down 3.5% last week. BTC correlation with Nasdaq at 0.74 applies −5pp headwind. ETF positive flows (+$94M today) provide partial offset.',
-    hl:'BTC vs $70K this week: close to a coin flip with Friday bank earnings as the key risk event',
-    thesis:'The crowd at 33% is reasonably calibrated for this high-uncertainty short-term event. BTC needs only +1.7% from $68,780 — less than one day of typical volatility. However, the timing is adverse: JPMorgan and Wells Fargo report Q1 earnings on Friday with high uncertainty about forward guidance under tariff conditions. BTC\'s 0.74 Nasdaq correlation means bank earnings are a direct risk for crypto.',
-    devil:'The upside case: ETFs have had 6 consecutive weeks of positive flows and the funding rate is neutral, meaning there are no overleveraged longs waiting to be liquidated. A clean, unlevered move to $70K could hold — this is not a blow-off top scenario. The market may be underpricing the ETF structural support.',
-    risk:'The 1-week implied volatility at 68% annualized is high for a rangebound asset — the options market is pricing a larger move than the spot price suggests, possibly anticipating a directional breakout after the bank earnings catalyst on Friday.',
-    bull:{p:39,t:'Bank earnings calm, ETF flows sustain',d:'No new negative headlines on tariffs. JPMorgan and Wells Fargo beat expectations. ETF flows stay positive. BTC closes above $70K organically by Thursday or Friday.'},
-    base:{p:44,t:'Consolidation $66K–$70K, no decisive catalyst',d:'BTC stays rangebound below $70K. Market waits for more macro clarity before taking directional positions. Closes the week between $67K and $70K.'},
-    bear:{p:17,t:'Bank earnings disappoint, risk-off cascade',d:'JPMorgan or Wells Fargo guide down significantly on tariff impact to net interest margins. Risk-off takes Nasdaq down 2%+ and BTC falls to $64–66K.'},
-    watch:['JPMorgan Q1 2026 earnings — Friday April 11, 7:00am ET pre-market (biggest catalyst)','Wells Fargo Q1 earnings — Friday April 11, 7:00am ET (concurrent)','BTC ETF daily flows — SoSoValue update 9pm ET each day'],
-    agents:[
-      {ico:'◈',name:'Macro Structuralist',col:'#0A84FF',prob:32,stance:'BEARISH',reas:'Bank earnings Friday under tariff uncertainty are a genuine macro risk event. Historical data shows BTC underperforms its expected return by 4–6pp in weeks with major bank earnings misses. With JPMorgan guiding conservatively, I weight the downside scenario more heavily. I place it at 32%.'},
-      {ico:'◆',name:'Quantitative',col:'#FF9500',prob:42,stance:'NEUTRAL',reas:'Statistical base rate with asset at −1.7% of level and neutral funding: 42%. The 1-week IV at 68% implies ±$4,600 range — $70K is within the upper half of the statistical distribution. No strong quantitative signal in either direction. Coin flip territory.'},
-      {ico:'◉',name:'Tail Risk',col:'#FF3B30',prob:41,stance:'NEUTRAL',reas:'Options positioning is interesting: more open interest in $72K calls than $65K puts. The market is asymmetrically positioned for upside, which could create a self-fulfilling breakout if the level is tested. But the Friday earnings risk is a genuine downside catalyst. I land at 41% — essentially aligned with the statistical base rate.'},
-    ],
-    synth:'All three agents give 32–42%, confirming this is genuinely close to a coin flip. The 10pp spread between Macro (32%) and Quant/Tail (41–42%) reflects genuine disagreement about the bank earnings risk weight. Final weighted: 39%. Edge over crowd at 33% is small — this market does not have a strong signal in either direction.',
-  },
-  {
-    id:'cpi', grp:'MACRO', cat:'MACRO', cls:'cat-mac',
-    title:'Will US monthly CPI exceed 0.8% in any month of 2026?',
-    crowd:96, ai:97, vol:'$596K', vol24h:'$28K', buy:67, sell:33,
-    days:266, resolves:'Dec 31, 2026', dx:1,
-    kd:[{l:'CPI MOM AVG',v:'0.28%',d:'24-month average',dc:'dn'},{l:'TARIFF IMPACT',v:'+1.5–2pp',d:'Goldman model',dc:'dd'},{l:'5Y BREAKEVEN',v:'2.89%',d:'Market expectation',dc:'dd'},{l:'SERVICES CPI',v:'4.1% YoY',d:'Persistent',dc:'dd'}],
-    news:[{src:'Goldman Sachs',h:'Tariffs to add 1.5–2pp to US CPI over the next 12 months, model updated',s:'s-bear',age:'6d'},{src:'BLS',h:'CPI March 2026 release today at 8:30am ET — consensus estimate +0.31% MoM',s:'s-neu',age:'today'},{src:'Cleveland Fed',h:'Inflation nowcast: April CPI projected at 0.38% MoM before tariff transmission',s:'s-bear',age:'2d'}],
-    cross:[{m:'Fed pause May?',c:98,i:'High inflation directly supports continued pause — fully consistent',sig:'ok'},{m:'US Recession <Jun?',c:32,i:'Stagflation = recession + persistent inflation — the worst possible Fed policy scenario',sig:'warn'}],
-    ob:{flow:'+$12K YES (24h)',big:'$8K YES · 1d ago',smart:'Very low volume. Market is essentially settled — minimal active trading.'},
-    br:'24-month average monthly CPI: 0.28% with standard deviation of 0.12%. Statistical probability that at least one month in 12 exceeds 0.8% without any tariff shock: ~72% by natural variance alone. With tariffs: ~97%.',
-    reg:'April 2026 tariffs (10% baseline, 34% on China) transmit to consumer prices in 2–4 months. Goldman models +1.5–2pp annual CPI impact. In monthly terms, May–June 2026 will almost certainly see CPI in the 0.7–1.0% range. Bond market\'s 5Y breakeven at 2.89% confirms market is already pricing persistent inflation.',
-    hl:'Trump tariffs make a monthly CPI above 0.8% mathematically inevitable sometime in 2026',
-    thesis:'The crowd at 96% is well-calibrated. The math is direct: a 0.28% monthly average CPI plus the tariff shock of +0.15–0.25pp per month in Q2–Q3 puts May–June 2026 in the 0.43–0.55% monthly range. But "at least one month >0.8%" is a low bar — all it takes is one month with concentrated price increases in tariff-affected goods categories. The bond market\'s 5Y breakeven at 2.89% confirms institutional markets are already pricing this.',
-    devil:'The only scenario where this resolves NO is a severe recession that collapses demand faster than tariffs transmit to prices. The transmission lag for tariffs is 2–4 months; the demand destruction lag in recession is 6–12 months. For NO to win, you need demand to collapse before May — that requires a financial crisis starting today. This is the weakest counterargument of any market in our set.',
-    risk:'The market underestimates that a monthly CPI above 0.8% would completely paralyze the Fed from cutting even in a recession — creating the worst possible stagflation policy trap that no asset class is correctly pricing.',
-    bull:{p:97,t:'Tariffs transmit to imported goods May–June',d:'Electronics, clothing, and autos — goods with highest tariff exposure — reprice in Q2. BLS May CPI (released June 10) has the highest probability of exceeding 0.8%.'},
-    base:{p:2,t:'Severe recession collapses demand before transmission',d:'Requires demand collapse before April tariffs reach consumer prices. Given the 2–4 month transmission lag vs 6–12 month recession lag, this is nearly impossible.'},
-    bear:{p:1,t:'Deflationary financial crisis suppresses all prices',d:'A 2008-style asset deflation event could temporarily suppress the CPI. Minimal probability given current consumer balance sheet health.'},
-    watch:['CPI March — today April 9, 8:30am ET (most immediate signal — currently releasing)','PPI March — Friday April 11, 8:30am ET (leading indicator for goods CPI)','CPI May — Wednesday June 10 (first reading with full tariff transmission)'],
-    agents:[
-      {ico:'◈',name:'Macro Structuralist',col:'#0A84FF',prob:97,stance:'YES',reas:'Tariffs are a mechanical supply shock that directly increases prices — this is not a demand-driven inflationary impulse that can be argued with. The transmission is as close to deterministic as macro gets. The only exit scenario is a financial crisis that collapses demand faster than prices can adjust. I have 97% confidence this resolves YES.'},
-      {ico:'◆',name:'Quantitative',col:'#FF9500',prob:98,stance:'YES',reas:'Pure statistics: with a 0.28% average and 0.12% standard deviation, the probability of NO month exceeding 0.8% in 12 months is already only 28% without any tariff shock. Adding +0.20pp monthly from tariffs in May–June pushes the YES probability to 97–98%. This is one of the highest-conviction markets in our dataset.'},
-      {ico:'◉',name:'Tail Risk',col:'#FF3B30',prob:94,stance:'YES',reas:'The tail risk here is a 2008-style financial crisis that collapses demand instantly. I assign that probability at 5–6%, which brings my YES estimate to 94%. The other 94% of scenarios produce at least one monthly CPI above 0.8%. Even in the Tail Risk framework, the NO case is extremely weak.'},
-    ],
-    synth:'Maximum convergence across all three agents (94–98%). Tail Risk is the most conservative at 94% due to the financial crisis tail. Final probability: 97%. HIGH conviction. The edge over the crowd at 96% is minimal — this market is correctly priced. No significant trade here, but the macro implications are significant.',
-  },
-  {
-    id:'fedem', grp:'FED', cat:'FED POLICY', cls:'cat-fed',
-    title:'Will there be an emergency Fed rate cut before January 1, 2027?',
-    crowd:15, ai:19, vol:'$3M', vol24h:'$210K', buy:44, sell:56,
-    days:267, resolves:'Jan 1, 2027', dx:4,
-    kd:[{l:'HY SPREADS',v:'385bp',d:'+80bp in 30D',dc:'dd'},{l:'HIST. THRESHOLD',v:'600bp',d:'For emergency',dc:'dn'},{l:'GDPNOW Q1',v:'+0.8%',d:'Falling fast',dc:'dd'},{l:'VIX',v:'24.1',d:'Elevated',dc:'dd'}],
-    news:[{src:'Bloomberg',h:'HY credit spreads widen to 385bp — highest level since October 2023',s:'s-bear',age:'1d'},{src:'FT',h:'Repo market shows signs of stress as banks increase liquidity hoarding behavior',s:'s-bear',age:'2d'},{src:'WSJ',h:'Fed has tools to provide liquidity without rate cuts, Powell says at closed-door event',s:'s-neu',age:'5d'}],
-    cross:[{m:'US Recession <Jun?',c:32,i:'Severe recession could force emergency action if HY spreads breach 600bp',sig:'warn'},{m:'Fed pause May?',c:98,i:'If pause in May, emergency cut before July requires a major systemic event — consistent',sig:'ok'}],
-    ob:{flow:'+$28K YES (24h)',big:'$15K YES · 4h ago',smart:'Small buyers accumulating YES. No clear institutional signal — retail-driven flow.'},
-    br:'Emergency Fed rate cuts: 3 in 40 years (1998: LTCM/Russia crisis, 2008: GFC, 2020: COVID). In all three cases, HY spreads exceeded 600bp BEFORE the emergency action. Current spreads: 385bp — 215bp below the historical emergency threshold.',
-    reg:'The tariff environment creates a stagflation risk that REDUCES the probability of emergency cuts: if the Fed cuts while inflation is at 2.8%, it risks losing credibility. This constraint did not exist in 1998, 2008, or 2020. Adjustment: neutral to slightly bearish vs historical base rate.',
-    hl:'Emergency cut unlikely at current spread levels: 385bp is 215bp from the historical emergency threshold',
-    thesis:'The crowd at 15% is reasonably calibrated, but our 19% estimate reflects that the deterioration in HY spreads (+80bp in 30 days) is approaching the historical threshold faster than the market seems to price. The key constraint: with PCE at 2.8%, a Fed emergency cut would risk triggering an inflationary credibility crisis — something that didn\'t exist as a constraint in the 1998, 2008, or 2020 emergencies.',
-    devil:'The Fed might provide emergency LIQUIDITY via balance sheet tools (QE, repo facilities) without touching the Federal Funds Rate. That response would not resolve this Polymarket market as YES — the question asks specifically about a rate cut. The crowd at 15% might actually be slightly high if you interpret the question strictly as "FFR cut" rather than "any emergency action."',
-    risk:'The market underestimates that the Fed could act via balance sheet tools without touching the rate — a distinction the Polymarket question doesn\'t capture. An emergency QE announcement without a rate cut could still rescue markets without triggering a YES resolution.',
-    bull:{p:15,t:'Markets stable, Fed maintains status quo',d:'HY spreads stabilize below 400bp, no systemic dislocations. Fed waits for scheduled meetings (June, July, September) for any rate actions.'},
-    base:{p:66,t:'Fed cuts gradually at scheduled meetings',d:'Economy deteriorates moderately. Fed cuts 25–50bp in June or September in orderly fashion. No need for the emergency mechanism.'},
-    bear:{p:19,t:'HY spreads breach 600bp — emergency triggered',d:'A credit event (major bank failure, repo market dislocation) forces an unscheduled meeting. The 2019 repo crisis is the closest modern precedent.'},
-    watch:['HY spreads daily — Bloomberg BAML HY OAS (alert if breaks above 450bp)', 'Overnight repo rates — SOFR vs FFR spread (alert if persistently above 50bp)', 'Fed balance sheet weekly — H.4.1 release every Thursday 4:30pm ET'],
-    agents:[
-      {ico:'◈',name:'Macro Structuralist',col:'#0A84FF',prob:22,stance:'POSSIBLE',reas:'The speed of spread widening (+80bp in 30 days) is the concerning signal. If this rate of deterioration continues for 60 more days, we breach the historical emergency threshold of 600bp. The Fed would then face the impossible choice between its inflation credibility and financial stability. I place it at 22%.'},
-      {ico:'◆',name:'Quantitative',col:'#FF9500',prob:17,stance:'UNLIKELY',reas:'Base rate: 3 emergencies in 40 years = 7.5% per year historically. Adjusting for the current elevated stress environment: 17%. The spread at 385bp is still 215bp from the historical threshold. In base rate terms, 17% is already an elevated probability for a mechanism that has only been used 3 times in modern history.'},
-      {ico:'◉',name:'Tail Risk',col:'#FF3B30',prob:20,stance:'NEUTRAL',reas:'The repo market stress signal from the FT article is not yet systemic but is worth monitoring. In September 2019, the repo market dislocated without clear advance warning and forced Fed action. A similar event could trigger emergency action even without HY spreads reaching 600bp. I hold at 20% — slightly above the crowd.'},
-    ],
-    synth:'All three agents converge at 17–22%, marginally above the crowd at 15%. The small divergence is mostly methodological noise at these probability levels. Final weighted: 19%. LOW conviction — there is no strong edge here. The most important monitoring signal is HY spreads approaching 450bp.',
-  },
-];
-
-const TRACK = {
-  total:47, correct:31, brier:0.14,
-  byCat:{'FED POLICY':{n:12,c:10,a:83},'CRYPTO':{n:18,c:11,a:61},'MACRO':{n:9,c:6,a:67},'EQUITIES':{n:8,c:4,a:50}},
-  recent:[
-    {q:'Fed pause March 2026?',crowd:94,ai:96,out:true,won:true},
-    {q:'BTC >$100K January?',crowd:68,ai:45,out:false,won:true},
-    {q:'US Recession Q4 2025?',crowd:22,ai:18,out:false,won:true},
-    {q:'NVIDIA beat Q4 2025?',crowd:95,ai:93,out:true,won:true},
-    {q:'BTC >$90K February?',crowd:71,ai:62,out:false,won:true},
-    {q:'Fed pause January 2026?',crowd:88,ai:91,out:true,won:false},
-  ],
-};
-
-/* ═══════════════════════════════════════════════════════════════
-   STATE
-═══════════════════════════════════════════════════════════════ */
-let current = null;
-let activeTab = 'MEMO';
-let catFilter = 'ALL';
-
-/* ═══════════════════════════════════════════════════════════════
-   CLOCK
-═══════════════════════════════════════════════════════════════ */
-(function clock(){
-  const el = document.getElementById('clock');
-  const tick = () => el.textContent = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  tick(); setInterval(tick,1000);
-})();
-
-/* ═══════════════════════════════════════════════════════════════
-   FILTER + LIST
-═══════════════════════════════════════════════════════════════ */
-function setFilter(btn){
-  document.querySelectorAll('.sb-filter').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  catFilter = btn.dataset.c;
-  renderList();
-}
-function getFiltered(){
-  const q = document.getElementById('srch').value.toLowerCase();
-  return MKTS.filter(m=>{
-    const gOk = catFilter==='ALL' || m.grp===catFilter;
-    const sOk = !q || m.title.toLowerCase().includes(q);
-    return gOk && sOk;
-  });
-}
-function renderList(){ document.getElementById('sbList').innerHTML = getFiltered().map(m=>mitemHTML(m)).join(''); }
-function renderSheetList(){ document.getElementById('sheetList').innerHTML = getFiltered().map(m=>mitemHTML(m,'sheet')).join(''); }
-
-function mitemHTML(m, mode=''){
-  const delta = Math.abs(m.ai - m.crowd);
-  const onclick = mode==='sheet' ? `pickMkt('${m.id}');closeSheet()` : `pickMkt('${m.id}')`;
-  return `<div class="mitem${current?.id===m.id?' on':''}" onclick="${onclick}">
-  <div class="mi-top">
-    <span class="mi-cat ${m.cls}">${m.cat}</span>
-    <div class="mi-badges">
-      ${delta>=10?`<span class="mi-edge">⚡Δ${delta}pp</span>`:''}
-      ${m.days<=7?`<span class="mi-urgent">●${m.days}D</span>`:''}
-    </div>
-  </div>
-  <p class="mi-title">${m.title}</p>
-  <div class="mi-probs">
-    <div class="mi-prob">
-      <div class="mi-ph"><span class="mi-pl">CROWD</span><span class="mi-pv" style="color:var(--mu)">${m.crowd}%</span></div>
-      <div class="mi-bar"><div class="mi-bf" style="width:${m.crowd}%;background:var(--b2)"></div></div>
-    </div>
-    <div class="mi-prob">
-      <div class="mi-ph"><span class="mi-pl">VELU</span><span class="mi-pv" style="color:var(--g2)">${m.ai}%</span></div>
-      <div class="mi-bar"><div class="mi-bf" style="width:${m.ai}%;background:var(--g)"></div></div>
-    </div>
-  </div>
-</div>`;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   PICK MARKET — shows loading then memo
-═══════════════════════════════════════════════════════════════ */
-async function pickMkt(id){
-  const m = MKTS.find(x=>x.id===id);
-  if(!m) return;
-  current = m;
-  activeTab = 'MEMO';
-  renderList();
-
-  document.getElementById('emptyState').style.display = 'none';
-  const area = document.getElementById('memoArea');
-  area.style.display = 'flex';
-  area.style.flexDirection = 'column';
-  area.style.overflow = 'hidden';
-  area.style.flex = '1';
-
-  // Render header immediately (no AI prob yet → loading state)
-  area.innerHTML = memoHeaderHTML(m, true) + `<div class="mcontent" id="tabContent"><div class="loading-wrap">${loadingHTML()}</div></div>`;
-  await runLoader();
-  // Now render full header + first tab
-  area.innerHTML = memoHeaderHTML(m, false) + `<div class="mcontent" id="tabContent"></div>`;
-  renderTab(m);
-}
-
-/* Loading sequence */
-function loadingHTML(){
-  const steps = [
-    'Fetching live macro data (FRED, CME, CoinGlass, ECB, BoJ)…',
-    'Step 1 · Anchoring calibrated historical base rates…',
-    'Step 2 · Adjusting for current global macro regime…',
-    'Step 3 · Running 3 independent agents in parallel…',
-    'Step 4 · Devil\'s Advocate challenging the thesis…',
-    'Step 5 · Synthesizer producing final weighted memo…',
-  ];
-  return `<div class="loading-tag">VELU INTELLIGENCE · CHAIN OF THOUGHT ANALYSIS</div>
-  ${steps.map((s,i)=>`<div class="ls${i===0?' active':''}" id="ls${i}"><div class="ls-dot"></div><span class="ls-txt">${s}</span></div>`).join('')}
-  <div class="loading-bar"><div class="loading-fill" id="lf" style="width:0%"></div></div>`;
-}
-async function runLoader(){
-  const total = 6;
-  for(let i=0;i<total;i++){
-    const el = document.getElementById(`ls${i}`);
-    if(!el) return; // user switched away
-    if(i>0){ const prev=document.getElementById(`ls${i-1}`); if(prev){prev.classList.remove('active');prev.classList.add('done');} }
-    el.classList.add('active');
-    const fill = document.getElementById('lf');
-    if(fill) fill.style.width=`${Math.round(((i+1)/total)*100)}%`;
-    await sleep(700);
-  }
-  await sleep(400);
-}
-function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
-
-/* ═══════════════════════════════════════════════════════════════
-   MEMO HEADER
-═══════════════════════════════════════════════════════════════ */
-function memoHeaderHTML(m, loading){
-  const delta = Math.abs(m.ai - m.crowd);
-  const hasEdge = delta >= 8;
-  const sub = m.ai > m.crowd ? 'HIGHER THAN CROWD' : 'LOWER THAN CROWD';
-  const tabs = ['MEMO','3 AGENTS','NEWS','CORRELATIONS','ORDER BOOK','TRACK RECORD'];
-  return `
-<div class="mhdr" id="mhdr">
-  <div class="mhdr-meta">
-    <span class="mi-cat ${m.cls}" style="padding:2px 8px;border-radius:4px;font-size:10px;font-family:var(--mono)">${m.cat}</span>
-    <span class="mhdr-info">${m.resolves} · ${m.days} days · ${m.vol} vol</span>
-    <a class="mhdr-poly" href="https://polymarket.com" target="_blank">↗ Polymarket</a>
-  </div>
-  <h2 class="mhdr-title">${m.title}</h2>
-  <div class="prob-row">
-    <div class="pbox">
-      <div class="pb-lbl">POLYMARKET CROWD</div>
-      <div class="pb-num crowd">${m.crowd}%</div>
-      <div class="pb-sub" style="color:var(--dim)">${m.vol} volume</div>
-    </div>
-    <div class="pbox ai">
-      <div class="pb-lbl">VELU AI</div>
-      ${loading
-        ? `<div style="display:flex;justify-content:center;padding:10px 0"><div style="width:20px;height:20px;border:2px solid var(--b1);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite"></div></div><div class="pb-sub" style="color:var(--g2)">Analyzing…</div>`
-        : `<div class="pb-num velu">${m.ai}%</div><div class="pb-sub" style="color:var(--g2)">${m.ai>m.crowd?'↑':'↓'} ${sub}</div>`
-      }
-    </div>
-    <div class="pbox delta-box">
-      <div class="pb-lbl">${hasEdge?'⚡ EDGE':'DELTA'}</div>
-      <div class="pb-num delta">Δ${delta}pp</div>
-      <div class="pb-sub" style="color:${hasEdge?'var(--g)':'#555'}">${hasEdge?'DETECTED':'NO EDGE'}</div>
-    </div>
-  </div>
-  ${!loading && hasEdge ? `<div class="edge-alert"><span class="ea-badge">⚡ EDGE Δ${delta}pp</span><span class="ea-text">Velu is ${m.ai>m.crowd?'more bullish':'more bearish'} than the crowd by ${delta} percentage points — Velu's analysis finds the crowd ${m.ai>m.crowd?'under':'over'}pricing this market.</span></div>` : ''}
-  ${!loading ? `<div class="tabs">${tabs.map(t=>`<button class="tab${activeTab===t?' on':''}" onclick="switchTab('${t}')">${t}</button>`).join('')}</div>` : ''}
-</div>`;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   TAB SWITCH
-═══════════════════════════════════════════════════════════════ */
-function switchTab(tab){
-  activeTab = tab;
-  // Re-render header to update active tab
-  const hdr = document.getElementById('mhdr');
-  if(hdr) hdr.outerHTML = memoHeaderHTML(current, false);
-  renderTab(current);
-}
-function switchMobTab(tab){
-  activeTab = tab;
-  ['Memo','Agents','Track'].forEach(t=>{
-    const b=document.getElementById('bn'+t);
-    if(b) b.classList.remove('on');
-  });
-  const map={'MEMO':'bnMemo','3 AGENTS':'bnAgents','TRACK RECORD':'bnTrack'};
-  const el = document.getElementById(map[tab]);
-  if(el) el.classList.add('on');
-  if(current){ const hdr=document.getElementById('mhdr'); if(hdr) hdr.outerHTML=memoHeaderHTML(current,false); renderTab(current); }
-}
-
-function renderTab(m){
-  const el = document.getElementById('tabContent');
-  if(!el) return;
-  const map = {
-    'MEMO': renderMemo,
-    '3 AGENTS': renderAgents,
-    'NEWS': renderNews,
-    'CORRELATIONS': renderCorr,
-    'ORDER BOOK': renderOB,
-    'TRACK RECORD': renderTrack,
-  };
-  el.innerHTML = (map[activeTab]||renderMemo)(m);
-  el.scrollTop = 0;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   TAB RENDERERS
-═══════════════════════════════════════════════════════════════ */
-function renderMemo(m){
-  return `
-  <div class="kd-grid">${m.kd.map(d=>`<div class="kd-cell"><div class="kd-l">${d.l}</div><div class="kd-v">${d.v}</div>${d.d?`<div class="kd-d ${d.dc||'dn'}">${d.d}</div>`:''}</div>`).join('')}</div>
-  <div class="step-grid">
-    <div class="sbox sbox-br"><div class="sbox-tag">STEP 1 · BASE RATE</div><div class="sbox-txt">${m.br}</div></div>
-    <div class="sbox sbox-rg"><div class="sbox-tag">STEP 2 · REGIME ADJUSTMENT</div><div class="sbox-txt">${m.reg}</div></div>
-  </div>
-  <div class="headline-box"><div class="hl-tag">STEP 3 · VELU MEMO · APR 9, 2026</div><div class="hl-h">${m.hl}</div></div>
-  <div class="thesis">${m.thesis}</div>
-  <div class="devil"><div class="devil-tag">STEP 4 · DEVIL'S ADVOCATE</div><div class="devil-txt">"${m.devil}"</div></div>
-  <div class="sc-label">STEP 5 · WEIGHTED SCENARIOS</div>
-  <div class="sc sc-bull"><div class="sc-h"><span class="sc-badge">BULL</span><span class="sc-trigger">${m.bull.t}</span><span class="sc-prob">${m.bull.p}%</span></div><div class="sc-bar"><div class="sc-fill" style="width:${m.bull.p}%"></div></div><div class="sc-det">${m.bull.d}</div></div>
-  <div class="sc sc-base"><div class="sc-h"><span class="sc-badge">BASE</span><span class="sc-trigger">${m.base.t}</span><span class="sc-prob">${m.base.p}%</span></div><div class="sc-bar"><div class="sc-fill" style="width:${m.base.p}%"></div></div><div class="sc-det">${m.base.d}</div></div>
-  <div class="sc sc-bear"><div class="sc-h"><span class="sc-badge">BEAR</span><span class="sc-trigger">${m.bear.t}</span><span class="sc-prob">${m.bear.p}%</span></div><div class="sc-bar"><div class="sc-fill" style="width:${m.bear.p}%"></div></div><div class="sc-det">${m.bear.d}</div></div>
-  <div class="risk-box"><div class="risk-tag">UNDERESTIMATED RISK</div><div class="risk-txt">${m.risk}</div></div>
-  <div class="watch-tag">WATCH LIST</div>
-  ${m.watch.map(w=>`<div class="watch-item"><span class="watch-arr">→</span><span class="watch-txt">${w}</span></div>`).join('')}`;
-}
-
-function renderAgents(m){
-  const agentColors = {'#0A84FF':'rgba(10,132,255,.1)','#FF9500':'rgba(255,149,0,.1)','#FF3B30':'rgba(255,59,48,.08)'};
-  return `<div class="agents-grid">
-  ${m.agents.map(a=>`
-  <div class="agent-card" style="border-left-color:${a.col};background:${agentColors[a.col]||'var(--off)'};">
-    <div class="ac-header">
-      <div class="ac-left"><span class="ac-icon" style="color:${a.col}">${a.ico}</span><div><div class="ac-name">${a.name}</div><div class="ac-stance" style="color:${a.col}">${a.stance}</div></div></div>
-      <div class="ac-prob" style="color:${a.col}">${a.prob}%</div>
-    </div>
-    <div class="ac-reas">"${a.reas}"</div>
-  </div>`).join('')}
-  <div class="synth-card">
-    <div class="synth-h"><div><div class="synth-name">⬡ Velu Synthesizer</div><div class="synth-sub">FINAL WEIGHTED PROBABILITY</div></div><div class="synth-prob">${m.ai}%</div></div>
-    <div class="synth-txt">${m.synth}</div>
-  </div>
-</div>`;
-}
-
-function renderNews(m){
-  const bull=m.news.filter(n=>n.s==='s-bull').length;
-  const bear=m.news.filter(n=>n.s==='s-bear').length;
-  const neu=m.news.length-bull-bear;
-  return `${m.news.map(n=>`
-  <div class="news-item">
-    <div class="ni-top"><div style="display:flex;gap:8px;align-items:center"><span class="ni-src">${n.src}</span><span class="ni-age">${n.age==='today'?'TODAY':n.age}</span></div>
-    <span class="ni-sent ${n.s}">${n.s==='s-bull'?'BULLISH':n.s==='s-bear'?'BEARISH':'NEUTRAL'}</span></div>
-    <p class="ni-h">${n.h}</p>
-  </div>`).join('')}
-  <div class="news-sentiment-box">
-    <div class="nsb-lbl">AGGREGATED SENTIMENT</div>
-    <div class="nsb-row">
-      <div class="nsb-stat"><div class="nsb-dot" style="background:var(--g2)"></div><span class="nsb-val" style="color:var(--g2)">${bull}</span><span class="nsb-name">Bullish</span></div>
-      <div class="nsb-stat"><div class="nsb-dot" style="background:var(--red)"></div><span class="nsb-val" style="color:var(--red)">${bear}</span><span class="nsb-name">Bearish</span></div>
-      <div class="nsb-stat"><div class="nsb-dot" style="background:var(--dim)"></div><span class="nsb-val" style="color:var(--dim)">${neu}</span><span class="nsb-name">Neutral</span></div>
-    </div>
-  </div>`;
-}
-
-function renderCorr(m){
-  const warns = m.cross.filter(c=>c.sig==='warn').length;
-  return `${m.cross.map(c=>`
-  <div class="corr-item ${c.sig}">
-    <div class="ci-top">
-      <div><div class="ci-mkt">${c.m}</div><div class="ci-crowd">Crowd: ${c.c}%</div></div>
-      <span class="ci-sig ${c.sig}">${c.sig==='warn'?'⚠ INCONSISTENT':'✓ CONSISTENT'}</span>
-    </div>
-    <div class="ci-impl">${c.i}</div>
-  </div>`).join('')}
-  <div style="margin-top:8px;background:var(--off);border:1px solid var(--b1);border-radius:10px;padding:12px;">
-    <div style="font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.08em;margin-bottom:6px">CROSS-MARKET SYNTHESIS</div>
-    <div style="font-size:11px;color:var(--mu);font-family:var(--mono);line-height:1.6">${warns===0?'All related markets are internally consistent. No contradictions detected.':warns+' inconsistency('+(warns>1?'ies':'y')+') detected between related markets. These contradictions suggest the crowd may be mispriced in at least one of these markets simultaneously.'}</div>
-  </div>`;
-}
-
-function renderOB(m){
-  return `<div class="ob-grid">
-  <div class="ob-box">
-    <div class="ob-lbl">BUY / SELL SPLIT (24H)</div>
-    <div class="ob-flow-row">
-      <span class="ob-side" style="color:var(--g2)">BUY</span>
-      <div class="ob-track"><div class="ob-bar" style="width:${m.buy}%;background:rgba(0,255,136,.18);"><span style="color:var(--g2)">${m.buy}%</span></div></div>
-    </div>
-    <div class="ob-flow-row">
-      <span class="ob-side" style="color:var(--red)">SELL</span>
-      <div class="ob-track"><div class="ob-bar" style="width:${m.sell}%;background:rgba(255,59,48,.18);"><span style="color:var(--red)">${m.sell}%</span></div></div>
-    </div>
-  </div>
-  <div class="ob-box">
-    <div class="ob-lbl">SMART MONEY SIGNALS</div>
-    <div class="ob-detail">Net flow 24h: <span class="ob-val">${m.ob.flow}</span></div>
-    <div class="ob-detail">Largest trade: <span class="ob-val">${m.ob.big}</span></div>
-    <div class="ob-detail" style="margin-top:6px;line-height:1.7">${m.ob.smart}</div>
-  </div>
-</div>
-<div style="background:var(--off);border:1px solid var(--b1);border-radius:10px;padding:12px;">
-  <div style="font-size:9px;color:var(--dim);font-family:var(--mono);letter-spacing:.08em;margin-bottom:6px">INTERPRETATION</div>
-  <div style="font-size:11px;color:var(--mu);font-family:var(--mono);line-height:1.6">${m.buy>57?'Buyers dominate the order book. Positive net flow toward YES suggests the market continues positioning in the current direction.':m.sell>57?'Sellers dominate. Significant selling pressure on YES — the crowd may be distributing its position.':'Order book is balanced between buyers and sellers. No clear directional signal. Market is in wait-and-see mode pending the next data release.'}</div>
-</div>`;
-}
-
-function renderTrack(){
-  const acc = Math.round(TRACK.correct/TRACK.total*100);
-  return `<div class="tr-stats">
-  ${[{l:'MARKETS RESOLVED',v:TRACK.total,c:'var(--ink)'},{l:'CORRECT',v:TRACK.correct,c:'var(--g2)'},{l:'ACCURACY',v:acc+'%',c:'var(--ink)'},{l:'BRIER SCORE',v:TRACK.brier,c:'#0A84FF'}].map(s=>`<div class="tr-stat"><div class="tr-sl">${s.l}</div><div class="tr-sv" style="color:${s.c}">${s.v}</div></div>`).join('')}
-</div>
-<div class="tr-dots-lbl">LAST ${TRACK.total} PREDICTIONS</div>
-<div class="tr-dots">${Array.from({length:TRACK.total}).map((_,i)=>`<div class="tr-dot" style="background:${i<TRACK.correct?'var(--g)':'rgba(255,59,48,.35)'}"></div>`).join('')}</div>
-<div class="tr-cat-lbl">ACCURACY BY CATEGORY</div>
-<div>${Object.entries(TRACK.byCat).map(([cat,d])=>`<div class="tr-cat-row"><div class="tr-ch"><span class="tr-cn">${cat}</span><span class="tr-ca" style="color:${d.a>=70?'var(--g2)':d.a>=55?'var(--amb)':'var(--red)'}">${d.a}% (${d.c}/${d.n})</span></div><div class="tr-cb"><div class="tr-cf" style="width:${d.a}%;background:${d.a>=70?'var(--g)':d.a>=55?'var(--amb)':'var(--red)'}"></div></div></div>`).join('')}</div>
-<div class="tr-rec-lbl" style="margin-top:16px">RECENT RESOLVED PREDICTIONS</div>
-${TRACK.recent.map(r=>`<div class="tr-rec-row"><span class="tr-rq">${r.q}</span><div class="tr-rv"><span style="font-size:10px;color:var(--dim);font-family:var(--mono)">Crowd ${r.crowd}%</span><span style="font-size:10px;color:var(--g2);font-family:var(--mono)">Velu ${r.ai}%</span><span style="font-size:11px;font-weight:600;font-family:var(--mono);color:${r.out?'var(--g2)':'var(--red)'}">${r.out?'YES':'NO'}</span><span style="font-size:10px;font-family:var(--mono);color:${r.won?'var(--g2)':'var(--red)'}">${r.won?'✓':'✗'}</span></div></div>`).join('')}`;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   MOBILE SHEET
-═══════════════════════════════════════════════════════════════ */
-function openSheet(){ renderSheetList(); document.getElementById('sheetBack').classList.add('open'); document.body.style.overflow='hidden'; }
-function closeSheet(){ document.getElementById('sheetBack').classList.remove('open'); document.body.style.overflow=''; }
-
-/* ═══════════════════════════════════════════════════════════════
-   INIT
-═══════════════════════════════════════════════════════════════ */
-renderList();
-applySessionToUi();
-updateClock();
 setInterval(updateClock, 1000);
+updateClock();
+
+/* ── SCREENER ──────────────────────────────────── */
+async function loadScreener() {
+  const body = document.getElementById('screenerBody');
+  const countBadge = document.getElementById('screenerCount');
+  body.innerHTML = '<div class=&quot;loading&quot;><div class=&quot;spinner&quot;></div><div class=&quot;loading-txt&quot;>Scanning 500+ stocks for mispriced opportunities...</div></div>';
+  countBadge.textContent = 'SCANNING...';
+
+  try {
+    const res = await fetch('/api/screener');
+    if (!res.ok) throw new Error('Screener request failed');
+    const data = await res.json();
+
+    if (!data.stocks || data.stocks.length === 0) {
+      body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>◎</div>No punished stocks match the criteria right now. Markets may be broadly strong today.</div>';
+      countBadge.textContent = '0 FOUND';
+      return;
+    }
+
+    countBadge.textContent = data.stocks.length + ' FOUND';
+
+    const maxPunish = Math.max(...data.stocks.map(s => s.punishmentScore));
+
+    let html = `
+      <div class=&quot;stock-row header&quot;>
+        <div>#</div>
+        <div>Company</div>
+        <div>Price</div>
+        <div>Today</div>
+        <div class=&quot;col-pe&quot;>P/E</div>
+        <div class=&quot;col-punish&quot;>Punishment</div>
+        <div class=&quot;col-verdict&quot;>From High</div>
+      </div>
+    `;
+
+    data.stocks.forEach((s, i) => {
+      const changeClass = s.changePct >= 0 ? 'up' : 'down';
+      const changeSign = s.changePct >= 0 ? '+' : '';
+      const barWidth = Math.max(20, (s.punishmentScore / maxPunish) * 80);
+
+      html += `
+        <div class=&quot;stock-row&quot; onclick=&quot;analyzeTicker('${s.symbol}')&quot;>
+          <div class=&quot;rank&quot;>${String(i + 1).padStart(2, '0')}</div>
+          <div class=&quot;stock-sym&quot;>
+            <span class=&quot;sym-ticker&quot;>${s.symbol}</span>
+            <span class=&quot;sym-name&quot;>${s.name || ''}</span>
+          </div>
+          <div class=&quot;stock-price&quot;>$${s.price?.toFixed(2)}</div>
+          <div class=&quot;stock-change ${changeClass}&quot;>${changeSign}${s.changePct?.toFixed(2)}%</div>
+          <div class=&quot;stock-pe col-pe&quot;>${s.pe?.toFixed(1) || '—'}</div>
+          <div class=&quot;punish-bar-wrap col-punish&quot;>
+            <div class=&quot;punish-bar&quot; style=&quot;width:${barWidth}px&quot;></div>
+            <span class=&quot;punish-val&quot;>${s.punishmentScore}</span>
+          </div>
+          <div class=&quot;stock-change down col-verdict&quot;>−${s.from52High}%</div>
+        </div>
+      `;
+    });
+
+    body.innerHTML = html;
+
+  } catch (err) {
+    console.error('Screener error:', err);
+    body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>⚠</div>Could not load the screener. The market data service may be rate-limited. Try again in a moment.</div>';
+    countBadge.textContent = 'ERROR';
+  }
+}
+
+/* ── TICKER ANALYSIS ───────────────────────────── */
+async function analyzeTicker(symbol) {
+  if (!symbol || !symbol.trim()) return;
+  const ticker = symbol.trim().toUpperCase();
+
+  const backdrop = document.getElementById('analysisBackdrop');
+  const panel = document.getElementById('analysisPanel');
+  backdrop.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  panel.innerHTML = `
+    <div class=&quot;ap-head&quot;>
+      <button class=&quot;ap-close&quot; onclick=&quot;closeAnalysis()&quot;>×</button>
+      <div class=&quot;ap-ticker-row&quot;><span class=&quot;ap-ticker&quot;>${ticker}</span></div>
+    </div>
+    <div class=&quot;loading&quot;>
+      <div class=&quot;spinner&quot;></div>
+      <div class=&quot;loading-txt&quot;>Running 3-agent analysis on ${ticker}...</div>
+    </div>
+  `;
+
+  try {
+    const res = await fetch('/api/analyze-stock', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ symbol: ticker })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Analysis failed');
+    }
+
+    const { stockData, analysis } = await res.json();
+    renderAnalysis(stockData, analysis);
+
+  } catch (err) {
+    console.error('Analysis error:', err);
+    panel.innerHTML = `
+      <div class=&quot;ap-head&quot;>
+        <button class=&quot;ap-close&quot; onclick=&quot;closeAnalysis()&quot;>×</button>
+        <div class=&quot;ap-ticker-row&quot;><span class=&quot;ap-ticker&quot;>${ticker}</span></div>
+      </div>
+      <div class=&quot;error-box&quot;>
+        <div class=&quot;err-ico&quot;>⚠</div>
+        Could not analyze ${ticker}. ${err.message.includes('not found') ? 'Ticker not found — check the symbol.' : 'The analysis service may be busy. Try again.'}
+      </div>
+    `;
+  }
+}
+
+function renderAnalysis(s, a) {
+  const panel = document.getElementById('analysisPanel');
+  const changeClass = s.changePct >= 0 ? 'up' : 'down';
+  const changeSign = s.changePct >= 0 ? '+' : '';
+
+  const verdictClass = a.verdict === 'BUY' ? 'v-buy' : a.verdict === 'SELL' ? 'v-sell' : 'v-hold';
+  const upsideClass = a.upside >= 0 ? 'up' : 'down';
+  const upsideSign = a.upside >= 0 ? '+' : '';
+
+  const stanceClass = (st) => st === 'BULLISH' ? 'st-bullish' : st === 'BEARISH' ? 'st-bearish' : 'st-neutral';
+  const agentIcons = ['◈', '◆', '◉'];
+
+  panel.innerHTML = `
+    <div class=&quot;ap-head&quot;>
+      <button class=&quot;ap-close&quot; onclick=&quot;closeAnalysis()&quot;>×</button>
+      <div class=&quot;ap-ticker-row&quot;>
+        <span class=&quot;ap-ticker&quot;>${s.symbol}</span>
+        <span class=&quot;ap-name&quot;>${s.name}</span>
+      </div>
+      <div class=&quot;ap-price-row&quot;>
+        <span class=&quot;ap-price&quot;>$${s.price?.toFixed(2)}</span>
+        <span class=&quot;ap-change ${changeClass}&quot;>${changeSign}${s.changePct?.toFixed(2)}% today</span>
+      </div>
+    </div>
+
+    <div class=&quot;ap-verdict-bar&quot;>
+      <div class=&quot;verdict-big ${verdictClass}&quot;>${a.verdict}</div>
+      <div class=&quot;verdict-meta&quot;>
+        <span class=&quot;vm-label&quot;>Conviction</span>
+        <span class=&quot;vm-value&quot;>${a.conviction}</span>
+      </div>
+      <div class=&quot;ap-target&quot;>
+        <div class=&quot;target-price&quot;>$${a.targetPrice}</div>
+        <div class=&quot;target-upside ${upsideClass}&quot;>${upsideSign}${a.upside}% 12mo target</div>
+      </div>
+    </div>
+
+    <div class=&quot;ap-body&quot;>
+      ${a.isPunished ? `<div class=&quot;edge-tag&quot;>⚡ EDGE DETECTED — ${a.edge}</div>` : ''}
+
+      <div class=&quot;ap-thesis&quot;>${a.thesis}</div>
+
+      <div class=&quot;ap-section-label&quot;>3-Agent Analysis</div>
+      <div class=&quot;agents-grid&quot;>
+        ${a.agents.map((ag, i) => `
+          <div class=&quot;agent-card&quot;>
+            <div class=&quot;agent-head&quot;>
+              <span class=&quot;agent-icon&quot;>${agentIcons[i]}</span>
+              <span class=&quot;agent-name&quot;>${ag.name}</span>
+              <span class=&quot;agent-stance ${stanceClass(ag.stance)}&quot;>${ag.stance}</span>
+            </div>
+            <div class=&quot;agent-reason&quot;>${ag.reasoning}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class=&quot;ap-section-label&quot;>Scenario Analysis</div>
+      <div class=&quot;scenarios&quot;>
+        <div class=&quot;scenario sc-bull&quot;>
+          <div class=&quot;scenario-head&quot;>
+            <span class=&quot;scenario-label&quot;>BULL</span>
+            <span class=&quot;scenario-prob&quot;>${a.bull.prob}%</span>
+          </div>
+          <div class=&quot;scenario-txt&quot;>${a.bull.scenario}</div>
+        </div>
+        <div class=&quot;scenario sc-base&quot;>
+          <div class=&quot;scenario-head&quot;>
+            <span class=&quot;scenario-label&quot;>BASE</span>
+            <span class=&quot;scenario-prob&quot;>${a.base.prob}%</span>
+          </div>
+          <div class=&quot;scenario-txt&quot;>${a.base.scenario}</div>
+        </div>
+        <div class=&quot;scenario sc-bear&quot;>
+          <div class=&quot;scenario-head&quot;>
+            <span class=&quot;scenario-label&quot;>BEAR</span>
+            <span class=&quot;scenario-prob&quot;>${a.bear.prob}%</span>
+          </div>
+          <div class=&quot;scenario-txt&quot;>${a.bear.scenario}</div>
+        </div>
+      </div>
+
+      <div class=&quot;ap-section-label&quot;>Key Metrics</div>
+      <div class=&quot;metrics-grid&quot;>
+        <div class=&quot;metric&quot;><div class=&quot;metric-label&quot;>P/E Ratio</div><div class=&quot;metric-value&quot;>${s.pe?.toFixed(1) || '—'}</div></div>
+        <div class=&quot;metric&quot;><div class=&quot;metric-label&quot;>Market Cap</div><div class=&quot;metric-value&quot;>$${(s.marketCap / 1e9)?.toFixed(1)}B</div></div>
+        <div class=&quot;metric&quot;><div class=&quot;metric-label&quot;>From 52W High</div><div class=&quot;metric-value down&quot;>−${s.from52High}%</div></div>
+        <div class=&quot;metric&quot;><div class=&quot;metric-label&quot;>Beta</div><div class=&quot;metric-value&quot;>${s.beta?.toFixed(2) || '—'}</div></div>
+        <div class=&quot;metric&quot;><div class=&quot;metric-label&quot;>ROE</div><div class=&quot;metric-value&quot;>${s.roe ? (s.roe * 100).toFixed(1) + '%' : '—'}</div></div>
+        <div class=&quot;metric&quot;><div class=&quot;metric-label&quot;>Net Margin</div><div class=&quot;metric-value&quot;>${s.netMargin ? (s.netMargin * 100).toFixed(1) + '%' : '—'}</div></div>
+        <div class=&quot;metric&quot;><div class=&quot;metric-label&quot;>Debt/Equity</div><div class=&quot;metric-value&quot;>${s.debtToEquity?.toFixed(2) || '—'}</div></div>
+        <div class=&quot;metric&quot;><div class=&quot;metric-label&quot;>52W Range</div><div class=&quot;metric-value&quot; style=&quot;font-size:12px&quot;>$${s.yearLow?.toFixed(0)}–$${s.yearHigh?.toFixed(0)}</div></div>
+      </div>
+
+      <div class=&quot;ap-section-label&quot;>What to Watch</div>
+      <div class=&quot;watch-list&quot;>
+        ${a.watchItems.map(w => `<div class=&quot;watch-item&quot;><span class=&quot;watch-bullet&quot;>▸</span><span>${w}</span></div>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function closeAnalysis() {
+  document.getElementById('analysisBackdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ── INIT ──────────────────────────────────────── */
+loadScreener();
 </script>
 </body>
 </html>
@@ -3712,6 +3105,18 @@ document.addEventListener('click', function(e) {
   // Don't close if clicking inside the wrap OR inside the dropdown itself
   if (!e.target.closest('.ob-country-wrap') && !e.target.closest('.ob-country-dropdown')) {
     dd.classList.remove('open');
+  }
+});
+
+
+/* Handle exit from terminal iframe */
+window.addEventListener('message', function(e) {
+  if (e.data === 'velu-exit') {
+    var tv = document.getElementById('unifiedTerminalView');
+    var hv = document.getElementById('unifiedHomeView');
+    if (tv) { tv.style.display = 'none'; tv.setAttribute('aria-hidden','true'); }
+    if (hv) { hv.style.display = 'block'; }
+    document.body.style.overflow = '';
   }
 });
 
