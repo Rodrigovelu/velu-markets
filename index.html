@@ -580,19 +580,46 @@ button { cursor: pointer; border: none; background: none; font-family: var(--san
 
 
 /* Country Dropdown */
-.ob-country-wrap{position:relative;margin-bottom:8px;z-index:9999;}
-.ob-country-search-wrap{display:flex;align-items:center;gap:10px;border:1px solid var(--b1);border-radius:10px;padding:10px 14px;background:var(--bg2);transition:border-color .15s;}
-.ob-country-search-wrap:focus-within{border-color:var(--g2);}
-.ob-country-flag{font-size:22px;flex-shrink:0;}
-.ob-country-input{flex:1;background:transparent;border:none;outline:none;font-size:14px;color:var(--ink);font-family:var(--sans);}
-.ob-country-input::placeholder{color:var(--dim);}
-.ob-country-dropdown{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--bg);border:1px solid var(--b1);border-radius:10px;max-height:220px;overflow-y:auto;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.25);}
+.ob-country-wrap{position:relative;margin-bottom:0;}
+.ob-country-search-wrap{
+  display:flex;align-items:center;gap:12px;
+  border:2px solid #e0e0e0;border-radius:14px;
+  padding:14px 18px;background:#ffffff;
+  transition:border-color .2s, box-shadow .2s;
+}
+.ob-country-search-wrap:focus-within{
+  border-color:#00FF88;
+  box-shadow:0 0 0 4px rgba(0,255,136,.1);
+}
+.ob-country-flag{font-size:26px;flex-shrink:0;line-height:1;}
+.ob-country-input{
+  flex:1;background:transparent;border:none;outline:none;
+  font-size:16px;color:#111;font-family:var(--sans);
+}
+.ob-country-input::placeholder{color:#bbb;}
+.ob-country-dropdown{
+  display:none;position:absolute;
+  top:calc(100% + 6px);left:0;right:0;
+  background:#ffffff;
+  border:1.5px solid #e0e0e0;
+  border-radius:14px;
+  max-height:260px;overflow-y:auto;
+  z-index:99999;
+  box-shadow:0 16px 48px rgba(0,0,0,.18);
+}
 .ob-country-dropdown.open{display:block;}
-.ob-country-opt{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;font-size:13px;color:var(--ink);transition:background .1s;}
-.ob-country-opt:hover{background:var(--bg2);}
-.ob-country-opt .cflag{font-size:18px;}
+.ob-country-opt{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 18px;cursor:pointer;
+  font-size:14px;color:#111;
+  transition:background .1s;
+  border-bottom:0.5px solid #f2f2f2;
+}
+.ob-country-opt:last-child{border-bottom:none;}
+.ob-country-opt:hover{background:#f7f7f7;}
+.ob-country-opt.selected{background:#f0fff8;color:#00AA55;}
+.ob-cflag{font-size:20px;flex-shrink:0;}
 
-.ob-grid{position:relative;z-index:1;}
 </style>
 
 <style id="velu-premium-ux-override">
@@ -1084,11 +1111,12 @@ body{
       <h2 class="ob-title" id="obTitle">Help us tailor Velu to you</h2>
       <p class="ob-sub">This takes less than a minute and helps us shape your first terminal experience around who you are, how you think, and what you care about most.</p>
       <div class="ob-steps">
-        <span class="ob-step-pill active" data-ob-step-pill="1">Identity</span>
-        <span class="ob-step-pill" data-ob-step-pill="2">Experience</span>
-        <span class="ob-step-pill" data-ob-step-pill="3">Focus</span>
-        <span class="ob-step-pill" data-ob-step-pill="4">Capital</span>
-        <span class="ob-step-pill" data-ob-step-pill="5">Profile</span>
+        <span class="ob-step-pill active" data-ob-step-pill="1">Country</span>
+        <span class="ob-step-pill" data-ob-step-pill="2">Identity</span>
+        <span class="ob-step-pill" data-ob-step-pill="3">Experience</span>
+        <span class="ob-step-pill" data-ob-step-pill="4">Focus</span>
+        <span class="ob-step-pill" data-ob-step-pill="5">Capital</span>
+        <span class="ob-step-pill" data-ob-step-pill="6">Profile</span>
       </div>
     </div>
 
@@ -1098,11 +1126,16 @@ body{
         <div class="ob-country-wrap">
           <div class="ob-country-search-wrap">
             <span class="ob-country-flag" id="obSelectedFlag">🌐</span>
-            <input type="text" id="obCountryInput" class="ob-country-input" placeholder="Search country..." autocomplete="off" oninput="filterCountries(this.value)" onfocus="showCountryDropdown()">
+            <input type="text" id="obCountryInput" class="ob-country-input"
+              placeholder="Type to search your country..." autocomplete="off"
+              oninput="filterCountries(this.value)" onfocus="showCountryDropdown()">
           </div>
           <div class="ob-country-dropdown" id="obCountryDropdown"></div>
         </div>
-        <div class="ob-label" style="margin-top:24px">What best describes you?</div>
+      </div>
+
+      <div class="ob-screen" data-ob-step="2">
+        <div class="ob-label">What best describes you?</div>
         <div class="ob-grid" id="obRoleGrid">
           <button class="ob-card" type="button" data-ob-group="role" data-value="Investor">
             <div class="ob-card-title">Investor</div>
@@ -1131,7 +1164,7 @@ body{
         </div>
       </div>
 
-      <div class="ob-screen" data-ob-step="2">
+      <div class="ob-screen" data-ob-step="3">
         <div class="ob-label">How would you describe your experience level?</div>
         <div class="ob-grid">
           <button class="ob-card" type="button" data-ob-group="level" data-value="Beginner">
@@ -1153,7 +1186,7 @@ body{
         </div>
       </div>
 
-      <div class="ob-screen" data-ob-step="3">
+      <div class="ob-screen" data-ob-step="4">
         <div class="ob-label">What matters most to you right now?</div>
         <div class="ob-grid">
           <button class="ob-card" type="button" data-ob-group="interest" data-value="Macro">
@@ -1179,7 +1212,7 @@ body{
         </div>
       </div>
 
-      <div class="ob-screen" data-ob-step="4">
+      <div class="ob-screen" data-ob-step="5">
         <div class="ob-label">How much capital do you actively manage?</div>
         <div class="ob-grid">
           <button class="ob-card" type="button" data-ob-group="capital" data-value="< $10k">
@@ -1201,7 +1234,7 @@ body{
         </div>
       </div>
 
-      <div class="ob-screen" data-ob-step="5">
+      <div class="ob-screen" data-ob-step="6">
         <div class="ob-summary">
           <div class="ob-summary-title" id="obSummaryTitle">You’re in.</div>
           <div class="ob-summary-copy" id="obSummaryCopy">We’re shaping your first Velu Markets experience around the profile you selected.</div>
@@ -1870,33 +1903,36 @@ function updateOnboardingUi() {
   const note = document.getElementById('obProgressNote');
 
   backBtn.style.display = step > 1 ? '' : 'none';
-  nextBtn.style.display = step < 5 ? '' : 'none';
-  finishBtn.style.display = step === 5 ? '' : 'none';
+  nextBtn.style.display = step < 6 ? '' : 'none';
+  finishBtn.style.display = step === 6 ? '' : 'none';
 
   const requirements = {
-    1: !!state.data.role && !!state.data.country,
-    2: !!state.data.level,
-    3: !!state.data.interest,
-    4: !!state.data.capital,
-    5: true
+    1: !!state.data.country,
+    2: !!state.data.role,
+    3: !!state.data.level,
+    4: !!state.data.interest,
+    5: !!state.data.capital,
+    6: true
   };
 
   nextBtn.disabled = !requirements[step];
 
   const notes = {
-    1: 'We start with identity so the product feels intentional from the first screen.',
-    2: 'This helps us decide how much context and explanation to surface.',
-    3: 'Your first signals should match what you actually care about.',
-    4: 'This helps us understand decision sensitivity and long-term monetization fit.',
-    5: 'You are ready. We have enough to shape your first Velu experience.'
+    1: 'This helps us personalize market coverage and regulatory context for your region.',
+    2: 'We start with identity so the product feels intentional from the first screen.',
+    3: 'This helps us decide how much context and explanation to surface.',
+    4: 'Your first signals should match what you actually care about.',
+    5: 'This helps us understand decision sensitivity and long-term monetization fit.',
+    6: 'You are ready. We have enough to shape your first Velu experience.'
   };
   note.textContent = notes[step] || '';
 
-  if (step === 5) {
+  if (step === 6) {
     const summary = buildSummary(state.data);
     document.getElementById('obSummaryTitle').textContent = summary.title;
     document.getElementById('obSummaryCopy').textContent = summary.copy;
     document.getElementById('obSummaryTags').innerHTML = `
+      ${state.data.country ? `<span class="ob-tag">${state.data.country}</span>` : ''}
       <span class="ob-tag">${state.data.role}</span>
       <span class="ob-tag">${state.data.level}</span>
       <span class="ob-tag">${state.data.interest}</span>
@@ -1937,7 +1973,7 @@ function closeOnboarding() {
 }
 
 function onboardingNext() {
-  if (window.__veluOnboarding.step < 5) {
+  if (window.__veluOnboarding.step < 6) {
     window.__veluOnboarding.step += 1;
     updateOnboardingUi();
   }
@@ -2005,7 +2041,7 @@ document.addEventListener('click', e => {
   document.querySelectorAll(`[data-ob-group="${group}"]`).forEach(el => el.classList.remove('active'));
   card.classList.add('active');
 
-  if (window.__veluOnboarding.step < 5) {
+  if (window.__veluOnboarding.step < 6) {
     updateOnboardingUi();
     setTimeout(() => {
       if (window.__veluOnboarding.step < 5) onboardingNext();
@@ -3608,6 +3644,9 @@ const COUNTRIES = [
   {code:'CR',name:'Costa Rica',flag:'🇨🇷'},
   {code:'PA',name:'Panama',flag:'🇵🇦'},
   {code:'DO',name:'Dominican Republic',flag:'🇩🇴'},
+  {code:'VE',name:'Venezuela',flag:'🇻🇪'},
+  {code:'PY',name:'Paraguay',flag:'🇵🇾'},
+  {code:'BO',name:'Bolivia',flag:'🇧🇴'},
   {code:'OTHER',name:'Other',flag:'🌐'},
 ];
 
@@ -3617,37 +3656,41 @@ function renderCountryDropdown(list) {
   const dd = document.getElementById('obCountryDropdown');
   if (!dd) return;
   if (list.length === 0) {
-    dd.innerHTML = '<div class="ob-country-opt" style="color:var(--dim);cursor:default">No results</div>';
+    dd.innerHTML = '<div class="ob-country-opt" style="color:#aaa;cursor:default">No results found</div>';
     return;
   }
   dd.innerHTML = list.map(function(c) {
     return '<div class="ob-country-opt" onclick="selectCountry(' +
       JSON.stringify(c.code) + ',' + JSON.stringify(c.name) + ',' + JSON.stringify(c.flag) + ')">' +
-      '<span class="cflag">' + c.flag + '</span><span>' + c.name + '</span></div>';
+      '<span class="ob-cflag">' + c.flag + '</span>' +
+      '<span>' + c.name + '</span>' +
+      '</div>';
   }).join('');
 }
 
 function showCountryDropdown() {
   renderCountryDropdown(_filteredCountries);
-  const dd = document.getElementById('obCountryDropdown');
+  var dd = document.getElementById('obCountryDropdown');
   if (dd) dd.classList.add('open');
 }
 
 function filterCountries(query) {
-  const q = query.toLowerCase().trim();
+  var q = query.toLowerCase().trim();
   _filteredCountries = q
-    ? COUNTRIES.filter(function(c) { return c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q); })
+    ? COUNTRIES.filter(function(c) {
+        return c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q);
+      })
     : [...COUNTRIES];
   renderCountryDropdown(_filteredCountries);
-  const dd = document.getElementById('obCountryDropdown');
+  var dd = document.getElementById('obCountryDropdown');
   if (dd) dd.classList.add('open');
 }
 
 function selectCountry(code, name, flag) {
   window.__veluOnboarding.data.country = name;
-  const input = document.getElementById('obCountryInput');
-  const flagEl = document.getElementById('obSelectedFlag');
-  const dd = document.getElementById('obCountryDropdown');
+  var input = document.getElementById('obCountryInput');
+  var flagEl = document.getElementById('obSelectedFlag');
+  var dd = document.getElementById('obCountryDropdown');
   if (input) input.value = name;
   if (flagEl) flagEl.textContent = flag;
   if (dd) dd.classList.remove('open');
@@ -3656,7 +3699,7 @@ function selectCountry(code, name, flag) {
 
 document.addEventListener('click', function(e) {
   if (!e.target.closest('.ob-country-wrap')) {
-    const dd = document.getElementById('obCountryDropdown');
+    var dd = document.getElementById('obCountryDropdown');
     if (dd) dd.classList.remove('open');
   }
 });
