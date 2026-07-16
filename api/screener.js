@@ -1,16 +1,16 @@
 // api/screener.js
-// Screener de acciones castigadas — versión plan gratuito FMP
-// Usa el endpoint stable/quote sobre una lista fija de ~50 acciones importantes
+// Screener de acciones castigadas — plan gratuito FMP
+// El plan gratuito solo permite UN símbolo por llamada, así que consultamos
+// las acciones en paralelo de una en una. Lista reducida para cuidar la cuota diaria.
 
 const UNIVERSE = [
-  'AAPL','MSFT','GOOGL','AMZN','META','NVDA','TSLA','AVGO','ORCL','CRM',
-  'AMD','INTC','MRVL','QCOM','MU','TXN','ADI','NXPI',
-  'PYPL','SQ','COIN','V','MA','AXP',
-  'NKE','SBUX','MCD','DIS','TGT','LULU','CMG',
-  'PFE','JNJ','MRNA','UNH','CVS','ABBV',
-  'BA','CAT','GE','XOM','CVX',
-  'NFLX','CMCSA','T','VZ',
-  'JPM','BAC','GS','MS',
+  'AAPL','MSFT','GOOGL','AMZN','META','NVDA','TSLA','AVGO',
+  'AMD','INTC','MRVL','QCOM','MU',
+  'PYPL','COIN','V','MA',
+  'NKE','SBUX','MCD','DIS','TGT',
+  'PFE','MRNA','UNH','CVS',
+  'BA','GE','XOM',
+  'NFLX','JPM','BAC','GS',
 ];
 
 export default async function handler(req, res) {
@@ -18,19 +18,24 @@ export default async function handler(req, res) {
   if (!FMP) return res.status(500).json({ error: 'FMP API key not configured' });
 
   try {
-    const symbols = UNIVERSE.join(',');
-    const url = `https://financialmodelingprep.com/stable/quote?symbol=${symbols}&apikey=${FMP}`;
+    // Una llamada por símbolo (plan gratuito no permite multi-símbolo)
+    const results = await Promise.all(
+      UNIVERSE.map(async (sym) => {
+        try {
+          const r = await fetch(`https://financialmodelingprep.com/stable/quote?symbol=${sym}&apikey=${FMP}`);
+          if (!r.ok) return null;
+          const arr = await r.json();
+          return Array.isArray(arr) ? arr[0] : null;
+        } catch {
+          return null;
+        }
+      })
+    );
 
-    const resp = await fetch(url);
-    if (!resp.ok) {
-      const txt = await resp.text();
-      console.error('FMP quote error:', txt);
-      return res.status(500).json({ error: 'Market data unavailable', detail: txt.slice(0, 200) });
-    }
+    const quotes = results.filter(q => q && q.price);
 
-    const quotes = await resp.json();
-    if (!Array.isArray(quotes)) {
-      return res.status(500).json({ error: 'Unexpected data format', detail: quotes });
+    if (quotes.length === 0) {
+      return res.status(500).json({ error: 'No market data returned' });
     }
 
     const analyzed = quotes.map(q => {
@@ -67,7 +72,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       count: punished.length,
       stocks: punished,
-      universe: UNIVERSE.length,
+      scanned: quotes.length,
       generatedAt: new Date().toISOString()
     });
 
