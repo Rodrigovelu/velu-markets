@@ -3658,13 +3658,18 @@ function renderCountryDropdown(list) {
     dd.innerHTML = '<div class="ob-country-opt" style="color:#aaa;cursor:default">No results found</div>';
     return;
   }
-  dd.innerHTML = list.map(function(c) {
-    return '<div class="ob-country-opt" onmousedown="event.preventDefault();selectCountry(' +
-      JSON.stringify(c.code) + ',' + JSON.stringify(c.name) + ',' + JSON.stringify(c.flag) + ')">' +
-      '<span class="ob-cflag">' + c.flag + '</span>' +
-      '<span>' + c.name + '</span>' +
-      '</div>';
-  }).join('');
+  dd.innerHTML = '';
+  list.forEach(function(c) {
+    var opt = document.createElement('div');
+    opt.className = 'ob-country-opt';
+    opt.innerHTML = '<span class="ob-cflag">' + c.flag + '</span><span>' + c.name + '</span>';
+    opt.addEventListener('mousedown', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      selectCountry(c.code, c.name, c.flag);
+    });
+    dd.appendChild(opt);
+  });
 }
 
 function showCountryDropdown() {
