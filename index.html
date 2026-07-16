@@ -598,8 +598,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--san
 }
 .ob-country-input::placeholder{color:#bbb;}
 .ob-country-dropdown{
-  display:none;position:absolute;
-  top:calc(100% + 6px);left:0;right:0;
+  display:none;position:fixed;
   background:#ffffff;
   border:1.5px solid #e0e0e0;
   border-radius:14px;
@@ -3671,7 +3670,14 @@ function renderCountryDropdown(list) {
 function showCountryDropdown() {
   renderCountryDropdown(_filteredCountries);
   var dd = document.getElementById('obCountryDropdown');
-  if (dd) dd.classList.add('open');
+  var wrap = document.querySelector('.ob-country-search-wrap');
+  if (dd && wrap) {
+    var rect = wrap.getBoundingClientRect();
+    dd.style.top = (rect.bottom + 6) + 'px';
+    dd.style.left = rect.left + 'px';
+    dd.style.width = rect.width + 'px';
+    dd.classList.add('open');
+  }
 }
 
 function filterCountries(query) {
@@ -3681,9 +3687,7 @@ function filterCountries(query) {
         return c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q);
       })
     : [...COUNTRIES];
-  renderCountryDropdown(_filteredCountries);
-  var dd = document.getElementById('obCountryDropdown');
-  if (dd) dd.classList.add('open');
+  showCountryDropdown();
 }
 
 function selectCountry(code, name, flag) {
