@@ -3659,7 +3659,7 @@ function renderCountryDropdown(list) {
     return;
   }
   dd.innerHTML = list.map(function(c) {
-    return '<div class="ob-country-opt" onclick="selectCountry(' +
+    return '<div class="ob-country-opt" onmousedown="event.preventDefault();selectCountry(' +
       JSON.stringify(c.code) + ',' + JSON.stringify(c.name) + ',' + JSON.stringify(c.flag) + ')">' +
       '<span class="ob-cflag">' + c.flag + '</span>' +
       '<span>' + c.name + '</span>' +
@@ -3702,9 +3702,11 @@ function selectCountry(code, name, flag) {
 }
 
 document.addEventListener('click', function(e) {
-  if (!e.target.closest('.ob-country-wrap')) {
-    var dd = document.getElementById('obCountryDropdown');
-    if (dd) dd.classList.remove('open');
+  var dd = document.getElementById('obCountryDropdown');
+  if (!dd) return;
+  // Don't close if clicking inside the wrap OR inside the dropdown itself
+  if (!e.target.closest('.ob-country-wrap') && !e.target.closest('.ob-country-dropdown')) {
+    dd.classList.remove('open');
   }
 });
 
