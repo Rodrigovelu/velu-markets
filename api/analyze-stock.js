@@ -18,9 +18,10 @@ export default async function handler(req, res) {
   const ticker = symbol.toUpperCase().trim();
 
   try {
-    const [quoteRes, ratiosRes] = await Promise.all([
+    const [quoteRes, ratiosRes, consensusRes] = await Promise.all([
       fetch(`https://financialmodelingprep.com/stable/quote?symbol=${ticker}&apikey=${FMP}`),
-      fetch(`https://financialmodelingprep.com/stable/ratios-ttm?symbol=${ticker}&apikey=${FMP}`)
+      fetch(`https://financialmodelingprep.com/stable/ratios-ttm?symbol=${ticker}&apikey=${FMP}`),
+      fetch(`https://financialmodelingprep.com/stable/price-target-consensus?symbol=${ticker}&apikey=${FMP}`)
     ]);
 
     const quoteArr = await quoteRes.json();
@@ -28,6 +29,11 @@ export default async function handler(req, res) {
 
     const quote = Array.isArray(quoteArr) ? quoteArr[0] : null;
     const ratios = Array.isArray(ratiosArr) ? ratiosArr[0] : {};
+    let consensus = null;
+    try {
+      const consensusArr = await consensusRes.json();
+      consensus = Array.isArray(consensusArr) && consensusArr[0] ? consensusArr[0] : null;
+    } catch (e) { consensus = null; }
 
     if (!quote) return res.status(404).json({ error: `Ticker ${ticker} not found` });
 
@@ -53,7 +59,11 @@ export default async function handler(req, res) {
       netMargin: ratios.netProfitMarginTTM,
       grossMargin: ratios.grossProfitMarginTTM,
       debtToEquity: ratios.debtToEquityRatioTTM,
-      eps: ratios.netIncomePerShareTTM
+      eps: ratios.netIncomePerShareTTM,
+      wallStreetTarget: consensus ? consensus.targetConsensus : null,
+      wallStreetHigh: consensus ? consensus.targetHigh : null,
+      wallStreetLow: consensus ? consensus.targetLow : null,
+      wallStreetMedian: consensus ? consensus.targetMedian : null
     };
 
     const fmt = (v, d = 1) => (typeof v === 'number' ? v.toFixed(d) : 'N/A');
