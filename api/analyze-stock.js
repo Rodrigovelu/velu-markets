@@ -143,6 +143,34 @@ Respond with ONLY a raw JSON object. No markdown, no code fences, no text before
       }
     }
 
+    // Guardar la llamada de Velu en el track record (fire and forget)
+    try {
+      const SUPABASE_URL = 'https://osrjmchajyrgdlucniid.supabase.co';
+      const SUPABASE_KEY = process.env.SUPABASE_KEY || 'sb_publishable_uL4sQ_T3HiCD6ZZ20D5thw_sc_gTK5F';
+      // Solo guardar llamadas BUY o SELL (las direccionales), no HOLD
+      if (analysis.verdict === 'BUY' || analysis.verdict === 'SELL') {
+        fetch(`${SUPABASE_URL}/rest/v1/velu_calls`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            ticker: stockData.symbol,
+            company: stockData.name,
+            verdict: analysis.verdict,
+            conviction: analysis.conviction,
+            entry_price: stockData.price,
+            target_price: analysis.targetPrice,
+            upside: analysis.upside,
+            status: 'open'
+          })
+        }).catch(e => console.warn('Call save failed:', e.message));
+      }
+    } catch (e) { console.warn('Track record save error:', e.message); }
+
     return res.status(200).json({ stockData, analysis });
 
   } catch (err) {
