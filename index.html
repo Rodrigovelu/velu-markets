@@ -2634,6 +2634,18 @@ document.addEventListener('DOMContentLoaded', () => {
   .wl-tk { font-family: var(--mono); font-weight: 650; font-size: 14px; }
   .wl-nm { font-size: 12px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+
+  .consensus-box { background: var(--bg2); border: 1px solid var(--b1); border-radius: 14px; padding: 20px; margin-bottom: 24px; }
+  .cons-label { font-family: var(--mono); font-size: 10px; color: var(--g); letter-spacing: .1em; margin-bottom: 16px; }
+  .cons-row { display: flex; align-items: center; justify-content: center; gap: 24px; margin-bottom: 14px; }
+  .cons-side { text-align: center; flex: 1; }
+  .cons-name { font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+  .cons-val { font-family: var(--mono); font-size: 28px; font-weight: 700; }
+  .cons-vs { font-family: var(--mono); font-size: 12px; color: var(--dim); }
+  .cons-direction { text-align: center; font-size: 14px; color: var(--mu); padding-top: 14px; border-top: 1px solid var(--b1); }
+  .cons-lock { text-align: center; font-family: var(--mono); font-size: 12px; color: var(--g); margin-top: 12px; cursor: pointer; padding: 8px; border-radius: 8px; background: rgba(0,229,160,.06); }
+  .cons-lock:hover { background: rgba(0,229,160,.12); }
+
 </style>
 </head>
 <body>
@@ -3086,6 +3098,72 @@ async function analyzeTicker(symbol, fromScreener) {
   }
 }
 
+
+function renderConsensusCompare(s, a) {
+  // Si no hay consenso de Wall Street, no mostrar nada
+  if (!s.wallStreetTarget) return '';
+
+  var plan = getUserPlan();
+  var isFree = plan === 'free';
+  var veluTarget = a.targetPrice;
+  var wsTarget = s.wallStreetTarget;
+
+  // Diferencia entre Velu y Wall Street
+  var diff = veluTarget - wsTarget;
+  var diffPct = ((diff / wsTarget) * 100);
+  var veluMoreBullish = diff > 0;
+
+  // Dirección (esto lo ve todo mundo, Free y Pro)
+  var direction = veluMoreBullish
+    ? 'Velu is <strong style=&quot;color:var(--g)&quot;>more bullish</strong> than Wall Street'
+    : (Math.abs(diffPct) < 2
+        ? 'Velu is <strong>aligned</strong> with Wall Street'
+        : 'Velu is <strong style=&quot;color:var(--amber)&quot;>more cautious</strong> than Wall Street');
+
+  if (isFree) {
+    // FREE: ve el consenso de Wall Street y la dirección, pero NO el número exacto de Velu
+    return `
+      <div class=&quot;consensus-box&quot;>
+        <div class=&quot;cons-label&quot;>VELU vs WALL STREET</div>
+        <div class=&quot;cons-row&quot;>
+          <div class=&quot;cons-side&quot;>
+            <div class=&quot;cons-name&quot;>Velu Target</div>
+            <div class=&quot;cons-val&quot; style=&quot;filter:blur(7px);user-select:none&quot;>$${veluTarget}</div>
+          </div>
+          <div class=&quot;cons-vs&quot;>vs</div>
+          <div class=&quot;cons-side&quot;>
+            <div class=&quot;cons-name&quot;>Wall Street</div>
+            <div class=&quot;cons-val&quot;>$${wsTarget?.toFixed(0)}</div>
+          </div>
+        </div>
+        <div class=&quot;cons-direction&quot;>${direction}</div>
+        <div class=&quot;cons-lock&quot; onclick=&quot;joinProWaitlist()&quot;>🔒 Unlock Velu's exact target with Pro →</div>
+      </div>
+    `;
+  }
+
+  // PRO: ve todo
+  var diffSign = diff > 0 ? '+' : '';
+  var diffColor = veluMoreBullish ? 'var(--g)' : 'var(--amber)';
+  return `
+    <div class=&quot;consensus-box&quot;>
+      <div class=&quot;cons-label&quot;>VELU vs WALL STREET</div>
+      <div class=&quot;cons-row&quot;>
+        <div class=&quot;cons-side&quot;>
+          <div class=&quot;cons-name&quot;>Velu Target</div>
+          <div class=&quot;cons-val&quot; style=&quot;color:var(--g)&quot;>$${veluTarget}</div>
+        </div>
+        <div class=&quot;cons-vs&quot;>vs</div>
+        <div class=&quot;cons-side&quot;>
+          <div class=&quot;cons-name&quot;>Wall Street (${s.wallStreetLow?.toFixed(0)}–${s.wallStreetHigh?.toFixed(0)})</div>
+          <div class=&quot;cons-val&quot;>$${wsTarget?.toFixed(0)}</div>
+        </div>
+      </div>
+      <div class=&quot;cons-direction&quot;>${direction} by <strong style=&quot;color:${diffColor}&quot;>${diffSign}$${Math.abs(diff).toFixed(0)} (${diffSign}${diffPct.toFixed(1)}%)</strong></div>
+    </div>
+  `;
+}
+
 function renderAnalysis(s, a) {
   const panel = document.getElementById('analysisPanel');
   const changeClass = s.changePct >= 0 ? 'up' : 'down';
@@ -3127,6 +3205,8 @@ function renderAnalysis(s, a) {
       ${a.isPunished ? `<div class=&quot;edge-tag&quot;>⚡ EDGE DETECTED — ${a.edge}</div>` : ''}
 
       <div class=&quot;ap-thesis&quot;>${a.thesis}</div>
+
+      ${renderConsensusCompare(s, a)}
 
       <div class=&quot;ap-section-label&quot;>3-Agent Analysis</div>
       <div class=&quot;agents-grid&quot;>
