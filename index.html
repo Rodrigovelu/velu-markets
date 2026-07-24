@@ -1545,7 +1545,7 @@ body{
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">5 ticker searches per day</span></div>
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">15-min delayed data</span></div>
         </div>
-        <button class="plan-btn pbt-s" onclick="openSignup()">Start free</button>
+        <button class="plan-btn pbt-s" onclick="selectPlan('free')">Start free</button>
       </div>
 
       <div class="plan feat">
@@ -1562,7 +1562,7 @@ body{
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">New-opportunity alerts</span></div>
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Real-time market data</span></div>
         </div>
-        <button class="plan-btn pbt-f" onclick="openSignup()">Start free trial</button>
+        <button class="plan-btn pbt-f" onclick="selectPlan('pro')">Join Pro waitlist</button>
         <p style="text-align:center;font-size:11px;color:var(--dim);margin-top:10px">$290/year — save 2 months</p>
       </div>
 
@@ -1577,7 +1577,7 @@ body{
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">API access</span></div>
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Dedicated support</span></div>
         </div>
-        <button class="plan-btn pbt-s" onclick="openSignup()">Get Terminal</button>
+        <button class="plan-btn pbt-s" onclick="selectPlan('terminal')">Join Terminal waitlist</button>
         <p style="text-align:center;font-size:11px;color:var(--dim);margin-top:10px">$990/year — save 2 months</p>
       </div>
 
@@ -2079,6 +2079,57 @@ async function submitLogin() {
   return false;
 }
 
+
+/* ── PLAN SELECTION & GATING ─────────────────────────── */
+window.__veluDesiredPlan = 'free';
+
+function selectPlan(plan) {
+  window.__veluDesiredPlan = plan;
+  const session = (window.__veluApp && window.__veluApp.getSession) ? window.__veluApp.getSession() : null;
+
+  if (plan === 'free') {
+    // Free: open signup (or go to terminal if already logged in)
+    if (session && session.isAuthenticated) {
+      goToTerminal(false);
+    } else {
+      openSignup();
+    }
+    return;
+  }
+
+  // Pro or Terminal: capture interest in waitlist
+  if (session && session.isAuthenticated && session.user && session.user.email) {
+    savePlanInterest(session.user.email, plan);
+    showPlanInterestConfirm(plan);
+  } else {
+    // Not logged in — open signup, will capture interest after they register
+    openSignup();
+  }
+}
+
+async function savePlanInterest(email, plan) {
+  const SUPABASE_URL = 'https://osrjmchajyrgdlucniid.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_uL4sQ_T3HiCD6ZZ20D5thw_sc_gTK5F';
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/plan_interest`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ email, plan_wanted: plan })
+    });
+  } catch (e) { console.warn('Plan interest save failed', e); }
+}
+
+function showPlanInterestConfirm(plan) {
+  const label = plan === 'pro' ? 'Pro' : 'Terminal';
+  alert(`You're on the ${label} waitlist! We'll notify you as soon as ${label} access opens up.`);
+}
+
+
 async function submitSignup() {
   const name  = document.getElementById('su-name')?.value.trim() || '';
   const email = document.getElementById('su-email')?.value.trim() || '';
@@ -2131,6 +2182,17 @@ async function submitSignup() {
     profile: {},
     createdAt: new Date().toISOString()
   });
+
+  // If they wanted Pro/Terminal, capture that interest
+  const desiredPlan = window.__veluDesiredPlan || 'free';
+  if (desiredPlan === 'pro' || desiredPlan === 'terminal') {
+    savePlanInterest(email, desiredPlan);
+  }
+
+  // Store the plan on the user (free by default; pro/terminal are "waitlisted" but still use free tier)
+  createdUser.plan = 'free';
+  createdUser.planInterest = desiredPlan;
+  upsertUser(createdUser);
 
   closeSignup();
   openOnboarding(createdUser);
@@ -2589,6 +2651,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <script>
 /* ── CLOCK ─────────────────────────────────────── */
+
+/* ── PLAN GATING (Free tier limits) ─────────────────── */
+function getUserPlan() {
+  try {
+    var auth = JSON.parse(localStorage.getItem('veluAuth') || 'null');
+    if (auth && auth.user && auth.user.plan) return auth.user.plan;
+  } catch(e) {}
+  return 'free';
+}
+function getPlanInterest() {
+  try {
+    var auth = JSON.parse(localStorage.getItem('veluAuth') || 'null');
+    if (auth && auth.user && auth.user.planInterest) return auth.user.planInterest;
+  } catch(e) {}
+  return 'free';
+}
+// Free tier limits
+var FREE_SCREENER_LIMIT = 3;
+var FREE_ANALYSES_PER_MONTH = 3;
+var FREE_SEARCHES_PER_DAY = 5;
+
+function getUsage() {
+  var month = new Date().toISOString().slice(0,7);   // YYYY-MM
+  var day = new Date().toISOString().slice(0,10);     // YYYY-MM-DD
+  var raw = {};
+  try { raw = JSON.parse(localStorage.getItem('veluUsage') || '{}'); } catch(e) {}
+  if (raw.month !== month) { raw.month = month; raw.analyses = 0; }
+  if (raw.day !== day) { raw.day = day; raw.searches = 0; }
+  return raw;
+}
+function saveUsage(u) {
+  try { localStorage.setItem('veluUsage', JSON.stringify(u)); } catch(e) {}
+}
+function incrementAnalyses() {
+  var u = getUsage(); u.analyses = (u.analyses||0) + 1; saveUsage(u); return u.analyses;
+}
+function incrementSearches() {
+  var u = getUsage(); u.searches = (u.searches||0) + 1; saveUsage(u); return u.searches;
+}
+function joinProWaitlist() {
+  window.parent.postMessage('velu-join-pro', '*');
+}
+
 function updateClock() {
   const now = new Date();
   const el = document.getElementById('clock');
@@ -2631,13 +2736,18 @@ async function loadScreener() {
       </div>
     `;
 
-    data.stocks.forEach((s, i) => {
+    const plan = getUserPlan();
+    const isFree = plan === 'free';
+    const visibleStocks = isFree ? data.stocks.slice(0, FREE_SCREENER_LIMIT) : data.stocks;
+    const lockedCount = isFree ? Math.max(0, data.stocks.length - FREE_SCREENER_LIMIT) : 0;
+
+    visibleStocks.forEach((s, i) => {
       const changeClass = s.changePct >= 0 ? 'up' : 'down';
       const changeSign = s.changePct >= 0 ? '+' : '';
       const barWidth = Math.max(20, (s.punishmentScore / maxPunish) * 80);
 
       html += `
-        <div class=&quot;stock-row&quot; onclick=&quot;analyzeTicker('${s.symbol}')&quot;>
+        <div class=&quot;stock-row&quot; onclick=&quot;analyzeTicker('${s.symbol}', true)&quot;>
           <div class=&quot;rank&quot;>${String(i + 1).padStart(2, '0')}</div>
           <div class=&quot;stock-sym&quot;>
             <span class=&quot;sym-ticker&quot;>${s.symbol}</span>
@@ -2655,6 +2765,23 @@ async function loadScreener() {
       `;
     });
 
+    if (lockedCount > 0) {
+      html += `
+        <div class=&quot;stock-row&quot; style=&quot;cursor:pointer;opacity:.85;background:linear-gradient(90deg,rgba(0,229,160,.04),transparent)&quot; onclick=&quot;joinProWaitlist()&quot;>
+          <div class=&quot;rank&quot;>🔒</div>
+          <div class=&quot;stock-sym&quot;>
+            <span class=&quot;sym-ticker&quot; style=&quot;color:var(--g)&quot;>+${lockedCount} more stocks</span>
+            <span class=&quot;sym-name&quot;>Unlock the full screener with Pro</span>
+          </div>
+          <div class=&quot;stock-price&quot; style=&quot;color:var(--dim)&quot;>—</div>
+          <div class=&quot;stock-change&quot; style=&quot;color:var(--dim)&quot;>—</div>
+          <div class=&quot;stock-pe col-pe&quot; style=&quot;color:var(--dim)&quot;>—</div>
+          <div class=&quot;col-punish&quot; style=&quot;color:var(--g);font-family:var(--mono);font-size:11px&quot;>Join Pro →</div>
+          <div class=&quot;col-verdict&quot; style=&quot;color:var(--dim)&quot;>—</div>
+        </div>
+      `;
+    }
+
     body.innerHTML = html;
 
   } catch (err) {
@@ -2665,9 +2792,24 @@ async function loadScreener() {
 }
 
 /* ── TICKER ANALYSIS ───────────────────────────── */
-async function analyzeTicker(symbol) {
+async function analyzeTicker(symbol, fromScreener) {
   if (!symbol || !symbol.trim()) return;
   const ticker = symbol.trim().toUpperCase();
+
+  const plan = getUserPlan();
+  if (plan === 'free') {
+    const u = getUsage();
+    // Search limit (only counts manual searches, not screener clicks)
+    if (!fromScreener && (u.searches||0) >= FREE_SEARCHES_PER_DAY) {
+      showUpgradeGate('You\'ve used all ' + FREE_SEARCHES_PER_DAY + ' free searches today', 'Upgrade to Pro for unlimited ticker search.');
+      return;
+    }
+    // Analysis limit
+    if ((u.analyses||0) >= FREE_ANALYSES_PER_MONTH) {
+      showUpgradeGate('You\'ve used all ' + FREE_ANALYSES_PER_MONTH + ' free analyses this month', 'Upgrade to Pro for unlimited AI analysis.');
+      return;
+    }
+  }
 
   const backdrop = document.getElementById('analysisBackdrop');
   const panel = document.getElementById('analysisPanel');
@@ -2698,6 +2840,10 @@ async function analyzeTicker(symbol) {
     }
 
     const { stockData, analysis } = await res.json();
+    if (getUserPlan() === 'free') {
+      incrementAnalyses();
+      if (!fromScreener) incrementSearches();
+    }
     renderAnalysis(stockData, analysis);
 
   } catch (err) {
@@ -2812,6 +2958,34 @@ function renderAnalysis(s, a) {
       <div class=&quot;watch-list&quot;>
         ${a.watchItems.map(w => `<div class=&quot;watch-item&quot;><span class=&quot;watch-bullet&quot;>▸</span><span>${w}</span></div>`).join('')}
       </div>
+    </div>
+  `;
+}
+
+
+function showUpgradeGate(title, subtitle) {
+  const backdrop = document.getElementById('analysisBackdrop');
+  const panel = document.getElementById('analysisPanel');
+  backdrop.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  panel.innerHTML = `
+    <div class=&quot;ap-head&quot;>
+      <button class=&quot;ap-close&quot; onclick=&quot;closeAnalysis()&quot;>×</button>
+      <div class=&quot;ap-ticker-row&quot;><span class=&quot;ap-ticker&quot; style=&quot;font-size:20px&quot;>⚡ Upgrade to Pro</span></div>
+    </div>
+    <div style=&quot;padding:32px 28px;text-align:center&quot;>
+      <div style=&quot;font-size:20px;font-weight:650;margin-bottom:8px;color:var(--ink)&quot;>${title}</div>
+      <div style=&quot;font-size:14px;color:var(--mu);margin-bottom:28px&quot;>${subtitle}</div>
+      <div style=&quot;background:var(--bg2);border:1px solid var(--b1);border-radius:14px;padding:22px;text-align:left;margin-bottom:24px&quot;>
+        <div style=&quot;font-family:var(--mono);font-size:11px;color:var(--g);letter-spacing:.1em;margin-bottom:14px&quot;>PRO — $29/MONTH</div>
+        <div style=&quot;display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--ink)&quot;>
+          <div>✓ Full screener — all 15 stocks</div>
+          <div>✓ Unlimited AI analyses</div>
+          <div>✓ Unlimited ticker search</div>
+          <div>✓ Real-time market data</div>
+        </div>
+      </div>
+      <button onclick=&quot;joinProWaitlist()&quot; style=&quot;width:100%;padding:14px;border-radius:12px;background:var(--g);color:#0A0B0D;font-weight:700;font-size:15px;border:none;cursor:pointer;font-family:var(--sans)&quot;>Join Pro waitlist</button>
     </div>
   `;
 }
@@ -3113,6 +3287,13 @@ document.addEventListener('click', function(e) {
 
 /* Handle exit from terminal iframe */
 window.addEventListener('message', function(e) {
+  if (e.data === 'velu-join-pro') {
+    var session = (window.__veluApp && window.__veluApp.getSession) ? window.__veluApp.getSession() : null;
+    if (session && session.user && session.user.email) {
+      savePlanInterest(session.user.email, 'pro');
+      alert("You're on the Pro waitlist! We'll notify you as soon as Pro access opens up.");
+    }
+  }
   if (e.data === 'velu-exit') {
     var tv = document.getElementById('unifiedTerminalView');
     var hv = document.getElementById('unifiedHomeView');
