@@ -2621,6 +2621,19 @@ document.addEventListener('DOMContentLoaded', () => {
     .tr-acc { font-size: 34px; }
   }
 
+
+  .watchlist-panel { background: var(--panel); border: 1px solid var(--b1); border-radius: 14px; overflow: hidden; }
+  .wl-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid var(--b1); background: var(--bg2); }
+  .wl-title { font-size: 14px; font-weight: 600; color: var(--g); }
+  .wl-count { font-family: var(--mono); font-size: 12px; color: var(--mu); background: var(--panel2); padding: 3px 10px; border-radius: 6px; }
+  .wl-empty { padding: 20px 22px; font-size: 13px; color: var(--mu); }
+  .wl-item { display: flex; align-items: center; gap: 12px; padding: 12px 22px; border-bottom: 1px solid var(--b1); cursor: pointer; transition: background .12s; }
+  .wl-item:last-child { border-bottom: none; }
+  .wl-item:hover { background: var(--panel2); }
+  .wl-star { color: var(--g); font-size: 16px; cursor: pointer; flex-shrink: 0; }
+  .wl-tk { font-family: var(--mono); font-weight: 650; font-size: 14px; }
+  .wl-nm { font-size: 12px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
 </style>
 </head>
 <body>
@@ -2651,6 +2664,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <div class=&quot;container&quot;>
   <div class=&quot;main&quot;>
+
+    <div class=&quot;watchlist-panel&quot; id=&quot;watchlistPanel&quot; style=&quot;margin-bottom:24px&quot;></div>
 
     <div class=&quot;track-record&quot; id=&quot;trackRecord&quot; style=&quot;margin-bottom:32px&quot;>
       <div class=&quot;tr-loading&quot; id=&quot;trLoading&quot; style=&quot;padding:24px;text-align:center;color:var(--mu);font-family:var(--mono);font-size:12px&quot;>Loading Velu's track record...</div>
@@ -2732,6 +2747,96 @@ function incrementSearches() {
 }
 function joinProWaitlist() {
   window.parent.postMessage('velu-join-pro', '*');
+}
+
+
+/* ── WATCHLIST ─────────────────────────────────────── */
+var FREE_WATCHLIST_LIMIT = 3;
+var SB_URL = 'https://osrjmchajyrgdlucniid.supabase.co';
+var SB_KEY = 'sb_publishable_uL4sQ_T3HiCD6ZZ20D5thw_sc_gTK5F';
+var __watchlist = [];  // cache local de tickers
+
+function getUserEmail() {
+  try {
+    var auth = JSON.parse(localStorage.getItem('veluAuth') || 'null');
+    if (auth && auth.user && auth.user.email) return auth.user.email;
+  } catch(e) {}
+  return null;
+}
+
+async function loadWatchlist() {
+  var email = getUserEmail();
+  if (!email) { __watchlist = []; return; }
+  try {
+    var res = await fetch(SB_URL + '/rest/v1/watchlist_items?email=eq.' + encodeURIComponent(email) + '&select=ticker,company&order=added_at.desc', {
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+    });
+    var items = await res.json();
+    __watchlist = Array.isArray(items) ? items : [];
+  } catch(e) { __watchlist = []; }
+}
+
+function isWatched(ticker) {
+  return __watchlist.some(function(w){ return w.ticker === ticker; });
+}
+
+async function toggleWatchlist(ticker, company, ev) {
+  if (ev) { ev.stopPropagation(); }
+  var email = getUserEmail();
+  if (!email) return;
+
+  if (isWatched(ticker)) {
+    // Quitar
+    try {
+      await fetch(SB_URL + '/rest/v1/watchlist_items?email=eq.' + encodeURIComponent(email) + '&ticker=eq.' + ticker, {
+        method: 'DELETE',
+        headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+      });
+      __watchlist = __watchlist.filter(function(w){ return w.ticker !== ticker; });
+    } catch(e) {}
+  } else {
+    // Verificar límite Free
+    if (getUserPlan() === 'free' && __watchlist.length >= FREE_WATCHLIST_LIMIT) {
+      showUpgradeGate('Your watchlist is full (' + FREE_WATCHLIST_LIMIT + ' stocks)', 'Upgrade to Pro to follow unlimited stocks.');
+      return;
+    }
+    // Agregar
+    try {
+      await fetch(SB_URL + '/rest/v1/watchlist_items', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ email: email, ticker: ticker, company: company || '' })
+      });
+      __watchlist.unshift({ ticker: ticker, company: company || '' });
+    } catch(e) {}
+  }
+  // Refrescar UI
+  loadScreener();
+  renderWatchlistPanel();
+}
+
+function renderWatchlistPanel() {
+  var panel = document.getElementById('watchlistPanel');
+  if (!panel) return;
+  var plan = getUserPlan();
+  var count = __watchlist.length;
+  var limitTxt = plan === 'free' ? (count + '/' + FREE_WATCHLIST_LIMIT) : count;
+
+  if (count === 0) {
+    panel.innerHTML = '<div class=&quot;wl-head&quot;><span class=&quot;wl-title&quot;>★ My Watchlist</span><span class=&quot;wl-count&quot;>' + limitTxt + '</span></div>' +
+      '<div class=&quot;wl-empty&quot;>Tap the ★ on any stock to follow it. Your watchlist stays with you across devices.</div>';
+    return;
+  }
+
+  var rows = __watchlist.map(function(w) {
+    return '<div class=&quot;wl-item&quot; onclick=&quot;analyzeTicker(\'' + w.ticker + '\', true)&quot;>' +
+      '<span class=&quot;wl-star&quot; onclick=&quot;toggleWatchlist(\'' + w.ticker + '\', \'' + (w.company||'').replace(/'/g,&quot;&quot;) + '\', event)&quot;>★</span>' +
+      '<span class=&quot;wl-tk&quot;>' + w.ticker + '</span>' +
+      '<span class=&quot;wl-nm&quot;>' + (w.company || '') + '</span>' +
+      '</div>';
+  }).join('');
+
+  panel.innerHTML = '<div class=&quot;wl-head&quot;><span class=&quot;wl-title&quot;>★ My Watchlist</span><span class=&quot;wl-count&quot;>' + limitTxt + '</span></div>' + rows;
 }
 
 function updateClock() {
@@ -2868,7 +2973,7 @@ async function loadScreener() {
 
       html += `
         <div class=&quot;stock-row&quot; onclick=&quot;analyzeTicker('${s.symbol}', true)&quot;>
-          <div class=&quot;rank&quot;>${String(i + 1).padStart(2, '0')}</div>
+          <div class=&quot;rank&quot; onclick=&quot;toggleWatchlist('${s.symbol}', '${(s.name||'').replace(/'/g,'')}', event)&quot; style=&quot;cursor:pointer&quot;>${isWatched(s.symbol) ? '<span style=\'color:var(--g)\'>★</span>' : '<span style=\'color:var(--dim)\'>☆</span>'}</div>
           <div class=&quot;stock-sym&quot;>
             <span class=&quot;sym-ticker&quot;>${s.symbol}</span>
             <span class=&quot;sym-name&quot;>${s.name || ''}</span>
@@ -2999,7 +3104,7 @@ function renderAnalysis(s, a) {
       <div class=&quot;ap-ticker-row&quot;>
         <span class=&quot;ap-ticker&quot;>${s.symbol}</span>
         <span class=&quot;ap-name&quot;>${s.name}</span>
-      </div>
+        <button onclick=&quot;toggleWatchlist('${s.symbol}', '${(s.name||'').replace(/'/g,'')}', event); this.innerHTML = isWatched('${s.symbol}') ? '★ Following' : '☆ Follow';&quot; style=&quot;margin-left:auto;font-family:var(--mono);font-size:12px;padding:6px 14px;border-radius:8px;background:var(--panel2);border:1px solid var(--b2);color:${isWatched(s.symbol)?'var(--g)':'var(--mu)'};cursor:pointer&quot;>${isWatched(s.symbol) ? '★ Following' : '☆ Follow'}</button>
       <div class=&quot;ap-price-row&quot;>
         <span class=&quot;ap-price&quot;>$${s.price?.toFixed(2)}</span>
         <span class=&quot;ap-change ${changeClass}&quot;>${changeSign}${s.changePct?.toFixed(2)}% today</span>
@@ -3116,8 +3221,12 @@ function closeAnalysis() {
 }
 
 /* ── INIT ──────────────────────────────────────── */
-loadScreener();
-loadTrackRecord();
+(async function initTerminal() {
+  await loadWatchlist();
+  loadScreener();
+  loadTrackRecord();
+  renderWatchlistPanel();
+})();
 </script>
 </body>
 </html>
