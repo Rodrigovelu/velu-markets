@@ -2585,6 +2585,42 @@ document.addEventListener('DOMContentLoaded', () => {
     .ap-verdict-bar { flex-wrap: wrap; }
     .ap-target { margin-left: 0; width: 100%; text-align: left; }
   }
+
+  .track-record { background: var(--panel); border: 1px solid var(--b1); border-radius: 14px; overflow: hidden; }
+  .tr-hero { display: flex; align-items: center; gap: 28px; padding: 24px 28px; border-bottom: 1px solid var(--b1); background: linear-gradient(135deg, rgba(0,229,160,.06), transparent); flex-wrap: wrap; }
+  .tr-big { display: flex; flex-direction: column; }
+  .tr-acc { font-family: var(--mono); font-size: 42px; font-weight: 700; color: var(--g); line-height: 1; letter-spacing: -0.02em; }
+  .tr-acc-label { font-size: 12px; color: var(--mu); margin-top: 4px; }
+  .tr-divider { width: 1px; height: 44px; background: var(--b2); }
+  .tr-stat2 { display: flex; flex-direction: column; }
+  .tr-stat2-n { font-family: var(--mono); font-size: 22px; font-weight: 600; color: var(--ink); }
+  .tr-stat2-l { font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: .06em; margin-top: 2px; }
+  .tr-tag { margin-left: auto; font-family: var(--mono); font-size: 10px; color: var(--g); background: rgba(0,229,160,.1); padding: 5px 11px; border-radius: 6px; letter-spacing: .05em; }
+  .tr-calls { padding: 8px 0; }
+  .tr-call-head { display: grid; grid-template-columns: 1.4fr 70px 90px 90px 70px; padding: 10px 28px; font-family: var(--mono); font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--b1); }
+  .tr-call { display: grid; grid-template-columns: 1.4fr 70px 90px 90px 70px; padding: 12px 28px; align-items: center; border-bottom: 1px solid var(--b1); font-size: 13px; }
+  .tr-call:last-child { border-bottom: none; }
+  .tr-call-tk { font-family: var(--mono); font-weight: 650; }
+  .tr-verdict { font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 5px; text-align: center; width: fit-content; }
+  .tv-buy { background: rgba(0,229,160,.12); color: var(--g); }
+  .tv-sell { background: rgba(255,77,77,.12); color: var(--red); }
+  .tr-mono { font-family: var(--mono); font-size: 12px; }
+  .tr-hit { font-family: var(--mono); font-size: 11px; font-weight: 600; }
+  .tr-hit-y { color: var(--g); }
+  .tr-hit-n { color: var(--red); }
+  .tr-hit-o { color: var(--amber); }
+  .tr-locked { padding: 28px; text-align: center; background: linear-gradient(180deg, transparent, rgba(0,229,160,.03)); }
+  .tr-locked-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .tr-locked-sub { font-size: 13px; color: var(--mu); margin-bottom: 16px; }
+  .tr-unlock-btn { padding: 11px 24px; border-radius: 10px; background: var(--g); color: #0A0B0D; font-weight: 700; font-size: 14px; border: none; cursor: pointer; font-family: var(--sans); }
+  @media (max-width: 768px) {
+    .tr-call-head, .tr-call { grid-template-columns: 1.2fr 60px 70px; }
+    .tr-call-head span:nth-child(4), .tr-call-head span:nth-child(5),
+    .tr-call > *:nth-child(4), .tr-call > *:nth-child(5) { display: none; }
+    .tr-hero { gap: 16px; }
+    .tr-acc { font-size: 34px; }
+  }
+
 </style>
 </head>
 <body>
@@ -2615,6 +2651,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <div class=&quot;container&quot;>
   <div class=&quot;main&quot;>
+
+    <div class=&quot;track-record&quot; id=&quot;trackRecord&quot; style=&quot;margin-bottom:32px&quot;>
+      <div class=&quot;tr-loading&quot; id=&quot;trLoading&quot; style=&quot;padding:24px;text-align:center;color:var(--mu);font-family:var(--mono);font-size:12px&quot;>Loading Velu's track record...</div>
+    </div>
 
     <div class=&quot;section-kicker&quot;>The Edge Screener</div>
     <div class=&quot;section-head&quot;>
@@ -2703,6 +2743,86 @@ setInterval(updateClock, 1000);
 updateClock();
 
 /* ── SCREENER ──────────────────────────────────── */
+
+/* ── TRACK RECORD ──────────────────────────────────── */
+async function loadTrackRecord() {
+  const container = document.getElementById('trackRecord');
+  if (!container) return;
+  try {
+    const res = await fetch('/api/track-record');
+    if (!res.ok) throw new Error('failed');
+    const data = await res.json();
+    const s = data.summary;
+    const plan = getUserPlan();
+
+    // Si no hay llamadas resueltas todavía
+    if (!s.accuracy && s.open === 0 && s.resolved === 0) {
+      container.innerHTML = `
+        <div class=&quot;tr-hero&quot;>
+          <div class=&quot;tr-big&quot;><span class=&quot;tr-acc&quot; style=&quot;color:var(--mu)&quot;>—</span><span class=&quot;tr-acc-label&quot;>Building track record</span></div>
+          <div class=&quot;tr-tag&quot;>LIVE TRACKING</div>
+        </div>
+        <div style=&quot;padding:20px 28px;color:var(--mu);font-size:13px&quot;>Velu is now tracking every BUY and SELL call. Accuracy will appear here as calls resolve over the coming weeks.</div>
+      `;
+      return;
+    }
+
+    // Hero con accuracy (público)
+    let html = `
+      <div class=&quot;tr-hero&quot;>
+        <div class=&quot;tr-big&quot;>
+          <span class=&quot;tr-acc&quot;>${s.accuracy !== null ? s.accuracy + '%' : '—'}</span>
+          <span class=&quot;tr-acc-label&quot;>Velu accuracy</span>
+        </div>
+        <div class=&quot;tr-divider&quot;></div>
+        <div class=&quot;tr-stat2&quot;><span class=&quot;tr-stat2-n&quot;>${s.resolved}</span><span class=&quot;tr-stat2-l&quot;>Resolved</span></div>
+        <div class=&quot;tr-stat2&quot;><span class=&quot;tr-stat2-n&quot; style=&quot;color:var(--g)&quot;>${s.hits}</span><span class=&quot;tr-stat2-l&quot;>Hits</span></div>
+        <div class=&quot;tr-stat2&quot;><span class=&quot;tr-stat2-n&quot;>${s.open}</span><span class=&quot;tr-stat2-l&quot;>In progress</span></div>
+        <div class=&quot;tr-tag&quot;>LIVE TRACK RECORD</div>
+      </div>
+    `;
+
+    // Detalle de llamadas (Pro) o teaser (Free)
+    if (plan === 'free') {
+      html += `
+        <div class=&quot;tr-locked&quot;>
+          <div class=&quot;tr-locked-title&quot;>🔒 See every call Velu has made</div>
+          <div class=&quot;tr-locked-sub&quot;>Pro unlocks the full history — which stocks, entry prices, targets, and whether Velu hit.</div>
+          <button class=&quot;tr-unlock-btn&quot; onclick=&quot;joinProWaitlist()&quot;>Unlock with Pro</button>
+        </div>
+      `;
+    } else {
+      const calls = (data.recentClosed || []).concat(data.recentOpen || []);
+      if (calls.length > 0) {
+        html += '<div class=&quot;tr-call-head&quot;><span>Call</span><span>Verdict</span><span>Entry</span><span>Target</span><span>Result</span></div>';
+        html += '<div class=&quot;tr-calls&quot;>';
+        calls.slice(0, 15).forEach(c => {
+          const vClass = c.verdict === 'BUY' ? 'tv-buy' : 'tv-sell';
+          let result;
+          if (c.hit === true) result = '<span class=&quot;tr-hit tr-hit-y&quot;>✓ HIT</span>';
+          else if (c.hit === false) result = '<span class=&quot;tr-hit tr-hit-n&quot;>✗ MISS</span>';
+          else result = '<span class=&quot;tr-hit tr-hit-o&quot;>● OPEN</span>';
+          html += `
+            <div class=&quot;tr-call&quot;>
+              <div><div class=&quot;tr-call-tk&quot;>${c.ticker}</div></div>
+              <div><span class=&quot;tr-verdict ${vClass}&quot;>${c.verdict}</span></div>
+              <div class=&quot;tr-mono&quot;>$${c.entryPrice?.toFixed(2) || '—'}</div>
+              <div class=&quot;tr-mono&quot;>$${c.targetPrice?.toFixed(2) || '—'}</div>
+              <div>${result}</div>
+            </div>
+          `;
+        });
+        html += '</div>';
+      }
+    }
+
+    container.innerHTML = html;
+  } catch (err) {
+    console.error('Track record error:', err);
+    container.style.display = 'none';  // Ocultar si falla, no romper el terminal
+  }
+}
+
 async function loadScreener() {
   const body = document.getElementById('screenerBody');
   const countBadge = document.getElementById('screenerCount');
@@ -2997,6 +3117,7 @@ function closeAnalysis() {
 
 /* ── INIT ──────────────────────────────────────── */
 loadScreener();
+loadTrackRecord();
 </script>
 </body>
 </html>
