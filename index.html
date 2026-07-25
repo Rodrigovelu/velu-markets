@@ -656,6 +656,34 @@ button { cursor: pointer; border: none; background: none; font-family: var(--san
   .sp-head span:nth-child(5){display:none;}
 }
 
+
+.steps-4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+@media(max-width:900px){.steps-4{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:560px){.steps-4{grid-template-columns:1fr;}}
+
+
+.tb-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;}
+.tb-points{margin-top:28px;display:flex;flex-direction:column;gap:12px;}
+.tb-point{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--i2);}
+.tb-check{color:var(--g2);font-weight:700;}
+.tb-card{background:linear-gradient(160deg,#0f1110,#090a09);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.18);}
+.tb-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.tb-card-title{font-family:var(--mono);font-size:11px;color:#00FF88;letter-spacing:.12em;}
+.tb-live{font-family:var(--mono);font-size:10px;color:#00FF88;}
+.tb-big-stat{margin-bottom:24px;}
+.tb-acc-num{font-family:var(--mono);font-size:44px;font-weight:700;color:#fff;line-height:1;letter-spacing:-.02em;}
+.tb-acc-lbl{font-size:13px;color:#9BA1AE;margin-top:8px;}
+.tb-mini-calls{display:flex;flex-direction:column;gap:10px;}
+.tb-mini-call{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:12px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;}
+.tb-mc-tk{font-family:var(--mono);font-weight:650;font-size:14px;color:#fff;}
+.tb-mc-v{font-family:var(--mono);font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;}
+.tb-buy{background:rgba(0,255,136,.14);color:#00FF88;}
+.tb-sell{background:rgba(255,77,77,.14);color:#FF4D4D;}
+.tb-mc-r{font-family:var(--mono);font-size:11px;font-weight:600;}
+.tb-hit{color:#00FF88;}
+.tb-open{color:#FFB020;}
+@media(max-width:860px){.tb-wrap{grid-template-columns:1fr;gap:32px;}}
+
 </style>
 
 <style id="velu-premium-ux-override">
@@ -1428,21 +1456,61 @@ body{
   <div class="sec-inner">
     <p class="sec-tag" style="text-align:center">HOW IT WORKS</p>
     <h2 class="sec-h" style="text-align:center">From ticker to verdict in seconds</h2>
-    <div class="steps">
+    <div class="steps steps-4">
       <div class="step">
         <div class="step-n">01</div>
         <h3 class="step-h">Scan for the punished</h3>
-        <p class="step-p">The screener finds stocks trading 20%+ below their 52-week high — but only those whose fundamentals don't justify the drop.</p>
+        <p class="step-p">The screener finds stocks trading far below their 52-week high — but only those whose fundamentals don't justify the drop.</p>
       </div>
       <div class="step">
         <div class="step-n">02</div>
         <h3 class="step-h">Three agents debate</h3>
-        <p class="step-p">A Macro Structuralist, a Quantitative analyst, and a Tail Risk agent each analyze the stock independently and take a stance.</p>
+        <p class="step-p">A Macro Structuralist, a Quantitative analyst, and a Tail Risk agent each analyze the stock and take a stance.</p>
       </div>
       <div class="step">
         <div class="step-n">03</div>
         <h3 class="step-h">Get a clear verdict</h3>
-        <p class="step-p">Buy, Hold, or Sell — with a 12-month price target, conviction level, and bull/base/bear scenarios. You decide from there.</p>
+        <p class="step-p">Buy, Hold, or Sell — with a price target, the reason behind the selloff, and how Velu compares to Wall Street.</p>
+      </div>
+      <div class="step">
+        <div class="step-n">04</div>
+        <h3 class="step-h">Velu keeps score</h3>
+        <p class="step-p">Every call is logged and tracked over time. You see the real hit rate, so you know exactly how much to trust the next verdict.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Track record showcase -->
+<section class="section" id="trackband">
+  <div class="sec-inner">
+    <div class="tb-wrap">
+      <div class="tb-left">
+        <p class="sec-tag">ACCOUNTABLE BY DESIGN</p>
+        <h2 class="sec-h">Most analysts never<br>keep score. Velu does.</h2>
+        <p class="sec-p" style="margin-top:16px;max-width:480px">Every Buy and Sell call Velu makes is logged with its entry price and target, then tracked over time. No cherry-picking winners. No quietly forgetting losers. You see the real hit rate — and decide for yourself how much to trust the next verdict.</p>
+        <div class="tb-points">
+          <div class="tb-point"><span class="tb-check">✓</span> Every call logged automatically</div>
+          <div class="tb-point"><span class="tb-check">✓</span> Scored against real market prices</div>
+          <div class="tb-point"><span class="tb-check">✓</span> Full history unlocked with Pro</div>
+        </div>
+      </div>
+      <div class="tb-right">
+        <div class="tb-card">
+          <div class="tb-card-head">
+            <span class="tb-card-title">VELU TRACK RECORD</span>
+            <span class="tb-live">● LIVE</span>
+          </div>
+          <div class="tb-big-stat">
+            <div class="tb-acc-num">Real</div>
+            <div class="tb-acc-lbl">accuracy, tracked from day one</div>
+          </div>
+          <div class="tb-mini-calls">
+            <div class="tb-mini-call"><span class="tb-mc-tk">MRVL</span><span class="tb-mc-v tb-buy">BUY</span><span class="tb-mc-r tb-hit">✓ HIT</span></div>
+            <div class="tb-mini-call"><span class="tb-mc-tk">PYPL</span><span class="tb-mc-v tb-buy">BUY</span><span class="tb-mc-r tb-hit">✓ HIT</span></div>
+            <div class="tb-mini-call"><span class="tb-mc-tk">INTC</span><span class="tb-mc-v tb-sell">SELL</span><span class="tb-mc-r tb-open">● OPEN</span></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1453,7 +1521,7 @@ body{
   <div class="sec-inner">
     <p class="sec-tag" style="text-align:center">WHY VELU</p>
     <h2 class="sec-h" style="text-align:center">Not data. Not opinions. A verdict.</h2>
-    <p class="sec-p" style="text-align:center;margin:12px auto 48px;max-width:600px">Other tools give you charts and leave the thinking to you. Velu does the analysis and tells you what it concludes — then shows its work.</p>
+    <p class="sec-p" style="text-align:center;margin:12px auto 48px;max-width:600px">Other tools give you charts and leave the thinking to you. Velu does the analysis, tells you what it concludes, and keeps score on every call.</p>
     <div class="feats">
       <div class="feat-card">
         <div class="feat-ico">⚡</div>
@@ -1461,29 +1529,29 @@ body{
         <p class="feat-p">Automatically surfaces stocks the market has oversold relative to their fundamentals. Your daily list of asymmetric opportunities.</p>
       </div>
       <div class="feat-card">
-        <div class="feat-ico">◈</div>
-        <h3 class="feat-h">Three-agent analysis</h3>
-        <p class="feat-p">Every stock is analyzed from three angles — macro positioning, quantitative valuation, and downside risk — before a verdict is reached.</p>
-      </div>
-      <div class="feat-card">
         <div class="feat-ico">◎</div>
         <h3 class="feat-h">Clear Buy/Hold/Sell</h3>
-        <p class="feat-p">No hedging, no "it depends." A directional call with conviction level, price target, and the reasoning behind it.</p>
+        <p class="feat-p">No hedging, no "it depends." A directional call with conviction level, a 12-month price target, and three AI agents defending it.</p>
       </div>
       <div class="feat-card">
-        <div class="feat-ico">⊹</div>
-        <h3 class="feat-h">Scenario modeling</h3>
-        <p class="feat-p">Bull, base, and bear cases with probabilities and price targets for each — so you understand the full distribution, not just the point estimate.</p>
+        <div class="feat-ico">◉</div>
+        <h3 class="feat-h">Live track record</h3>
+        <p class="feat-p">Every call Velu makes is logged and scored over time. See the real hit rate — no cherry-picking, no hindsight. Velu is accountable for every verdict.</p>
       </div>
       <div class="feat-card">
-        <div class="feat-ico">◇</div>
-        <h3 class="feat-h">Live market data</h3>
-        <p class="feat-p">Real-time prices, P/E, margins, ROE, and 52-week ranges pulled fresh on every analysis. Never stale.</p>
+        <div class="feat-ico">⚖</div>
+        <h3 class="feat-h">Velu vs Wall Street</h3>
+        <p class="feat-p">See exactly where Velu's price target diverges from the analyst consensus — and by how much. Find the calls where Velu sees what the Street misses.</p>
       </div>
       <div class="feat-card">
-        <div class="feat-ico">▨</div>
-        <h3 class="feat-h">Devil's advocate</h3>
-        <p class="feat-p">The Tail Risk agent actively argues against the thesis, surfacing what could go wrong before you commit capital.</p>
+        <div class="feat-ico">⚠</div>
+        <h3 class="feat-h">Why it's punished</h3>
+        <p class="feat-p">Velu reads the latest news on every stock and explains the real reason behind the selloff — with sources — so you know if the fear is justified.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ico">★</div>
+        <h3 class="feat-h">Your watchlist</h3>
+        <p class="feat-p">Follow the stocks you care about and keep Velu's verdict one tap away. Synced across every device, always up to date.</p>
       </div>
     </div>
   </div>
@@ -1997,6 +2065,17 @@ async function completeOnboarding() {
   } catch (err) {
     console.error('Profile save error:', err);
   }
+
+  // Value-first onboarding: pick a ticker relevant to their interest to auto-show
+  var interestTickerMap = {
+    'Macro': 'JPM',
+    'Crypto': 'COIN',
+    'Equities': 'NVDA',
+    'Events': 'DIS',
+    'All Markets': 'MRVL'
+  };
+  var welcomeTicker = interestTickerMap[state.data.interest] || 'NVDA';
+  try { localStorage.setItem('veluWelcomeTicker', welcomeTicker); } catch(e) {}
 
   closeOnboarding();
   goToTerminal(true);
@@ -2646,6 +2725,27 @@ document.addEventListener('DOMContentLoaded', () => {
   .cons-lock { text-align: center; font-family: var(--mono); font-size: 12px; color: var(--g); margin-top: 12px; cursor: pointer; padding: 8px; border-radius: 8px; background: rgba(0,229,160,.06); }
   .cons-lock:hover { background: rgba(0,229,160,.12); }
 
+
+  .why-box { background: var(--bg2); border: 1px solid var(--b1); border-radius: 14px; padding: 20px; margin-bottom: 24px; border-left: 3px solid var(--amber); }
+  .why-label { font-family: var(--mono); font-size: 10px; color: var(--amber); letter-spacing: .1em; margin-bottom: 12px; }
+  .why-short { font-size: 15px; color: var(--ink); line-height: 1.5; }
+  .why-full { font-size: 14px; color: var(--ink); line-height: 1.6; margin-bottom: 16px; }
+  .why-lock { text-align: center; font-family: var(--mono); font-size: 12px; color: var(--g); margin-top: 14px; cursor: pointer; padding: 9px; border-radius: 8px; background: rgba(0,229,160,.06); }
+  .why-lock:hover { background: rgba(0,229,160,.12); }
+  .why-news-label { font-family: var(--mono); font-size: 10px; color: var(--dim); letter-spacing: .08em; margin-bottom: 10px; }
+  .why-news-item { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 9px; background: var(--panel); border: 1px solid var(--b1); margin-bottom: 8px; text-decoration: none; transition: border-color .15s; }
+  .why-news-item:hover { border-color: var(--g2); }
+  .why-news-date { font-family: var(--mono); font-size: 10px; color: var(--dim); }
+  .why-news-title { font-size: 13px; color: var(--ink); line-height: 1.4; }
+  .why-news-pub { font-size: 11px; color: var(--mu); }
+
+
+  .share-row { display: flex; align-items: center; gap: 14px; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--b1); }
+  .share-btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--sans); font-size: 14px; font-weight: 600; padding: 11px 20px; border-radius: 10px; background: var(--ink); color: var(--bg); border: none; cursor: pointer; transition: opacity .15s; }
+  .share-btn:hover { opacity: .85; }
+  .share-hint { font-size: 12px; color: var(--dim); }
+  @media (max-width: 768px) { .share-hint { display: none; } }
+
 </style>
 </head>
 <body>
@@ -3076,12 +3176,12 @@ async function analyzeTicker(symbol, fromScreener) {
       throw new Error(err.error || 'Analysis failed');
     }
 
-    const { stockData, analysis } = await res.json();
+    const { stockData, analysis, news } = await res.json();
     if (getUserPlan() === 'free') {
       incrementAnalyses();
       if (!fromScreener) incrementSearches();
     }
-    renderAnalysis(stockData, analysis);
+    renderAnalysis(stockData, analysis, news);
 
   } catch (err) {
     console.error('Analysis error:', err);
@@ -3098,6 +3198,44 @@ async function analyzeTicker(symbol, fromScreener) {
   }
 }
 
+
+
+function renderWhyPunished(s, a, news) {
+  if (!a.whyPunished && !a.whyPunishedShort) return '';
+  var plan = getUserPlan();
+  var isFree = plan === 'free';
+
+  if (isFree) {
+    // Free: solo la versión corta (1 línea) + teaser
+    return `
+      <div class=&quot;why-box&quot;>
+        <div class=&quot;why-label&quot;>⚠ WHY IS IT PUNISHED?</div>
+        <div class=&quot;why-short&quot;>${a.whyPunishedShort || 'A recent catalyst drove this selloff.'}</div>
+        <div class=&quot;why-lock&quot; onclick=&quot;joinProWaitlist()&quot;>🔒 See the full breakdown + news sources with Pro →</div>
+      </div>
+    `;
+  }
+
+  // Pro: explicación completa + fuentes de noticias
+  var newsHtml = '';
+  if (news && news.length > 0) {
+    newsHtml = '<div class=&quot;why-news-label&quot;>SOURCES</div>' + news.slice(0, 4).map(function(n) {
+      return '<a href=&quot;' + n.url + '&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; class=&quot;why-news-item&quot;>' +
+        '<span class=&quot;why-news-date&quot;>' + (n.publishedDate ? n.publishedDate.slice(0,10) : '') + '</span>' +
+        '<span class=&quot;why-news-title&quot;>' + n.title + '</span>' +
+        '<span class=&quot;why-news-pub&quot;>' + (n.publisher || n.site || '') + '</span>' +
+        '</a>';
+    }).join('');
+  }
+
+  return `
+    <div class=&quot;why-box&quot;>
+      <div class=&quot;why-label&quot;>⚠ WHY IS IT PUNISHED?</div>
+      <div class=&quot;why-full&quot;>${a.whyPunished || a.whyPunishedShort}</div>
+      ${newsHtml}
+    </div>
+  `;
+}
 
 function renderConsensusCompare(s, a) {
   // Si no hay consenso de Wall Street, no mostrar nada
@@ -3164,7 +3302,7 @@ function renderConsensusCompare(s, a) {
   `;
 }
 
-function renderAnalysis(s, a) {
+function renderAnalysis(s, a, news) {
   const panel = document.getElementById('analysisPanel');
   const changeClass = s.changePct >= 0 ? 'up' : 'down';
   const changeSign = s.changePct >= 0 ? '+' : '';
@@ -3207,6 +3345,8 @@ function renderAnalysis(s, a) {
       <div class=&quot;ap-thesis&quot;>${a.thesis}</div>
 
       ${renderConsensusCompare(s, a)}
+
+      ${renderWhyPunished(s, a, news)}
 
       <div class=&quot;ap-section-label&quot;>3-Agent Analysis</div>
       <div class=&quot;agents-grid&quot;>
@@ -3263,8 +3403,22 @@ function renderAnalysis(s, a) {
       <div class=&quot;watch-list&quot;>
         ${a.watchItems.map(w => `<div class=&quot;watch-item&quot;><span class=&quot;watch-bullet&quot;>▸</span><span>${w}</span></div>`).join('')}
       </div>
+
+      <div class=&quot;share-row&quot;>
+        <button class=&quot;share-btn&quot; onclick=&quot;shareAnalysis('${s.symbol}', '${a.verdict}', ${a.targetPrice}, ${a.upside})&quot;>
+          <span>𝕏</span> Share this call
+        </button>
+        <span class=&quot;share-hint&quot;>Show your network what Velu sees</span>
+      </div>
     </div>
   `;
+}
+
+function shareAnalysis(ticker, verdict, target, upside) {
+  var upsideTxt = upside >= 0 ? '+' + upside + '%' : upside + '%';
+  var text = 'Velu says ' + verdict + ' on $' + ticker + ' — 12mo target $' + target + ' (' + upsideTxt + ' upside).\n\nAI-powered equity analysis at velumarkets.com';
+  var url = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text);
+  window.open(url, '_blank', 'noopener');
 }
 
 
@@ -3306,6 +3460,17 @@ function closeAnalysis() {
   loadScreener();
   loadTrackRecord();
   renderWatchlistPanel();
+
+  // Value-first onboarding: auto-open analysis of a relevant stock (one time)
+  try {
+    var welcomeTicker = localStorage.getItem('veluWelcomeTicker');
+    if (welcomeTicker) {
+      localStorage.removeItem('veluWelcomeTicker');  // solo una vez
+      setTimeout(function() {
+        analyzeTicker(welcomeTicker, true);  // fromScreener=true para no gastar búsqueda
+      }, 800);
+    }
+  } catch(e) {}
 })();
 </script>
 </body>
