@@ -165,13 +165,15 @@ Respond with ONLY a raw JSON object. No markdown, no code fences, no text before
       }
     }
 
-    // Guardar la llamada de Velu en el track record (fire and forget)
-    try {
-      const SUPABASE_URL = 'https://osrjmchajyrgdlucniid.supabase.co';
-      const SUPABASE_KEY = process.env.SUPABASE_KEY || 'sb_publishable_uL4sQ_T3HiCD6ZZ20D5thw_sc_gTK5F';
-      // Solo guardar llamadas BUY o SELL (las direccionales), no HOLD
-      if (analysis.verdict === 'BUY' || analysis.verdict === 'SELL') {
-        fetch(`${SUPABASE_URL}/rest/v1/velu_calls`, {
+    // Guardar la llamada de Velu en el track record
+    // IMPORTANTE: hay que esperar (await) el guardado. En serverless, la funcion
+    // se congela al devolver la respuesta y mataria un fetch en vuelo.
+    if (analysis.verdict === 'BUY' || analysis.verdict === 'SELL') {
+      try {
+        const SUPABASE_URL = 'https://osrjmchajyrgdlucniid.supabase.co';
+        const SUPABASE_KEY = process.env.SUPABASE_KEY || 'sb_publishable_uL4sQ_T3HiCD6ZZ20D5thw_sc_gTK5F';
+
+        const saveRes = await fetch(`${SUPABASE_URL}/rest/v1/velu_calls`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -187,11 +189,19 @@ Respond with ONLY a raw JSON object. No markdown, no code fences, no text before
             entry_price: stockData.price,
             target_price: analysis.targetPrice,
             upside: analysis.upside,
+            current_price: stockData.price,
             status: 'open'
           })
-        }).catch(e => console.warn('Call save failed:', e.message));
+        });
+
+        if (!saveRes.ok) {
+          const errTxt = await saveRes.text();
+          console.error('Call save failed:', saveRes.status, errTxt);
+        }
+      } catch (e) {
+        console.error('Track record save error:', e.message);
       }
-    } catch (e) { console.warn('Track record save error:', e.message); }
+    }
 
     return res.status(200).json({ stockData, analysis, news });
 
