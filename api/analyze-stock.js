@@ -18,10 +18,11 @@ export default async function handler(req, res) {
   const ticker = symbol.toUpperCase().trim();
 
   try {
-    const [quoteRes, ratiosRes, consensusRes] = await Promise.all([
+    const [quoteRes, ratiosRes, consensusRes, newsRes] = await Promise.all([
       fetch(`https://financialmodelingprep.com/stable/quote?symbol=${ticker}&apikey=${FMP}`),
       fetch(`https://financialmodelingprep.com/stable/ratios-ttm?symbol=${ticker}&apikey=${FMP}`),
-      fetch(`https://financialmodelingprep.com/stable/price-target-consensus?symbol=${ticker}&apikey=${FMP}`)
+      fetch(`https://financialmodelingprep.com/stable/price-target-consensus?symbol=${ticker}&apikey=${FMP}`),
+      fetch(`https://financialmodelingprep.com/stable/news/stock?symbols=${ticker}&limit=6&apikey=${FMP}`)
     ]);
 
     const quoteArr = await quoteRes.json();
@@ -34,6 +35,12 @@ export default async function handler(req, res) {
       const consensusArr = await consensusRes.json();
       consensus = Array.isArray(consensusArr) && consensusArr[0] ? consensusArr[0] : null;
     } catch (e) { consensus = null; }
+
+    let news = [];
+    try {
+      const newsArr = await newsRes.json();
+      news = Array.isArray(newsArr) ? newsArr.slice(0, 6) : [];
+    } catch (e) { news = []; }
 
     if (!quote) return res.status(404).json({ error: `Ticker ${ticker} not found` });
 
@@ -82,6 +89,9 @@ LIVE DATA:
 - Debt/Equity: ${fmt(stockData.debtToEquity, 2)}
 - 50-day MA: $${stockData.priceAvg50} | 200-day MA: $${stockData.priceAvg200}
 
+RECENT NEWS HEADLINES (most recent first):
+${news.length > 0 ? news.map((n, i) => `${i+1}. [${n.publishedDate?.slice(0,10)}] ${n.title} — ${n.text?.slice(0, 150)}`).join('\n') : 'No recent news available.'}
+
 Respond with ONLY a raw JSON object. No markdown, no code fences, no text before or after. Start your response with { and end with }.
 
 {
@@ -92,6 +102,8 @@ Respond with ONLY a raw JSON object. No markdown, no code fences, no text before
   "thesis": "2-3 sentence core thesis",
   "isPunished": true,
   "edge": "1 sentence on the edge",
+  "whyPunished": "2-3 sentences explaining WHY this stock has sold off, citing the specific recent news/catalysts above. If no clear catalyst, explain the likely reason from the data (sector rotation, earnings miss, valuation reset, etc.)",
+  "whyPunishedShort": "1 short sentence summary of the main reason for the selloff",
   "agents": [
     { "name": "Macro Structuralist", "stance": "BULLISH or BEARISH or NEUTRAL", "reasoning": "2-3 sentences" },
     { "name": "Quantitative", "stance": "BULLISH or BEARISH or NEUTRAL", "reasoning": "2-3 sentences" },
@@ -181,7 +193,7 @@ Respond with ONLY a raw JSON object. No markdown, no code fences, no text before
       }
     } catch (e) { console.warn('Track record save error:', e.message); }
 
-    return res.status(200).json({ stockData, analysis });
+    return res.status(200).json({ stockData, analysis, news });
 
   } catch (err) {
     console.error('Analyze error:', err.message, err.stack);
