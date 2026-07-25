@@ -2778,6 +2778,10 @@ document.addEventListener('DOMContentLoaded', () => {
   .share-hint { font-size: 12px; color: var(--dim); }
   @media (max-width: 768px) { .share-hint { display: none; } }
 
+
+  .plan-badge { font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 6px; letter-spacing: .08em; background: var(--panel2); color: var(--mu); border: 1px solid var(--b2); }
+  .plan-badge.is-pro { background: rgba(0,229,160,.12); color: var(--g); border-color: rgba(0,229,160,.35); }
+
 </style>
 </head>
 <body>
@@ -2801,6 +2805,7 @@ document.addEventListener('DOMContentLoaded', () => {
   </div>
   <div class=&quot;topbar-right&quot;>
     <div class=&quot;status-live&quot;><span class=&quot;status-dot&quot;></span> Live</div>
+    <span class=&quot;plan-badge&quot; id=&quot;planBadge&quot;>FREE</span>
     <div class=&quot;clock&quot; id=&quot;clock&quot;>--:--:--</div>
     <button onclick=&quot;window.parent.postMessage('velu-exit','*')&quot; style=&quot;font-family:var(--mono);font-size:11px;padding:7px 14px;border-radius:8px;background:var(--panel2);border:1px solid var(--b2);color:var(--mu);cursor:pointer;&quot;>← Home</button>
   </div>
@@ -2861,7 +2866,7 @@ function getUserPlan() {
 
 async function verifyPlanWithServer() {
   var email = getUserEmail();
-  if (!email) { __verifiedPlan = 'free'; return 'free'; }
+  if (!email) { __verifiedPlan = 'free'; updatePlanBadge(); return 'free'; }
   try {
     var res = await fetch('/api/check-subscription?email=' + encodeURIComponent(email));
     var data = await res.json();
@@ -2869,7 +2874,17 @@ async function verifyPlanWithServer() {
   } catch (e) {
     __verifiedPlan = 'free';
   }
+  updatePlanBadge();
   return __verifiedPlan;
+}
+
+function updatePlanBadge() {
+  var b = document.getElementById('planBadge');
+  if (!b) return;
+  var p = __verifiedPlan || 'free';
+  b.textContent = p.toUpperCase();
+  if (p === 'pro' || p === 'terminal') b.classList.add('is-pro');
+  else b.classList.remove('is-pro');
 }
 function getPlanInterest() {
   try {
@@ -2904,7 +2919,8 @@ function incrementSearches() {
 async function startCheckout(plan) {
   var email = getUserEmail();
   if (!email) {
-    window.parent.postMessage('velu-exit', '*');
+    // Pedir a la pagina principal que maneje el checkout
+    try { window.parent.postMessage({ type: 'velu-checkout', plan: plan }, '*'); } catch(e) {}
     return;
   }
   try {
@@ -2939,12 +2955,37 @@ var SB_URL = 'https://osrjmchajyrgdlucniid.supabase.co';
 var SB_KEY = 'sb_publishable_uL4sQ_T3HiCD6ZZ20D5thw_sc_gTK5F';
 var __watchlist = [];  // cache local de tickers
 
+var __sessionEmail = null;   // email confirmado por la pagina principal
+
 function getUserEmail() {
+  if (__sessionEmail) return __sessionEmail;
   try {
     var auth = JSON.parse(localStorage.getItem('veluAuth') || 'null');
     if (auth && auth.user && auth.user.email) return auth.user.email;
   } catch(e) {}
   return null;
+}
+
+function requestSessionFromParent() {
+  return new Promise(function(resolve) {
+    var settled = false;
+    function onMsg(ev) {
+      if (ev.data && ev.data.type === 'velu-session') {
+        settled = true;
+        window.removeEventListener('message', onMsg);
+        __sessionEmail = ev.data.email || null;
+        resolve(__sessionEmail);
+      }
+    }
+    window.addEventListener('message', onMsg);
+    try { window.parent.postMessage('velu-request-session', '*'); } catch(e) {}
+    setTimeout(function() {
+      if (!settled) {
+        window.removeEventListener('message', onMsg);
+        resolve(getUserEmail());
+      }
+    }, 1500);
+  });
 }
 
 async function loadWatchlist() {
@@ -3527,6 +3568,7 @@ function closeAnalysis() {
 
 /* ── INIT ──────────────────────────────────────── */
 (async function initTerminal() {
+  await requestSessionFromParent();
   await verifyPlanWithServer();
   await loadWatchlist();
   loadScreener();
@@ -3834,12 +3876,23 @@ document.addEventListener('click', function(e) {
 
 /* Handle exit from terminal iframe */
 window.addEventListener('message', function(e) {
-  if (e.data === 'velu-join-pro') {
-    var session = (window.__veluApp && window.__veluApp.getSession) ? window.__veluApp.getSession() : null;
-    if (session && session.user && session.user.email) {
-      savePlanInterest(session.user.email, 'pro');
-      alert("You're on the Pro waitlist! We'll notify you as soon as Pro access opens up.");
+  // El terminal pide la sesion actual -> se la mandamos
+  if (e.data === 'velu-request-session') {
+    var s = (window.__veluApp && window.__veluApp.getSession) ? window.__veluApp.getSession() : null;
+    var em = (s && s.user && s.user.email) ? s.user.email : null;
+    var fr = document.getElementById('terminalFrame');
+    if (fr && fr.contentWindow) {
+      fr.contentWindow.postMessage({ type: 'velu-session', email: em }, '*');
     }
+    return;
+  }
+  // El terminal pide iniciar checkout (fallback si el iframe no puede)
+  if (e.data && e.data.type === 'velu-checkout') {
+    var s2 = (window.__veluApp && window.__veluApp.getSession) ? window.__veluApp.getSession() : null;
+    var em2 = (s2 && s2.user && s2.user.email) ? s2.user.email : null;
+    if (em2) { startCheckoutFromParent(em2, e.data.plan || 'pro'); }
+    else { alert('Please log in first to upgrade.'); }
+    return;
   }
   if (e.data === 'velu-exit') {
     var tv = document.getElementById('unifiedTerminalView');
