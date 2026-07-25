@@ -2838,6 +2838,26 @@ document.addEventListener('DOMContentLoaded', () => {
     .fd-margin { display: none; }
   }
 
+
+  .sector-box { background: var(--bg2); border: 1px solid var(--b1); border-radius: 14px; padding: 20px; margin-bottom: 24px; border-left: 3px solid var(--blue); }
+  .sector-label { font-family: var(--mono); font-size: 10px; color: var(--g); letter-spacing: .1em; margin-bottom: 10px; }
+  .sc-headline { font-size: 17px; font-weight: 650; margin-bottom: 16px; letter-spacing: -.01em; }
+  .sc-bars { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .sc-bar-row { display: grid; grid-template-columns: 84px 1fr 56px; align-items: center; gap: 12px; }
+  .sc-bar-lbl { font-family: var(--mono); font-size: 11px; color: var(--mu); }
+  .sc-bar-track { height: 10px; background: var(--panel); border-radius: 5px; overflow: hidden; }
+  .sc-bar { height: 100%; border-radius: 5px; }
+  .sc-bar-own { background: linear-gradient(90deg, #FF6B6B, var(--red)); }
+  .sc-bar-peer { background: var(--b2); }
+  .sc-bar-val { font-family: var(--mono); font-size: 12px; color: var(--red); text-align: right; }
+  .sc-muted { color: var(--mu); }
+  .sc-detail { font-size: 13.5px; color: var(--ink); line-height: 1.55; }
+  .sc-peers { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--b1); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .sc-peers-lbl { font-family: var(--mono); font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: .06em; }
+  .sc-peer { font-family: var(--mono); font-size: 11px; color: var(--mu); background: var(--panel); border: 1px solid var(--b1); padding: 3px 9px; border-radius: 6px; }
+  .sc-peer-v { color: var(--red); }
+  @media (max-width: 768px) { .sc-bar-row { grid-template-columns: 70px 1fr 50px; gap: 8px; } }
+
 </style>
 </head>
 <body>
@@ -3477,12 +3497,12 @@ async function analyzeTicker(symbol, fromScreener) {
       throw new Error(err.error || 'Analysis failed');
     }
 
-    const { stockData, analysis, news, history, fundamentals } = await res.json();
+    const { stockData, analysis, news, history, fundamentals, sectorContext } = await res.json();
     if (getUserPlan() === 'free') {
       incrementAnalyses();
       if (!fromScreener) incrementSearches();
     }
-    renderAnalysis(stockData, analysis, news, history, fundamentals);
+    renderAnalysis(stockData, analysis, news, history, fundamentals, sectorContext);
 
   } catch (err) {
     console.error('Analysis error:', err);
@@ -3502,6 +3522,64 @@ async function analyzeTicker(symbol, fromScreener) {
 
 
 
+
+
+function renderSectorContext(s, sc) {
+  if (!sc) return '';
+
+  var own = s.from52High || 0;
+  var avg = sc.peerAvgFrom52High || 0;
+  var maxVal = Math.max(own, avg, 1);
+  var ownW = (own / maxVal) * 100;
+  var avgW = (avg / maxVal) * 100;
+
+  var headline, hlColor, detail;
+  if (sc.verdict === 'stock-specific') {
+    headline = 'Stock-specific selloff';
+    hlColor = 'var(--amber)';
+    detail = s.symbol + ' is down far more than its sector. Whatever is driving this is about the company, not the industry — which means the thesis lives or dies on company fundamentals.';
+  } else if (sc.verdict === 'sector-wide') {
+    headline = 'Sector-wide selloff';
+    hlColor = 'var(--blue)';
+    detail = 'The whole ' + sc.sector + ' sector is under pressure, with ' + sc.peersDownHard + ' of ' + sc.peerCount + ' peers also down 15%+. This looks like rotation, not a company-specific problem.';
+  } else if (sc.verdict === 'outperforming') {
+    headline = 'Holding up better than peers';
+    hlColor = 'var(--g)';
+    detail = s.symbol + ' has fallen less than the average ' + sc.sector + ' name. Relative strength inside a weak sector is often a quality signal.';
+  } else {
+    headline = 'Down more than its sector';
+    hlColor = 'var(--mu)';
+    detail = 'The ' + sc.sector + ' sector is under pressure too (down ' + avg + '% on average), but ' + s.symbol +
+             ' has fallen harder. Part of this is industry-wide, part is specific to the company — the agents weigh both below.';
+  }
+
+  var worst = (sc.worstPeers || []).map(function(p) {
+    return '<span class=&quot;sc-peer&quot;>' + p.symbol + ' <span class=&quot;sc-peer-v&quot;>−' + p.from52High + '%</span></span>';
+  }).join('');
+
+  return `
+    <div class=&quot;sector-box&quot;>
+      <div class=&quot;sector-label&quot;>SECTOR CONTEXT · ${sc.sector.toUpperCase()}</div>
+      <div class=&quot;sc-headline&quot; style=&quot;color:${hlColor}&quot;>${headline}</div>
+
+      <div class=&quot;sc-bars&quot;>
+        <div class=&quot;sc-bar-row&quot;>
+          <span class=&quot;sc-bar-lbl&quot;>${s.symbol}</span>
+          <div class=&quot;sc-bar-track&quot;><div class=&quot;sc-bar sc-bar-own&quot; style=&quot;width:${ownW.toFixed(1)}%&quot;></div></div>
+          <span class=&quot;sc-bar-val&quot;>−${own}%</span>
+        </div>
+        <div class=&quot;sc-bar-row&quot;>
+          <span class=&quot;sc-bar-lbl&quot;>Sector avg</span>
+          <div class=&quot;sc-bar-track&quot;><div class=&quot;sc-bar sc-bar-peer&quot; style=&quot;width:${avgW.toFixed(1)}%&quot;></div></div>
+          <span class=&quot;sc-bar-val sc-muted&quot;>−${avg}%</span>
+        </div>
+      </div>
+
+      <div class=&quot;sc-detail&quot;>${detail}</div>
+      ${worst ? '<div class=&quot;sc-peers&quot;><span class=&quot;sc-peers-lbl&quot;>Hardest hit peers</span>' + worst + '</div>' : ''}
+    </div>
+  `;
+}
 
 function renderFundamentals(s, f) {
   if (!f || !f.years || f.years.length < 2) return '';
@@ -3762,7 +3840,7 @@ function renderConsensusCompare(s, a) {
   `;
 }
 
-function renderAnalysis(s, a, news, history, fundamentals) {
+function renderAnalysis(s, a, news, history, fundamentals, sectorContext) {
   const panel = document.getElementById('analysisPanel');
   const changeClass = s.changePct >= 0 ? 'up' : 'down';
   const changeSign = s.changePct >= 0 ? '+' : '';
@@ -3811,6 +3889,8 @@ function renderAnalysis(s, a, news, history, fundamentals) {
       ${renderConsensusCompare(s, a)}
 
       ${renderWhyPunished(s, a, news)}
+
+      ${renderSectorContext(s, sectorContext)}
 
       <div class=&quot;ap-section-label&quot;>3-Agent Analysis</div>
       <div class=&quot;agents-grid&quot;>
