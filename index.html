@@ -2858,6 +2858,32 @@ document.addEventListener('DOMContentLoaded', () => {
   .sc-peer-v { color: var(--red); }
   @media (max-width: 768px) { .sc-bar-row { grid-template-columns: 70px 1fr 50px; gap: 8px; } }
 
+
+  .disc-tabs { display: flex; gap: 8px; margin-bottom: 22px; }
+  .disc-tab { font-family: var(--sans); font-size: 14px; font-weight: 600; padding: 10px 20px; border-radius: 10px; background: var(--panel); border: 1px solid var(--b1); color: var(--mu); cursor: pointer; transition: all .15s; }
+  .disc-tab:hover { color: var(--ink); border-color: var(--b2); }
+  .disc-tab.active { background: rgba(0,229,160,.1); color: var(--g); border-color: rgba(0,229,160,.35); }
+  .rad-row { display: grid; grid-template-columns: 48px 1.5fr 90px 110px 110px 70px; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--b1); cursor: pointer; transition: background .12s; }
+  .rad-row:last-child { border-bottom: none; }
+  .rad-row:hover { background: var(--panel2); }
+  .rad-row.header { cursor: default; background: transparent; font-family: var(--mono); font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: .08em; padding: 10px 20px; }
+  .rad-row.header:hover { background: transparent; }
+  .rad-stage { font-family: var(--mono); font-size: 10px; font-weight: 600; padding: 4px 9px; border-radius: 6px; letter-spacing: .04em; white-space: nowrap; }
+  .stg-early { background: rgba(0,229,160,.14); color: var(--g); }
+  .stg-base  { background: rgba(77,159,255,.12); color: var(--blue); }
+  .stg-trend { background: rgba(255,176,32,.12); color: var(--amber); }
+  .stg-late  { background: rgba(155,161,174,.1); color: var(--mu); }
+  .rad-score { font-family: var(--mono); font-size: 16px; font-weight: 700; text-align: right; }
+  .rs-high { color: var(--g); }
+  .rs-mid  { color: var(--amber); }
+  .rs-low  { color: var(--mu); }
+  .rad-accel { color: var(--g); font-size: 10px; }
+  @media (max-width: 768px) {
+    .disc-tab { flex: 1; padding: 10px 12px; font-size: 13px; }
+    .rad-row { grid-template-columns: 32px 1.3fr 80px 60px; }
+    .rad-row .col-rev, .rad-row .col-stage { display: none; }
+  }
+
 </style>
 </head>
 <body>
@@ -2896,27 +2922,61 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class=&quot;tr-loading&quot; id=&quot;trLoading&quot; style=&quot;padding:24px;text-align:center;color:var(--mu);font-family:var(--mono);font-size:12px&quot;>Loading Velu's track record...</div>
     </div>
 
-    <div class=&quot;section-kicker&quot;>The Edge Screener</div>
-    <div class=&quot;section-head&quot;>
-      <h1 class=&quot;section-title&quot;>Stocks the market is punishing</h1>
+    <div class=&quot;disc-tabs&quot;>
+      <button class=&quot;disc-tab active&quot; id=&quot;tabBtnPunished&quot;>⚡ Punished</button>
+      <button class=&quot;disc-tab&quot; id=&quot;tabBtnRadar&quot;>📡 Radar</button>
     </div>
-    <p class=&quot;section-desc&quot;>
-      Velu scans 176 major US stocks every time you refresh, ranking the ones that have sold off hardest
-      relative to their own highs and moving averages. Click any stock for a full 3-agent analysis.
-    </p>
 
-    <div class=&quot;screener&quot;>
-      <div class=&quot;screener-head&quot;>
-        <div class=&quot;screener-title&quot;>
-          ⚡ Punishment Screener
-          <span class=&quot;screener-badge&quot; id=&quot;screenerCount&quot;>SCANNING...</span>
-        </div>
-        <button class=&quot;refresh-btn&quot; onclick=&quot;loadScreener()&quot;>↻ Refresh</button>
+    <div id=&quot;tabPunished&quot;>
+      <div class=&quot;section-kicker&quot;>The Edge Screener</div>
+      <div class=&quot;section-head&quot;>
+        <h1 class=&quot;section-title&quot;>Stocks the market is punishing</h1>
       </div>
-      <div id=&quot;screenerBody&quot;>
-        <div class=&quot;loading&quot;>
-          <div class=&quot;spinner&quot;></div>
-          <div class=&quot;loading-txt&quot;>Scanning 500+ stocks for mispriced opportunities...</div>
+      <p class=&quot;section-desc&quot;>
+        Velu scans 176 major US stocks every time you refresh, ranking the ones that have sold off hardest
+        relative to their own highs and moving averages. Click any stock for a full 3-agent analysis.
+      </p>
+
+      <div class=&quot;screener&quot;>
+        <div class=&quot;screener-head&quot;>
+          <div class=&quot;screener-title&quot;>
+            ⚡ Punishment Screener
+            <span class=&quot;screener-badge&quot; id=&quot;screenerCount&quot;>SCANNING...</span>
+          </div>
+          <button class=&quot;refresh-btn&quot; onclick=&quot;loadScreener()&quot;>↻ Refresh</button>
+        </div>
+        <div id=&quot;screenerBody&quot;>
+          <div class=&quot;loading&quot;>
+            <div class=&quot;spinner&quot;></div>
+            <div class=&quot;loading-txt&quot;>Scanning 176 stocks for mispriced opportunities...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id=&quot;tabRadar&quot; style=&quot;display:none&quot;>
+      <div class=&quot;section-kicker&quot;>Early Signal Radar</div>
+      <div class=&quot;section-head&quot;>
+        <h1 class=&quot;section-title&quot;>Before the crowd notices</h1>
+      </div>
+      <p class=&quot;section-desc&quot;>
+        Companies inside structural themes whose fundamentals are inflecting but whose price has not run yet.
+        The score deliberately penalizes names that already moved — the point is to find them early, not to admire winners.
+      </p>
+
+      <div class=&quot;screener&quot;>
+        <div class=&quot;screener-head&quot;>
+          <div class=&quot;screener-title&quot;>
+            📡 Radar
+            <span class=&quot;screener-badge&quot; id=&quot;radarCount&quot;>READY</span>
+          </div>
+          <button class=&quot;refresh-btn&quot; onclick=&quot;loadRadar(true)&quot;>↻ Refresh</button>
+        </div>
+        <div id=&quot;radarBody&quot;>
+          <div class=&quot;loading&quot;>
+            <div class=&quot;spinner&quot;></div>
+            <div class=&quot;loading-txt&quot;>Scanning thematic universe...</div>
+          </div>
         </div>
       </div>
     </div>
@@ -3448,6 +3508,153 @@ function bindScreenerControls(body) {
   }
 }
 
+
+
+/* ── DISCOVERY TABS + RADAR ────────────────────── */
+var __radarLoaded = false;
+var __radarStocks = [];
+var __radarScanned = 0;
+var __radarTheme = 'All';
+var __radarVisible = 15;
+
+function switchTab(tab) {
+  var pB = document.getElementById('tabBtnPunished');
+  var rB = document.getElementById('tabBtnRadar');
+  var pP = document.getElementById('tabPunished');
+  var rP = document.getElementById('tabRadar');
+  if (!pB || !rB || !pP || !rP) return;
+
+  if (tab === 'radar') {
+    rB.classList.add('active'); pB.classList.remove('active');
+    rP.style.display = ''; pP.style.display = 'none';
+    if (!__radarLoaded) loadRadar();
+  } else {
+    pB.classList.add('active'); rB.classList.remove('active');
+    pP.style.display = ''; rP.style.display = 'none';
+  }
+}
+
+async function loadRadar(force) {
+  var body = document.getElementById('radarBody');
+  var badge = document.getElementById('radarCount');
+  if (!body) return;
+  if (__radarLoaded && !force) { renderRadar(); return; }
+
+  body.innerHTML = '<div class=&quot;loading&quot;><div class=&quot;spinner&quot;></div><div class=&quot;loading-txt&quot;>Scanning thematic universe for early inflections...</div></div>';
+  badge.textContent = 'SCANNING...';
+
+  try {
+    var res = await fetch('/api/radar');
+    if (!res.ok) throw new Error('radar failed');
+    var data = await res.json();
+    __radarStocks = data.stocks || [];
+    __radarScanned = data.scanned || 0;
+    __radarLoaded = true;
+    __radarVisible = 15;
+    renderRadar();
+  } catch (e) {
+    console.error('Radar error:', e);
+    body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>⚠</div>Could not load the radar. The market data service may be busy. Try again in a moment.</div>';
+    badge.textContent = 'ERROR';
+  }
+}
+
+function setRadarTheme(t) {
+  __radarTheme = t;
+  __radarVisible = 15;
+  renderRadar();
+}
+function showMoreRadar() {
+  __radarVisible += 15;
+  renderRadar();
+}
+
+function renderRadar() {
+  var body = document.getElementById('radarBody');
+  var badge = document.getElementById('radarCount');
+  if (!body) return;
+
+  var isFree = getUserPlan() === 'free';
+  var list = __radarStocks.slice();
+  if (__radarTheme !== 'All') {
+    list = list.filter(function(s) { return s.theme === __radarTheme; });
+  }
+
+  badge.textContent = list.length + ' OF ' + __radarScanned + ' SCANNED';
+
+  if (list.length === 0) {
+    body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>◎</div>No early-stage setups in this theme right now.</div>';
+    return;
+  }
+
+  var themes = ['All'];
+  __radarStocks.forEach(function(s) {
+    if (s.theme && themes.indexOf(s.theme) === -1) themes.push(s.theme);
+  });
+
+  var html = '<div class=&quot;scr-controls&quot;><div class=&quot;scr-chips&quot;>';
+  themes.forEach(function(t) {
+    html += '<button class=&quot;scr-chip' + (t === __radarTheme ? ' active' : '') + '&quot; data-theme=&quot;' + t + '&quot;>' + t + '</button>';
+  });
+  html += '</div></div>';
+
+  html += '<div class=&quot;rad-row header&quot;>' +
+          '<div>#</div><div>Company</div><div>Price</div><div class=&quot;col-rev&quot;>Rev growth</div>' +
+          '<div class=&quot;col-stage&quot;>Stage</div><div>Radar</div></div>';
+
+  var cap = isFree ? FREE_SCREENER_LIMIT : __radarVisible;
+  var vis = list.slice(0, cap);
+  var remaining = list.length - vis.length;
+
+  vis.forEach(function(s) {
+    var star = isWatched(s.symbol)
+      ? '<span style=&quot;color:var(--g)&quot;>★</span>'
+      : '<span style=&quot;color:var(--dim)&quot;>☆</span>';
+    var stageCls = (s.stage === 'Just turning' || s.stage === 'Early trend') ? 'stg-early'
+                 : (s.stage === 'Basing') ? 'stg-base'
+                 : (s.stage === 'In trend') ? 'stg-trend' : 'stg-late';
+    var revTxt = s.revYoY != null ? (s.revYoY > 0 ? '+' : '') + s.revYoY + '%' : '—';
+    var revCls = (s.revYoY != null && s.revYoY > 0) ? 'up' : 'down';
+    var accel = (s.revAccel != null && s.revAccel > 0)
+      ? '<span class=&quot;rad-accel&quot; title=&quot;Growth is accelerating&quot;>▲</span>' : '';
+    var scoreCls = s.radarScore >= 70 ? 'rs-high' : s.radarScore >= 50 ? 'rs-mid' : 'rs-low';
+
+    html += '<div class=&quot;rad-row&quot; onclick=&quot;analyzeTicker(\'' + s.symbol + '\', true)&quot;>' +
+      '<div class=&quot;rank&quot; onclick=&quot;toggleWatchlist(\'' + s.symbol + '\', \'' + (s.name||'').replace(/'/g,'') + '\', event)&quot; style=&quot;cursor:pointer&quot;>' + star + '</div>' +
+      '<div class=&quot;stock-sym&quot;><span class=&quot;sym-ticker&quot;>' + s.symbol + '</span>' +
+        '<span class=&quot;sym-name&quot;>' + (s.name||'') + (s.theme ? ' · <span class=&quot;sym-sector&quot;>' + s.theme + '</span>' : '') + '</span></div>' +
+      '<div class=&quot;stock-price&quot;>$' + (s.price != null ? s.price.toFixed(2) : '—') + '</div>' +
+      '<div class=&quot;stock-change ' + revCls + ' col-rev&quot;>' + revTxt + ' ' + accel + '</div>' +
+      '<div class=&quot;col-stage&quot;><span class=&quot;rad-stage ' + stageCls + '&quot;>' + s.stage + '</span></div>' +
+      '<div class=&quot;rad-score ' + scoreCls + '&quot;>' + s.radarScore + '</div>' +
+      '</div>';
+  });
+
+  if (isFree && remaining > 0) {
+    html += '<div class=&quot;rad-row&quot; style=&quot;cursor:pointer;background:linear-gradient(90deg,rgba(0,229,160,.05),transparent)&quot; onclick=&quot;joinProWaitlist()&quot;>' +
+      '<div class=&quot;rank&quot;>🔒</div>' +
+      '<div class=&quot;stock-sym&quot;><span class=&quot;sym-ticker&quot; style=&quot;color:var(--g)&quot;>+' + remaining + ' more signals</span>' +
+      '<span class=&quot;sym-name&quot;>Unlock the full radar with Pro</span></div>' +
+      '<div class=&quot;stock-price&quot; style=&quot;color:var(--dim)&quot;>—</div>' +
+      '<div class=&quot;col-rev&quot; style=&quot;color:var(--dim)&quot;>—</div>' +
+      '<div class=&quot;col-stage&quot; style=&quot;color:var(--g);font-family:var(--mono);font-size:11px&quot;>Join Pro →</div>' +
+      '<div style=&quot;color:var(--dim)&quot;>—</div></div>';
+  } else if (!isFree && remaining > 0) {
+    html += '<div class=&quot;scr-more&quot;><button class=&quot;scr-more-btn&quot; onclick=&quot;showMoreRadar()&quot;>Show ' + Math.min(15, remaining) + ' more · ' + remaining + ' remaining</button></div>';
+  }
+
+  body.innerHTML = html;
+
+  var chips = body.querySelectorAll('.scr-chip');
+  for (var i = 0; i < chips.length; i++) {
+    (function(btn) {
+      btn.addEventListener('click', function(ev) {
+        ev.stopPropagation();
+        setRadarTheme(btn.getAttribute('data-theme'));
+      });
+    })(chips[i]);
+  }
+}
 
 /* ── TICKER ANALYSIS ───────────────────────────── */
 async function analyzeTicker(symbol, fromScreener) {
@@ -4018,6 +4225,11 @@ window.addEventListener('message', function(ev) {
 
 /* ── INIT ──────────────────────────────────────── */
 (async function initTerminal() {
+  var tb1 = document.getElementById('tabBtnPunished');
+  var tb2 = document.getElementById('tabBtnRadar');
+  if (tb1) tb1.addEventListener('click', function(){ switchTab('punished'); });
+  if (tb2) tb2.addEventListener('click', function(){ switchTab('radar'); });
+
   await requestSessionFromParent();
   await verifyPlanWithServer();
   await loadWatchlist();
