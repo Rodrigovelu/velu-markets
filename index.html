@@ -2816,6 +2816,28 @@ document.addEventListener('DOMContentLoaded', () => {
   .chart-drop { font-family: var(--mono); font-size: 11px; color: var(--red); font-weight: 600; }
   @media (max-width: 768px) { .chart-svg { height: 140px; } }
 
+
+  .fund-box { background: var(--bg2); border: 1px solid var(--b1); border-radius: 14px; padding: 20px; margin-bottom: 24px; }
+  .fund-label { font-family: var(--mono); font-size: 10px; color: var(--g); letter-spacing: .1em; margin-bottom: 16px; }
+  .fund-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  .fd-stat { padding: 12px 14px; background: var(--panel); border: 1px solid var(--b1); border-radius: 10px; }
+  .fd-stat-l { font-family: var(--mono); font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; }
+  .fd-stat-v { font-family: var(--mono); font-size: 20px; font-weight: 700; }
+  .fd-table { display: flex; flex-direction: column; gap: 7px; }
+  .fd-row { display: grid; grid-template-columns: 58px 1fr 76px 54px; align-items: center; gap: 10px; }
+  .fd-head { font-family: var(--mono); font-size: 9px; color: var(--dim); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 2px; }
+  .fd-year { font-family: var(--mono); font-size: 11px; color: var(--mu); }
+  .fd-bar-track { height: 7px; background: var(--panel); border-radius: 4px; overflow: hidden; }
+  .fd-bar { height: 100%; background: linear-gradient(90deg, var(--g2), var(--g)); border-radius: 4px; }
+  .fd-rev { font-family: var(--mono); font-size: 12px; color: var(--ink); text-align: right; }
+  .fd-margin { font-family: var(--mono); font-size: 11px; color: var(--mu); text-align: right; }
+  .fd-insight { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--b1); font-size: 13.5px; color: var(--ink); line-height: 1.55; }
+  @media (max-width: 768px) {
+    .fund-stats { grid-template-columns: 1fr; gap: 8px; }
+    .fd-row { grid-template-columns: 50px 1fr 66px; }
+    .fd-margin { display: none; }
+  }
+
 </style>
 </head>
 <body>
@@ -3455,12 +3477,12 @@ async function analyzeTicker(symbol, fromScreener) {
       throw new Error(err.error || 'Analysis failed');
     }
 
-    const { stockData, analysis, news, history } = await res.json();
+    const { stockData, analysis, news, history, fundamentals } = await res.json();
     if (getUserPlan() === 'free') {
       incrementAnalyses();
       if (!fromScreener) incrementSearches();
     }
-    renderAnalysis(stockData, analysis, news, history);
+    renderAnalysis(stockData, analysis, news, history, fundamentals);
 
   } catch (err) {
     console.error('Analysis error:', err);
@@ -3479,6 +3501,90 @@ async function analyzeTicker(symbol, fromScreener) {
 
 
 
+
+
+function renderFundamentals(s, f) {
+  if (!f || !f.years || f.years.length < 2) return '';
+
+  var fmtPct = function(v) {
+    if (v == null) return 'N/A';
+    return (v > 0 ? '+' : '') + v.toFixed(1) + '%';
+  };
+  var fmtB = function(v) {
+    if (v == null) return 'N/A';
+    var abs = Math.abs(v);
+    if (abs >= 1e9) return '$' + (v / 1e9).toFixed(1) + 'B';
+    if (abs >= 1e6) return '$' + (v / 1e6).toFixed(0) + 'M';
+    return '$' + v.toFixed(0);
+  };
+
+  var revColor = (f.revenueCagr != null && f.revenueCagr > 0) ? 'var(--g)' : 'var(--red)';
+  var epsColor = (f.epsCagr != null && f.epsCagr > 0) ? 'var(--g)' : 'var(--red)';
+  var mtColor = f.marginTrend === 'expanding' ? 'var(--g)'
+              : f.marginTrend === 'compressing' ? 'var(--red)' : 'var(--mu)';
+  var mtLabel = f.marginTrend === 'expanding' ? 'Expanding'
+              : f.marginTrend === 'compressing' ? 'Compressing'
+              : f.marginTrend === 'stable' ? 'Stable' : 'N/A';
+
+  // Barras de ingresos por año
+  var revs = f.years.map(function(y) { return y.revenue; });
+  var maxRev = Math.max.apply(null, revs) || 1;
+  var bars = f.years.map(function(y) {
+    var w = Math.max(4, (y.revenue / maxRev) * 100);
+    var growing = true;
+    return '<div class=&quot;fd-row&quot;>' +
+      '<span class=&quot;fd-year&quot;>FY' + y.year + '</span>' +
+      '<div class=&quot;fd-bar-track&quot;><div class=&quot;fd-bar&quot; style=&quot;width:' + w.toFixed(1) + '%&quot;></div></div>' +
+      '<span class=&quot;fd-rev&quot;>' + fmtB(y.revenue) + '</span>' +
+      '<span class=&quot;fd-margin&quot;>' + (y.netMargin != null ? (y.netMargin * 100).toFixed(1) + '%' : '—') + '</span>' +
+      '</div>';
+  }).join('');
+
+  // La linea clave: negocio vs precio
+  var insight = '';
+  if (f.revenueCagr != null && s.from52High > 0) {
+    if (f.revenueCagr > 3) {
+      insight = 'Revenue has compounded at ' + fmtPct(f.revenueCagr) + ' a year while the stock sits ' +
+                s.from52High + '% below its high. That divergence is the setup Velu looks for.';
+    } else if (f.revenueCagr < 0) {
+      insight = 'Revenue has been shrinking at ' + fmtPct(f.revenueCagr) + ' a year. The ' + s.from52High +
+                '% decline may reflect a real deterioration, not just sentiment.';
+    } else {
+      insight = 'Revenue is roughly flat over the period while the stock fell ' + s.from52High +
+                '%. The story depends on whether growth resumes.';
+    }
+  }
+
+  return `
+    <div class=&quot;fund-box&quot;>
+      <div class=&quot;fund-label&quot;>FUNDAMENTAL TRAJECTORY · ${f.spanYears + 1} YEARS</div>
+      <div class=&quot;fund-stats&quot;>
+        <div class=&quot;fd-stat&quot;>
+          <div class=&quot;fd-stat-l&quot;>Revenue CAGR</div>
+          <div class=&quot;fd-stat-v&quot; style=&quot;color:${revColor}&quot;>${fmtPct(f.revenueCagr)}</div>
+        </div>
+        <div class=&quot;fd-stat&quot;>
+          <div class=&quot;fd-stat-l&quot;>EPS CAGR</div>
+          <div class=&quot;fd-stat-v&quot; style=&quot;color:${epsColor}&quot;>${fmtPct(f.epsCagr)}</div>
+        </div>
+        <div class=&quot;fd-stat&quot;>
+          <div class=&quot;fd-stat-l&quot;>Net margins</div>
+          <div class=&quot;fd-stat-v&quot; style=&quot;color:${mtColor};font-size:16px&quot;>${mtLabel}</div>
+        </div>
+      </div>
+      <div class=&quot;fd-table&quot;>
+        <div class=&quot;fd-row fd-head&quot;>
+          <span class=&quot;fd-year&quot;>Year</span>
+          <span class=&quot;fd-bar-track&quot;></span>
+          <span class=&quot;fd-rev&quot;>Revenue</span>
+          <span class=&quot;fd-margin&quot;>Margin</span>
+        </div>
+        ${bars}
+      </div>
+      ${insight ? '<div class=&quot;fd-insight&quot;>' + insight + '</div>' : ''}
+    </div>
+  `;
+}
 
 function renderPriceChart(s, history) {
   if (!history || history.length < 8) return '';
@@ -3656,7 +3762,7 @@ function renderConsensusCompare(s, a) {
   `;
 }
 
-function renderAnalysis(s, a, news, history) {
+function renderAnalysis(s, a, news, history, fundamentals) {
   const panel = document.getElementById('analysisPanel');
   const changeClass = s.changePct >= 0 ? 'up' : 'down';
   const changeSign = s.changePct >= 0 ? '+' : '';
@@ -3699,6 +3805,8 @@ function renderAnalysis(s, a, news, history) {
       ${a.isPunished ? `<div class=&quot;edge-tag&quot;>⚡ EDGE DETECTED — ${a.edge}</div>` : ''}
 
       <div class=&quot;ap-thesis&quot;>${a.thesis}</div>
+
+      ${renderFundamentals(s, fundamentals)}
 
       ${renderConsensusCompare(s, a)}
 
