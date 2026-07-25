@@ -1630,7 +1630,7 @@ body{
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">New-opportunity alerts</span></div>
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Real-time market data</span></div>
         </div>
-        <button class="plan-btn pbt-f" onclick="selectPlan('pro')">Join Pro waitlist</button>
+        <button class="plan-btn pbt-f" onclick="selectPlan('pro')">Start free trial</button>
         <p style="text-align:center;font-size:11px;color:var(--dim);margin-top:10px">$290/year — save 2 months</p>
       </div>
 
@@ -1645,7 +1645,7 @@ body{
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">API access</span></div>
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Dedicated support</span></div>
         </div>
-        <button class="plan-btn pbt-s" onclick="selectPlan('terminal')">Join Terminal waitlist</button>
+        <button class="plan-btn pbt-s" onclick="selectPlan('terminal')">Get Terminal</button>
         <p style="text-align:center;font-size:11px;color:var(--dim);margin-top:10px">$990/year — save 2 months</p>
       </div>
 
@@ -2176,13 +2176,44 @@ function selectPlan(plan) {
     return;
   }
 
-  // Pro or Terminal: capture interest in waitlist
+  // Pro or Terminal: si ya tiene sesión, mandarlo directo a pagar
   if (session && session.isAuthenticated && session.user && session.user.email) {
-    savePlanInterest(session.user.email, plan);
-    showPlanInterestConfirm(plan);
+    startCheckoutFromParent(session.user.email, plan);
   } else {
-    // Not logged in — open signup, will capture interest after they register
+    // Sin sesión — abrir signup primero; al terminar el onboarding lo mandamos a pagar
     openSignup();
+  }
+}
+
+async function startCheckoutFromParent(email, plan) {
+  try {
+    const res = await fetch('/api/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, plan })
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert('Could not start checkout. Please try again.');
+    }
+  } catch (e) {
+    alert('Could not start checkout. Please try again.');
+  }
+}
+
+/* Detectar retorno de Stripe Checkout */
+function handleCheckoutReturn() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('checkout') === 'success') {
+    setTimeout(() => {
+      alert("Payment successful! Welcome to Velu Pro. Your access is now active.");
+      window.history.replaceState({}, '', window.location.pathname);
+      goToTerminal(true);
+    }, 300);
+  } else if (params.get('checkout') === 'cancelled') {
+    window.history.replaceState({}, '', window.location.pathname);
   }
 }
 
@@ -2308,6 +2339,7 @@ document.querySelectorAll('.bc, .plan, .step, .mkt').forEach(el => {
 
 document.addEventListener('DOMContentLoaded', () => {
   updateAuthCtas();
+  handleCheckoutReturn();
 });
 </script>
 
@@ -2820,12 +2852,24 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ── CLOCK ─────────────────────────────────────── */
 
 /* ── PLAN GATING (Free tier limits) ─────────────────── */
+var __verifiedPlan = null;  // cache del plan REAL verificado por el servidor
+
 function getUserPlan() {
+  // Mientras se verifica o si no hay sesión, tratar como free (seguro por defecto)
+  return __verifiedPlan || 'free';
+}
+
+async function verifyPlanWithServer() {
+  var email = getUserEmail();
+  if (!email) { __verifiedPlan = 'free'; return 'free'; }
   try {
-    var auth = JSON.parse(localStorage.getItem('veluAuth') || 'null');
-    if (auth && auth.user && auth.user.plan) return auth.user.plan;
-  } catch(e) {}
-  return 'free';
+    var res = await fetch('/api/check-subscription?email=' + encodeURIComponent(email));
+    var data = await res.json();
+    __verifiedPlan = data.plan || 'free';
+  } catch (e) {
+    __verifiedPlan = 'free';
+  }
+  return __verifiedPlan;
 }
 function getPlanInterest() {
   try {
@@ -2857,8 +2901,35 @@ function incrementAnalyses() {
 function incrementSearches() {
   var u = getUsage(); u.searches = (u.searches||0) + 1; saveUsage(u); return u.searches;
 }
+async function startCheckout(plan) {
+  var email = getUserEmail();
+  if (!email) {
+    window.parent.postMessage('velu-exit', '*');
+    return;
+  }
+  try {
+    var res = await fetch('/api/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, plan: plan })
+    });
+    var data = await res.json();
+    if (data.url) {
+      window.top.location.href = data.url;  // salir del iframe hacia Stripe Checkout
+    } else {
+      alert('Could not start checkout. Please try again.');
+    }
+  } catch (e) {
+    alert('Could not start checkout. Please try again.');
+  }
+}
+
 function joinProWaitlist() {
-  window.parent.postMessage('velu-join-pro', '*');
+  startCheckout('pro');
+}
+
+function joinTerminalWaitlist() {
+  startCheckout('terminal');
 }
 
 
@@ -3444,7 +3515,7 @@ function showUpgradeGate(title, subtitle) {
           <div>✓ Real-time market data</div>
         </div>
       </div>
-      <button onclick=&quot;joinProWaitlist()&quot; style=&quot;width:100%;padding:14px;border-radius:12px;background:var(--g);color:#0A0B0D;font-weight:700;font-size:15px;border:none;cursor:pointer;font-family:var(--sans)&quot;>Join Pro waitlist</button>
+      <button onclick=&quot;joinProWaitlist()&quot; style=&quot;width:100%;padding:14px;border-radius:12px;background:var(--g);color:#0A0B0D;font-weight:700;font-size:15px;border:none;cursor:pointer;font-family:var(--sans)&quot;>Upgrade to Pro — $29/mo</button>
     </div>
   `;
 }
@@ -3456,6 +3527,7 @@ function closeAnalysis() {
 
 /* ── INIT ──────────────────────────────────────── */
 (async function initTerminal() {
+  await verifyPlanWithServer();
   await loadWatchlist();
   loadScreener();
   loadTrackRecord();
