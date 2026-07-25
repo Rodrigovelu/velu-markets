@@ -1,4 +1,79 @@
 // api/analyze-stock.js
+
+// Mapa de sectores para comparar cada accion contra sus pares
+const SECTOR_PEERS = {
+  'Communication': ['META', 'NFLX', 'RBLX', 'DIS', 'CMCSA', 'T', 'VZ', 'TMUS', 'WBD', 'PARA', 'EA', 'TTWO', 'ROKU', 'SPOT', 'PINS', 'SNAP'],
+  'Consumer Discretionary': ['AMZN', 'TSLA', 'HD', 'LOW', 'NKE', 'SBUX', 'MCD', 'CMG', 'LULU', 'TGT', 'TJX', 'ROST', 'BKNG', 'MAR', 'HLT', 'RCL', 'CCL', 'F', 'GM', 'RIVN', 'ABNB', 'UBER', 'DASH'],
+  'Consumer Staples': ['PG', 'KO', 'PEP', 'COST', 'WMT', 'CL', 'KMB', 'GIS', 'HSY', 'MDLZ', 'STZ', 'KHC'],
+  'Energy': ['XOM', 'CVX', 'COP', 'EOG', 'SLB', 'PSX', 'VLO', 'MPC', 'OXY', 'DVN', 'HAL', 'KMI'],
+  'Financials': ['V', 'MA', 'PYPL', 'SQ', 'COIN', 'HOOD', 'AXP', 'SCHW', 'JPM', 'BAC', 'WFC', 'GS', 'MS', 'C', 'BLK', 'COF', 'USB', 'PNC'],
+  'Healthcare': ['JNJ', 'UNH', 'PFE', 'MRK', 'ABBV', 'LLY', 'TMO', 'ABT', 'DHR', 'BMY', 'AMGN', 'GILD', 'CVS', 'CI', 'HUM', 'MRNA', 'BNTX', 'REGN', 'VRTX', 'BIIB', 'ISRG', 'MDT', 'SYK', 'BSX'],
+  'Industrials': ['BA', 'CAT', 'DE', 'GE', 'HON', 'LMT', 'RTX', 'NOC', 'GD', 'MMM', 'UPS', 'FDX', 'UNP', 'CSX', 'EMR', 'ETN'],
+  'Materials': ['LIN', 'APD', 'SHW', 'FCX', 'NEM'],
+  'Real Estate': ['AMT', 'PLD', 'CCI', 'EQIX', 'SPG', 'O'],
+  'Semiconductors': ['NVDA', 'AMD', 'INTC', 'AVGO', 'QCOM', 'TXN', 'MU', 'ADI', 'NXPI', 'MRVL', 'ON', 'SWKS', 'MCHP', 'LRCX', 'AMAT', 'KLAC', 'TSM', 'ARM'],
+  'Technology': ['AAPL', 'MSFT', 'GOOGL', 'CRM', 'ORCL', 'ADBE', 'NOW', 'INTU', 'SNOW', 'DDOG', 'MDB', 'TEAM', 'OKTA', 'TWLO', 'NET', 'CRWD', 'PANW', 'ZS', 'PLTR', 'SHOP', 'ZM', 'DOCU', 'U'],
+  'Utilities': ['NEE', 'DUK', 'SO'],
+};
+
+function findSector(ticker) {
+  for (const sec in SECTOR_PEERS) {
+    if (SECTOR_PEERS[sec].indexOf(ticker) !== -1) return sec;
+  }
+  return null;
+}
+
+async function fetchSectorContext(ticker, FMP, ownFrom52High) {
+  const sector = findSector(ticker);
+  if (!sector) return null;
+
+  const peers = SECTOR_PEERS[sector].filter(t => t !== ticker).slice(0, 12);
+  if (peers.length < 3) return null;
+
+  try {
+    const results = await Promise.all(peers.map(async (p) => {
+      try {
+        const r = await fetch(`https://financialmodelingprep.com/stable/quote?symbol=${p}&apikey=${FMP}`);
+        if (!r.ok) return null;
+        const arr = await r.json();
+        const q = Array.isArray(arr) ? arr[0] : null;
+        if (!q || !q.price || !q.yearHigh) return null;
+        return {
+          symbol: q.symbol,
+          from52High: ((q.yearHigh - q.price) / q.yearHigh) * 100
+        };
+      } catch { return null; }
+    }));
+
+    const valid = results.filter(Boolean);
+    if (valid.length < 3) return null;
+
+    const avg = valid.reduce((sum, p) => sum + p.from52High, 0) / valid.length;
+    const downHard = valid.filter(p => p.from52High >= 15).length;
+
+    // Clasificar el castigo. La clave es si el sector en si esta sano:
+    // si todo el sector cayo, el castigo no es "especifico de la accion"
+    // aunque esta haya caido mas.
+    const sectorHealthy = avg < 12;
+    let verdict;
+    if (ownFrom52High < avg - 3) verdict = 'outperforming';
+    else if (Math.abs(ownFrom52High - avg) <= 8) verdict = 'sector-wide';
+    else if (sectorHealthy && ownFrom52High >= 20) verdict = 'stock-specific';
+    else verdict = 'worse-than-sector';
+
+    return {
+      sector,
+      peerCount: valid.length,
+      peerAvgFrom52High: Math.round(avg * 10) / 10,
+      peersDownHard: downHard,
+      verdict,
+      worstPeers: valid.sort((a, b) => b.from52High - a.from52High).slice(0, 3)
+        .map(p => ({ symbol: p.symbol, from52High: Math.round(p.from52High * 10) / 10 }))
+    };
+  } catch {
+    return null;
+  }
+}
 // Análisis en vivo de una acción con 3 agentes de Velu + veredicto Buy/Hold/Sell
 
 export default async function handler(req, res) {
@@ -143,6 +218,9 @@ export default async function handler(req, res) {
       wallStreetMedian: consensus ? consensus.targetMedian : null
     };
 
+    // Contexto de sector: comparar contra pares de la misma industria
+    const sectorContext = await fetchSectorContext(ticker, FMP, stockData.from52High);
+
     const fmt = (v, d = 1) => (typeof v === 'number' ? v.toFixed(d) : 'N/A');
     const pct = (v) => (typeof v === 'number' ? (v * 100).toFixed(1) + '%' : 'N/A');
 
@@ -168,6 +246,16 @@ ${fundamentals ? (
   `\nEPS CAGR (${fundamentals.spanYears}y): ${fundamentals.epsCagr != null ? (fundamentals.epsCagr > 0 ? '+' : '') + fundamentals.epsCagr.toFixed(1) + '%' : 'N/A'}` +
   `\nNet margin trend: ${fundamentals.marginTrend}${fundamentals.marginDeltaPp != null ? ' (' + (fundamentals.marginDeltaPp > 0 ? '+' : '') + fundamentals.marginDeltaPp.toFixed(1) + 'pp over period)' : ''}`
 ) : 'Annual fundamentals not available for this ticker.'}
+
+SECTOR CONTEXT:
+${sectorContext ? (
+  `Sector: ${sectorContext.sector}. This stock is down ${stockData.from52High}% from its high, while its ${sectorContext.peerCount} sector peers are down ${sectorContext.peerAvgFrom52High}% on average. ` +
+  `${sectorContext.peersDownHard} of ${sectorContext.peerCount} peers are also down 15%+. ` +
+  `Classification: ${sectorContext.verdict === 'stock-specific' ? 'The selloff is STOCK-SPECIFIC — this name is being punished far more than its sector.'
+    : sectorContext.verdict === 'sector-wide' ? 'The selloff is SECTOR-WIDE — the whole industry is under pressure.'
+    : sectorContext.verdict === 'outperforming' ? 'This stock is holding up BETTER than its sector.'
+    : 'This stock is down more than its sector, but not dramatically so.'}`
+) : 'Sector peer data not available for this ticker.'}
 
 CRITICAL QUESTION: Compare the fundamental trajectory above against the ${stockData.from52High}% price decline. If the business is growing while the stock fell, that gap is the edge. If the business is deteriorating, the selloff may be justified. Your agents must address this directly.
 
@@ -285,7 +373,7 @@ Respond with ONLY a raw JSON object. No markdown, no code fences, no text before
       }
     }
 
-    return res.status(200).json({ stockData, analysis, news, history, fundamentals });
+    return res.status(200).json({ stockData, analysis, news, history, fundamentals, sectorContext });
 
   } catch (err) {
     console.error('Analyze error:', err.message, err.stack);
