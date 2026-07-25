@@ -2782,6 +2782,9 @@ document.addEventListener('DOMContentLoaded', () => {
   .plan-badge { font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 6px; letter-spacing: .08em; background: var(--panel2); color: var(--mu); border: 1px solid var(--b2); }
   .plan-badge.is-pro { background: rgba(0,229,160,.12); color: var(--g); border-color: rgba(0,229,160,.35); }
 
+
+  .sym-sector { color: var(--dim); opacity: .75; }
+
 </style>
 </head>
 <body>
@@ -2825,8 +2828,8 @@ document.addEventListener('DOMContentLoaded', () => {
       <h1 class=&quot;section-title&quot;>Stocks the market is punishing</h1>
     </div>
     <p class=&quot;section-desc&quot;>
-      Companies trading 20%+ below their 52-week high, but with fundamentals that don't justify the sell-off.
-      Where the crowd overreacts, there's an edge. Click any stock for a full 3-agent analysis.
+      Velu scans 176 major US stocks every time you refresh, ranking the ones that have sold off hardest
+      relative to their own highs and moving averages. Click any stock for a full 3-agent analysis.
     </p>
 
     <div class=&quot;screener&quot;>
@@ -3186,7 +3189,7 @@ async function loadScreener() {
       return;
     }
 
-    countBadge.textContent = data.stocks.length + ' FOUND';
+    countBadge.textContent = data.stocks.length + ' OF ' + (data.scanned || '?') + ' SCANNED';
 
     const maxPunish = Math.max(...data.stocks.map(s => s.punishmentScore));
 
@@ -3217,7 +3220,7 @@ async function loadScreener() {
           <div class=&quot;rank&quot; onclick=&quot;toggleWatchlist('${s.symbol}', '${(s.name||'').replace(/'/g,'')}', event)&quot; style=&quot;cursor:pointer&quot;>${isWatched(s.symbol) ? '<span style=\'color:var(--g)\'>★</span>' : '<span style=\'color:var(--dim)\'>☆</span>'}</div>
           <div class=&quot;stock-sym&quot;>
             <span class=&quot;sym-ticker&quot;>${s.symbol}</span>
-            <span class=&quot;sym-name&quot;>${s.name || ''}</span>
+            <span class=&quot;sym-name&quot;>${s.name || ''}${s.sector ? ' · <span class=&quot;sym-sector&quot;>' + s.sector + '</span>' : ''}</span>
           </div>
           <div class=&quot;stock-price&quot;>$${s.price?.toFixed(2)}</div>
           <div class=&quot;stock-change ${changeClass}&quot;>${changeSign}${s.changePct?.toFixed(2)}%</div>
