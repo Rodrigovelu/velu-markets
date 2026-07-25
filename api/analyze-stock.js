@@ -18,11 +18,18 @@ export default async function handler(req, res) {
   const ticker = symbol.toUpperCase().trim();
 
   try {
-    const [quoteRes, ratiosRes, consensusRes, newsRes] = await Promise.all([
+    // Rango de 1 año para el historial de precios
+    const _today = new Date();
+    const _yearAgo = new Date(_today.getTime() - 365 * 24 * 60 * 60 * 1000);
+    const toDate = _today.toISOString().slice(0, 10);
+    const fromDate = _yearAgo.toISOString().slice(0, 10);
+
+    const [quoteRes, ratiosRes, consensusRes, newsRes, historyRes] = await Promise.all([
       fetch(`https://financialmodelingprep.com/stable/quote?symbol=${ticker}&apikey=${FMP}`),
       fetch(`https://financialmodelingprep.com/stable/ratios-ttm?symbol=${ticker}&apikey=${FMP}`),
       fetch(`https://financialmodelingprep.com/stable/price-target-consensus?symbol=${ticker}&apikey=${FMP}`),
-      fetch(`https://financialmodelingprep.com/stable/news/stock?symbols=${ticker}&limit=6&apikey=${FMP}`)
+      fetch(`https://financialmodelingprep.com/stable/news/stock?symbols=${ticker}&limit=6&apikey=${FMP}`),
+      fetch(`https://financialmodelingprep.com/stable/historical-price-eod/light?symbol=${ticker}&from=${fromDate}&to=${toDate}&apikey=${FMP}`)
     ]);
 
     const quoteArr = await quoteRes.json();
@@ -41,6 +48,18 @@ export default async function handler(req, res) {
       const newsArr = await newsRes.json();
       news = Array.isArray(newsArr) ? newsArr.slice(0, 6) : [];
     } catch (e) { news = []; }
+
+    // Historial de precios — reducido a ~130 puntos para un payload ligero
+    let history = [];
+    try {
+      const histArr = await historyRes.json();
+      if (Array.isArray(histArr) && histArr.length > 0) {
+        const step = Math.max(1, Math.floor(histArr.length / 130));
+        history = histArr
+          .filter((_, i) => i % step === 0)
+          .map(h => ({ d: h.date, p: h.price }));
+      }
+    } catch (e) { history = []; }
 
     if (!quote) return res.status(404).json({ error: `Ticker ${ticker} not found` });
 
@@ -203,7 +222,7 @@ Respond with ONLY a raw JSON object. No markdown, no code fences, no text before
       }
     }
 
-    return res.status(200).json({ stockData, analysis, news });
+    return res.status(200).json({ stockData, analysis, news, history });
 
   } catch (err) {
     console.error('Analyze error:', err.message, err.stack);
