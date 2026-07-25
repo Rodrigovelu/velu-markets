@@ -16,6 +16,27 @@ const SECTOR_PEERS = {
   'Utilities': ['NEE', 'DUK', 'SO'],
 };
 
+// Temas estructurales (espejo de api/radar.js) para dar contexto a los agentes
+const THEMES = {
+  'AI Infrastructure & Memory': ['MU','SNDK','WDC','STX','MRVL','AVGO','VRT','SMCI','ANET','CRDO','ALAB','PSTG','NTAP'],
+  'Power & Grid for AI':        ['VST','CEG','NRG','TLN','GEV','PWR','ETN','EMR','AES','NEE'],
+  'Nuclear & Uranium':          ['CCJ','LEU','SMR','OKLO','BWXT','UEC','DNN'],
+  'Defense & Aerospace':        ['LMT','RTX','NOC','GD','LHX','HII','AVAV','KTOS','LDOS'],
+  'Cybersecurity':              ['PANW','CRWD','ZS','FTNT','S','CYBR','TENB','OKTA'],
+  'Robotics & Automation':      ['ISRG','ROK','TER','SYM','PATH','CGNX','ZBRA'],
+  'Space & Satellites':         ['RKLB','ASTS','PL','LUNR','RDW','IRDM'],
+  'Metabolic & Biotech':        ['LLY','VKTX','AMGN','REGN','VRTX','MDGL','ALNY'],
+  'Quantum Computing':          ['IONQ','RGTI','QBTS'],
+  'Critical Materials':         ['MP','ALB','LAC','FCX','TROX','NEM'],
+};
+
+function findTheme(ticker) {
+  for (const t in THEMES) {
+    if (THEMES[t].indexOf(ticker) !== -1) return t;
+  }
+  return null;
+}
+
 function findSector(ticker) {
   for (const sec in SECTOR_PEERS) {
     if (SECTOR_PEERS[sec].indexOf(ticker) !== -1) return sec;
@@ -220,6 +241,7 @@ export default async function handler(req, res) {
 
     // Contexto de sector: comparar contra pares de la misma industria
     const sectorContext = await fetchSectorContext(ticker, FMP, stockData.from52High);
+    const theme = findTheme(ticker);
 
     const fmt = (v, d = 1) => (typeof v === 'number' ? v.toFixed(d) : 'N/A');
     const pct = (v) => (typeof v === 'number' ? (v * 100).toFixed(1) + '%' : 'N/A');
@@ -247,6 +269,7 @@ ${fundamentals ? (
   `\nNet margin trend: ${fundamentals.marginTrend}${fundamentals.marginDeltaPp != null ? ' (' + (fundamentals.marginDeltaPp > 0 ? '+' : '') + fundamentals.marginDeltaPp.toFixed(1) + 'pp over period)' : ''}`
 ) : 'Annual fundamentals not available for this ticker.'}
 
+${theme ? `STRUCTURAL THEME: ${theme}. This company sits inside a theme with a multi-year demand driver. Consider whether the market has already priced that in, or whether the re-rating is still ahead. A stock trading near its moving averages inside a strong theme is early; one that has already multiplied is late.\n` : ''}
 SECTOR CONTEXT:
 ${sectorContext ? (
   `Sector: ${sectorContext.sector}. This stock is down ${stockData.from52High}% from its high, while its ${sectorContext.peerCount} sector peers are down ${sectorContext.peerAvgFrom52High}% on average. ` +
@@ -373,7 +396,7 @@ Respond with ONLY a raw JSON object. No markdown, no code fences, no text before
       }
     }
 
-    return res.status(200).json({ stockData, analysis, news, history, fundamentals, sectorContext });
+    return res.status(200).json({ stockData, analysis, news, history, fundamentals, sectorContext, theme });
 
   } catch (err) {
     console.error('Analyze error:', err.message, err.stack);
