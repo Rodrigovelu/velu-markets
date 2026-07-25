@@ -194,18 +194,22 @@ export default async function handler(req, res) {
       };
     });
 
-    // 3. Filtrar las castigadas y quedarnos con las top 15
+    // 3. Filtrar las castigadas — devolvemos hasta 60 para que el front pueda
+    //    filtrar por sector y paginar de 15 en 15
     const punished = analyzed
-      .filter(s => s.from52High >= 15 && s.price > 5)
+      .filter(s => s.from52High >= 12 && s.price > 5)
       .sort((a, b) => b.punishmentScore - a.punishmentScore)
-      .slice(0, 15);
+      .slice(0, 60);
 
-    // 4. Enriquecer solo las top 15 con P/E real (15 llamadas extra)
-    const peValues = await Promise.all(punished.map(s => fetchPE(s.symbol, FMP)));
-    punished.forEach((s, i) => {
-      const pe = peValues[i];
-      s.pe = (typeof pe === 'number' && pe > 0) ? Math.round(pe * 10) / 10 : null;
-    });
+    // 4. Enriquecer con P/E real, tambien en lotes
+    for (let i = 0; i < punished.length; i += BATCH_SIZE) {
+      const chunk = punished.slice(i, i + BATCH_SIZE);
+      const peValues = await Promise.all(chunk.map(s => fetchPE(s.symbol, FMP)));
+      chunk.forEach((s, idx) => {
+        const pe = peValues[idx];
+        s.pe = (typeof pe === 'number' && pe > 0) ? Math.round(pe * 10) / 10 : null;
+      });
+    }
 
     // 5. Resumen por sector (para contexto)
     const sectorCounts = {};
