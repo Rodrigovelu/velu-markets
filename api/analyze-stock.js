@@ -24,12 +24,13 @@ export default async function handler(req, res) {
     const toDate = _today.toISOString().slice(0, 10);
     const fromDate = _yearAgo.toISOString().slice(0, 10);
 
-    const [quoteRes, ratiosRes, consensusRes, newsRes, historyRes] = await Promise.all([
+    const [quoteRes, ratiosRes, consensusRes, newsRes, historyRes, incomeRes] = await Promise.all([
       fetch(`https://financialmodelingprep.com/stable/quote?symbol=${ticker}&apikey=${FMP}`),
       fetch(`https://financialmodelingprep.com/stable/ratios-ttm?symbol=${ticker}&apikey=${FMP}`),
       fetch(`https://financialmodelingprep.com/stable/price-target-consensus?symbol=${ticker}&apikey=${FMP}`),
       fetch(`https://financialmodelingprep.com/stable/news/stock?symbols=${ticker}&limit=6&apikey=${FMP}`),
-      fetch(`https://financialmodelingprep.com/stable/historical-price-eod/light?symbol=${ticker}&from=${fromDate}&to=${toDate}&apikey=${FMP}`)
+      fetch(`https://financialmodelingprep.com/stable/historical-price-eod/light?symbol=${ticker}&from=${fromDate}&to=${toDate}&apikey=${FMP}`),
+      fetch(`https://financialmodelingprep.com/stable/income-statement?symbol=${ticker}&period=annual&limit=5&apikey=${FMP}`)
     ]);
 
     const quoteArr = await quoteRes.json();
@@ -60,6 +61,56 @@ export default async function handler(req, res) {
           .map(h => ({ d: h.date, p: h.price }));
       }
     } catch (e) { history = []; }
+
+    // Fundamentales anuales (5 años) — para que los agentes razonen sobre trayectoria
+    let fundamentals = null;
+    try {
+      const incArr = await incomeRes.json();
+      if (Array.isArray(incArr) && incArr.length >= 2) {
+        // Ordenar del mas antiguo al mas reciente
+        const rows = incArr
+          .filter(r => r && typeof r.revenue === 'number' && r.revenue > 0)
+          .sort((a, b) => String(a.fiscalYear).localeCompare(String(b.fiscalYear)));
+
+        if (rows.length >= 2) {
+          const years = rows.map(r => ({
+            year: r.fiscalYear,
+            revenue: r.revenue,
+            netIncome: r.netIncome,
+            eps: r.epsDiluted != null ? r.epsDiluted : r.eps,
+            grossMargin: r.revenue ? r.grossProfit / r.revenue : null,
+            operatingMargin: r.revenue ? r.operatingIncome / r.revenue : null,
+            netMargin: r.revenue ? r.netIncome / r.revenue : null
+          }));
+
+          const first = years[0];
+          const last = years[years.length - 1];
+          const nYears = years.length - 1;
+
+          const cagr = (endVal, startVal, n) => {
+            if (!startVal || startVal <= 0 || !endVal || endVal <= 0 || n <= 0) return null;
+            return (Math.pow(endVal / startVal, 1 / n) - 1) * 100;
+          };
+
+          const marginDelta = (last.netMargin != null && first.netMargin != null)
+            ? (last.netMargin - first.netMargin) * 100
+            : null;
+
+          fundamentals = {
+            years,
+            revenueCagr: cagr(last.revenue, first.revenue, nYears),
+            epsCagr: cagr(last.eps, first.eps, nYears),
+            netIncomeCagr: cagr(last.netIncome, first.netIncome, nYears),
+            marginDeltaPp: marginDelta,
+            marginTrend: marginDelta == null ? 'unknown'
+              : marginDelta > 1.5 ? 'expanding'
+              : marginDelta < -1.5 ? 'compressing'
+              : 'stable',
+            spanYears: nYears
+          };
+        }
+      }
+    } catch (e) { fundamentals = null; }
 
     if (!quote) return res.status(404).json({ error: `Ticker ${ticker} not found` });
 
@@ -107,6 +158,18 @@ LIVE DATA:
 - Net margin: ${pct(stockData.netMargin)} | Gross margin: ${pct(stockData.grossMargin)}
 - Debt/Equity: ${fmt(stockData.debtToEquity, 2)}
 - 50-day MA: $${stockData.priceAvg50} | 200-day MA: $${stockData.priceAvg200}
+
+5-YEAR FUNDAMENTAL TRAJECTORY:
+${fundamentals ? (
+  fundamentals.years.map(y =>
+    `FY${y.year}: Revenue $${(y.revenue/1e9).toFixed(1)}B | Net income $${(y.netIncome/1e9).toFixed(1)}B | Net margin ${(y.netMargin*100).toFixed(1)}% | EPS $${y.eps != null ? y.eps.toFixed(2) : 'N/A'}`
+  ).join('\n') +
+  `\nRevenue CAGR (${fundamentals.spanYears}y): ${fundamentals.revenueCagr != null ? (fundamentals.revenueCagr > 0 ? '+' : '') + fundamentals.revenueCagr.toFixed(1) + '%' : 'N/A'}` +
+  `\nEPS CAGR (${fundamentals.spanYears}y): ${fundamentals.epsCagr != null ? (fundamentals.epsCagr > 0 ? '+' : '') + fundamentals.epsCagr.toFixed(1) + '%' : 'N/A'}` +
+  `\nNet margin trend: ${fundamentals.marginTrend}${fundamentals.marginDeltaPp != null ? ' (' + (fundamentals.marginDeltaPp > 0 ? '+' : '') + fundamentals.marginDeltaPp.toFixed(1) + 'pp over period)' : ''}`
+) : 'Annual fundamentals not available for this ticker.'}
+
+CRITICAL QUESTION: Compare the fundamental trajectory above against the ${stockData.from52High}% price decline. If the business is growing while the stock fell, that gap is the edge. If the business is deteriorating, the selloff may be justified. Your agents must address this directly.
 
 RECENT NEWS HEADLINES (most recent first):
 ${news.length > 0 ? news.map((n, i) => `${i+1}. [${n.publishedDate?.slice(0,10)}] ${n.title} — ${n.text?.slice(0, 150)}`).join('\n') : 'No recent news available.'}
@@ -222,7 +285,7 @@ Respond with ONLY a raw JSON object. No markdown, no code fences, no text before
       }
     }
 
-    return res.status(200).json({ stockData, analysis, news, history });
+    return res.status(200).json({ stockData, analysis, news, history, fundamentals });
 
   } catch (err) {
     console.error('Analyze error:', err.message, err.stack);
