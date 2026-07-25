@@ -2785,6 +2785,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   .sym-sector { color: var(--dim); opacity: .75; }
 
+
+  .scr-controls { display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--b1); background: var(--bg2); flex-wrap: wrap; }
+  .scr-chips { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+  .scr-chip { font-family: var(--mono); font-size: 11px; padding: 5px 11px; border-radius: 7px; background: var(--panel); border: 1px solid var(--b1); color: var(--mu); cursor: pointer; transition: all .12s; white-space: nowrap; }
+  .scr-chip:hover { color: var(--ink); border-color: var(--b2); }
+  .scr-chip.active { background: rgba(0,229,160,.12); color: var(--g); border-color: rgba(0,229,160,.35); }
+  .scr-sort { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .scr-sort-lbl { font-family: var(--mono); font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: .08em; }
+  .scr-select { font-family: var(--sans); font-size: 12px; padding: 6px 10px; border-radius: 8px; background: var(--panel); border: 1px solid var(--b1); color: var(--ink); cursor: pointer; outline: none; }
+  .scr-select:focus { border-color: var(--g2); }
+  .scr-more { padding: 16px 20px; text-align: center; }
+  .scr-more-btn { font-family: var(--mono); font-size: 12px; padding: 10px 22px; border-radius: 9px; background: var(--panel2); border: 1px solid var(--b2); color: var(--mu); cursor: pointer; transition: all .15s; }
+  .scr-more-btn:hover { color: var(--g); border-color: var(--g2); }
+  @media (max-width: 768px) {
+    .scr-controls { flex-direction: column; align-items: stretch; gap: 10px; }
+    .scr-chips { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+    .scr-sort { justify-content: space-between; }
+  }
+
 </style>
 </head>
 <body>
@@ -3172,10 +3191,17 @@ async function loadTrackRecord() {
   }
 }
 
+var __allStocks = [];
+var __scannedCount = 0;
+var __filterSector = 'All';
+var __sortBy = 'punishment';
+var __pageSize = 15;
+var __visibleCount = 15;
+
 async function loadScreener() {
   const body = document.getElementById('screenerBody');
   const countBadge = document.getElementById('screenerCount');
-  body.innerHTML = '<div class=&quot;loading&quot;><div class=&quot;spinner&quot;></div><div class=&quot;loading-txt&quot;>Scanning 500+ stocks for mispriced opportunities...</div></div>';
+  body.innerHTML = '<div class=&quot;loading&quot;><div class=&quot;spinner&quot;></div><div class=&quot;loading-txt&quot;>Scanning 176 stocks for mispriced opportunities...</div></div>';
   countBadge.textContent = 'SCANNING...';
 
   try {
@@ -3189,76 +3215,185 @@ async function loadScreener() {
       return;
     }
 
-    countBadge.textContent = data.stocks.length + ' OF ' + (data.scanned || '?') + ' SCANNED';
-
-    const maxPunish = Math.max(...data.stocks.map(s => s.punishmentScore));
-
-    let html = `
-      <div class=&quot;stock-row header&quot;>
-        <div>#</div>
-        <div>Company</div>
-        <div>Price</div>
-        <div>Today</div>
-        <div class=&quot;col-pe&quot;>P/E</div>
-        <div class=&quot;col-punish&quot;>Punishment</div>
-        <div class=&quot;col-verdict&quot;>From High</div>
-      </div>
-    `;
-
-    const plan = getUserPlan();
-    const isFree = plan === 'free';
-    const visibleStocks = isFree ? data.stocks.slice(0, FREE_SCREENER_LIMIT) : data.stocks;
-    const lockedCount = isFree ? Math.max(0, data.stocks.length - FREE_SCREENER_LIMIT) : 0;
-
-    visibleStocks.forEach((s, i) => {
-      const changeClass = s.changePct >= 0 ? 'up' : 'down';
-      const changeSign = s.changePct >= 0 ? '+' : '';
-      const barWidth = Math.max(20, (s.punishmentScore / maxPunish) * 80);
-
-      html += `
-        <div class=&quot;stock-row&quot; onclick=&quot;analyzeTicker('${s.symbol}', true)&quot;>
-          <div class=&quot;rank&quot; onclick=&quot;toggleWatchlist('${s.symbol}', '${(s.name||'').replace(/'/g,'')}', event)&quot; style=&quot;cursor:pointer&quot;>${isWatched(s.symbol) ? '<span style=\'color:var(--g)\'>★</span>' : '<span style=\'color:var(--dim)\'>☆</span>'}</div>
-          <div class=&quot;stock-sym&quot;>
-            <span class=&quot;sym-ticker&quot;>${s.symbol}</span>
-            <span class=&quot;sym-name&quot;>${s.name || ''}${s.sector ? ' · <span class=&quot;sym-sector&quot;>' + s.sector + '</span>' : ''}</span>
-          </div>
-          <div class=&quot;stock-price&quot;>$${s.price?.toFixed(2)}</div>
-          <div class=&quot;stock-change ${changeClass}&quot;>${changeSign}${s.changePct?.toFixed(2)}%</div>
-          <div class=&quot;stock-pe col-pe&quot;>${s.pe?.toFixed(1) || '—'}</div>
-          <div class=&quot;punish-bar-wrap col-punish&quot;>
-            <div class=&quot;punish-bar&quot; style=&quot;width:${barWidth}px&quot;></div>
-            <span class=&quot;punish-val&quot;>${s.punishmentScore}</span>
-          </div>
-          <div class=&quot;stock-change down col-verdict&quot;>−${s.from52High}%</div>
-        </div>
-      `;
-    });
-
-    if (lockedCount > 0) {
-      html += `
-        <div class=&quot;stock-row&quot; style=&quot;cursor:pointer;opacity:.85;background:linear-gradient(90deg,rgba(0,229,160,.04),transparent)&quot; onclick=&quot;joinProWaitlist()&quot;>
-          <div class=&quot;rank&quot;>🔒</div>
-          <div class=&quot;stock-sym&quot;>
-            <span class=&quot;sym-ticker&quot; style=&quot;color:var(--g)&quot;>+${lockedCount} more stocks</span>
-            <span class=&quot;sym-name&quot;>Unlock the full screener with Pro</span>
-          </div>
-          <div class=&quot;stock-price&quot; style=&quot;color:var(--dim)&quot;>—</div>
-          <div class=&quot;stock-change&quot; style=&quot;color:var(--dim)&quot;>—</div>
-          <div class=&quot;stock-pe col-pe&quot; style=&quot;color:var(--dim)&quot;>—</div>
-          <div class=&quot;col-punish&quot; style=&quot;color:var(--g);font-family:var(--mono);font-size:11px&quot;>Join Pro →</div>
-          <div class=&quot;col-verdict&quot; style=&quot;color:var(--dim)&quot;>—</div>
-        </div>
-      `;
-    }
-
-    body.innerHTML = html;
+    __allStocks = data.stocks;
+    __scannedCount = data.scanned || 0;
+    __visibleCount = __pageSize;
+    renderScreener();
 
   } catch (err) {
     console.error('Screener error:', err);
-    body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>⚠</div>Could not load the screener. The market data service may be rate-limited. Try again in a moment.</div>';
+    body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>⚠</div>Could not load the screener. The market data service may be busy. Try again in a moment.</div>';
     countBadge.textContent = 'ERROR';
   }
 }
+
+function getFilteredStocks() {
+  var list = __allStocks.slice();
+  if (__filterSector !== 'All') {
+    list = list.filter(function(s) { return s.sector === __filterSector; });
+  }
+  if (__sortBy === 'punishment') {
+    list.sort(function(a,b){ return b.punishmentScore - a.punishmentScore; });
+  } else if (__sortBy === 'fromHigh') {
+    list.sort(function(a,b){ return b.from52High - a.from52High; });
+  } else if (__sortBy === 'today') {
+    list.sort(function(a,b){ return (a.changePct||0) - (b.changePct||0); });
+  } else if (__sortBy === 'pe') {
+    list.sort(function(a,b){
+      var pa = a.pe == null ? 9999 : a.pe;
+      var pb = b.pe == null ? 9999 : b.pe;
+      return pa - pb;
+    });
+  } else if (__sortBy === 'marketCap') {
+    list.sort(function(a,b){ return (b.marketCap||0) - (a.marketCap||0); });
+  }
+  return list;
+}
+
+function setSector(sec) {
+  __filterSector = sec;
+  __visibleCount = __pageSize;
+  renderScreener();
+}
+
+function setSort(by) {
+  __sortBy = by;
+  __visibleCount = __pageSize;
+  renderScreener();
+}
+
+function showMoreStocks() {
+  __visibleCount += __pageSize;
+  renderScreener();
+}
+
+function renderScreener() {
+  const body = document.getElementById('screenerBody');
+  const countBadge = document.getElementById('screenerCount');
+  if (!body) return;
+
+  const plan = getUserPlan();
+  const isFree = plan === 'free';
+  const filtered = getFilteredStocks();
+
+  countBadge.textContent = filtered.length + ' OF ' + __scannedCount + ' SCANNED';
+
+  // Sectores disponibles en los resultados
+  var sectors = ['All'];
+  __allStocks.forEach(function(s) {
+    if (s.sector && sectors.indexOf(s.sector) === -1) sectors.push(s.sector);
+  });
+
+  var sortOptions = [
+    { k: 'punishment', l: 'Most punished' },
+    { k: 'fromHigh',   l: 'Furthest from high' },
+    { k: 'today',      l: &quot;Today's biggest drop&quot; },
+    { k: 'pe',         l: 'Lowest P/E' },
+    { k: 'marketCap',  l: 'Largest company' }
+  ];
+
+  var html = '<div class=&quot;scr-controls&quot;>';
+  html += '<div class=&quot;scr-chips&quot;>';
+  sectors.forEach(function(sec) {
+    var active = sec === __filterSector ? ' active' : '';
+    html += '<button class=&quot;scr-chip' + active + '&quot; data-sector=&quot;' + sec + '&quot;>' + sec + '</button>';
+  });
+  html += '</div>';
+  html += '<div class=&quot;scr-sort&quot;><span class=&quot;scr-sort-lbl&quot;>Sort</span><select class=&quot;scr-select&quot; onchange=&quot;setSort(this.value)&quot;>';
+  sortOptions.forEach(function(o) {
+    html += '<option value=&quot;' + o.k + '&quot;' + (o.k === __sortBy ? ' selected' : '') + '>' + o.l + '</option>';
+  });
+  html += '</select></div>';
+  html += '</div>';
+
+  if (filtered.length === 0) {
+    html += '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>◎</div>No punished stocks in this sector right now.</div>';
+    body.innerHTML = html;
+    bindScreenerControls(body);
+    return;
+  }
+
+  const maxPunish = Math.max.apply(null, filtered.map(function(s){ return s.punishmentScore; }));
+
+  html += `
+    <div class=&quot;stock-row header&quot;>
+      <div>#</div>
+      <div>Company</div>
+      <div>Price</div>
+      <div>Today</div>
+      <div class=&quot;col-pe&quot;>P/E</div>
+      <div class=&quot;col-punish&quot;>Punishment</div>
+      <div class=&quot;col-verdict&quot;>From High</div>
+    </div>
+  `;
+
+  const cap = isFree ? FREE_SCREENER_LIMIT : __visibleCount;
+  const visibleStocks = filtered.slice(0, cap);
+  const remaining = filtered.length - visibleStocks.length;
+
+  visibleStocks.forEach(function(s, i) {
+    const changeClass = s.changePct >= 0 ? 'up' : 'down';
+    const changeSign = s.changePct >= 0 ? '+' : '';
+    const barWidth = Math.max(20, (s.punishmentScore / maxPunish) * 80);
+    const star = isWatched(s.symbol)
+      ? '<span style=&quot;color:var(--g)&quot;>★</span>'
+      : '<span style=&quot;color:var(--dim)&quot;>☆</span>';
+
+    html += `
+      <div class=&quot;stock-row&quot; onclick=&quot;analyzeTicker('${s.symbol}', true)&quot;>
+        <div class=&quot;rank&quot; onclick=&quot;toggleWatchlist('${s.symbol}', '${(s.name||'').replace(/'/g,'')}', event)&quot; style=&quot;cursor:pointer&quot;>${star}</div>
+        <div class=&quot;stock-sym&quot;>
+          <span class=&quot;sym-ticker&quot;>${s.symbol}</span>
+          <span class=&quot;sym-name&quot;>${s.name || ''}${s.sector ? ' · <span class=&quot;sym-sector&quot;>' + s.sector + '</span>' : ''}</span>
+        </div>
+        <div class=&quot;stock-price&quot;>$${s.price?.toFixed(2)}</div>
+        <div class=&quot;stock-change ${changeClass}&quot;>${changeSign}${s.changePct?.toFixed(2)}%</div>
+        <div class=&quot;stock-pe col-pe&quot;>${s.pe != null ? s.pe.toFixed(1) : '—'}</div>
+        <div class=&quot;punish-bar-wrap col-punish&quot;>
+          <div class=&quot;punish-bar&quot; style=&quot;width:${barWidth}px&quot;></div>
+          <span class=&quot;punish-val&quot;>${s.punishmentScore}</span>
+        </div>
+        <div class=&quot;stock-change down col-verdict&quot;>−${s.from52High}%</div>
+      </div>
+    `;
+  });
+
+  if (isFree && remaining > 0) {
+    html += `
+      <div class=&quot;stock-row&quot; style=&quot;cursor:pointer;opacity:.9;background:linear-gradient(90deg,rgba(0,229,160,.05),transparent)&quot; onclick=&quot;joinProWaitlist()&quot;>
+        <div class=&quot;rank&quot;>🔒</div>
+        <div class=&quot;stock-sym&quot;>
+          <span class=&quot;sym-ticker&quot; style=&quot;color:var(--g)&quot;>+${remaining} more stocks</span>
+          <span class=&quot;sym-name&quot;>Unlock the full screener with Pro</span>
+        </div>
+        <div class=&quot;stock-price&quot; style=&quot;color:var(--dim)&quot;>—</div>
+        <div class=&quot;stock-change&quot; style=&quot;color:var(--dim)&quot;>—</div>
+        <div class=&quot;stock-pe col-pe&quot; style=&quot;color:var(--dim)&quot;>—</div>
+        <div class=&quot;col-punish&quot; style=&quot;color:var(--g);font-family:var(--mono);font-size:11px&quot;>Join Pro →</div>
+        <div class=&quot;col-verdict&quot; style=&quot;color:var(--dim)&quot;>—</div>
+      </div>
+    `;
+  } else if (!isFree && remaining > 0) {
+    html += '<div class=&quot;scr-more&quot;><button class=&quot;scr-more-btn&quot; onclick=&quot;showMoreStocks()&quot;>Show ' + Math.min(__pageSize, remaining) + ' more · ' + remaining + ' remaining</button></div>';
+  }
+
+  body.innerHTML = html;
+
+  bindScreenerControls(body);
+}
+
+function bindScreenerControls(body) {
+  var chips = body.querySelectorAll('.scr-chip');
+  for (var ci = 0; ci < chips.length; ci++) {
+    (function(btn) {
+      btn.addEventListener('click', function(ev) {
+        ev.stopPropagation();
+        setSector(btn.getAttribute('data-sector'));
+      });
+    })(chips[ci]);
+  }
+}
+
 
 /* ── TICKER ANALYSIS ───────────────────────────── */
 async function analyzeTicker(symbol, fromScreener) {
