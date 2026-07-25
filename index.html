@@ -3084,32 +3084,49 @@ async function loadTrackRecord() {
     const s = data.summary;
     const plan = getUserPlan();
 
-    // Si no hay llamadas resueltas todavía
-    if (!s.accuracy && s.open === 0 && s.resolved === 0) {
+    // Caso 1: no hay ninguna llamada todavia
+    if (s.totalCalls === 0) {
       container.innerHTML = `
         <div class=&quot;tr-hero&quot;>
-          <div class=&quot;tr-big&quot;><span class=&quot;tr-acc&quot; style=&quot;color:var(--mu)&quot;>—</span><span class=&quot;tr-acc-label&quot;>Building track record</span></div>
+          <div class=&quot;tr-big&quot;><span class=&quot;tr-acc&quot; style=&quot;color:var(--mu);font-size:26px&quot;>No calls yet</span><span class=&quot;tr-acc-label&quot;>Track record starts with your first analysis</span></div>
           <div class=&quot;tr-tag&quot;>LIVE TRACKING</div>
         </div>
-        <div style=&quot;padding:20px 28px;color:var(--mu);font-size:13px&quot;>Velu is now tracking every BUY and SELL call. Accuracy will appear here as calls resolve over the coming weeks.</div>
+        <div style=&quot;padding:20px 28px;color:var(--mu);font-size:13px&quot;>Run an analysis on any stock. Every BUY or SELL verdict gets logged here and scored against real prices over time.</div>
       `;
       return;
     }
 
-    // Hero con accuracy (público)
-    let html = `
-      <div class=&quot;tr-hero&quot;>
-        <div class=&quot;tr-big&quot;>
-          <span class=&quot;tr-acc&quot;>${s.accuracy !== null ? s.accuracy + '%' : '—'}</span>
-          <span class=&quot;tr-acc-label&quot;>Velu accuracy</span>
+    // Caso 2: hay llamadas pero ninguna resuelta aun
+    let html;
+    if (s.resolved === 0) {
+      html = `
+        <div class=&quot;tr-hero&quot;>
+          <div class=&quot;tr-big&quot;>
+            <span class=&quot;tr-acc&quot; style=&quot;font-size:34px&quot;>${s.open}</span>
+            <span class=&quot;tr-acc-label&quot;>${s.open === 1 ? 'call being tracked' : 'calls being tracked'}</span>
+          </div>
+          <div class=&quot;tr-divider&quot;></div>
+          <div class=&quot;tr-stat2&quot;><span class=&quot;tr-stat2-n&quot; style=&quot;color:var(--mu)&quot;>Pending</span><span class=&quot;tr-stat2-l&quot;>Accuracy</span></div>
+          <div class=&quot;tr-tag&quot;>LIVE TRACK RECORD</div>
         </div>
-        <div class=&quot;tr-divider&quot;></div>
-        <div class=&quot;tr-stat2&quot;><span class=&quot;tr-stat2-n&quot;>${s.resolved}</span><span class=&quot;tr-stat2-l&quot;>Resolved</span></div>
-        <div class=&quot;tr-stat2&quot;><span class=&quot;tr-stat2-n&quot; style=&quot;color:var(--g)&quot;>${s.hits}</span><span class=&quot;tr-stat2-l&quot;>Hits</span></div>
-        <div class=&quot;tr-stat2&quot;><span class=&quot;tr-stat2-n&quot;>${s.open}</span><span class=&quot;tr-stat2-l&quot;>In progress</span></div>
-        <div class=&quot;tr-tag&quot;>LIVE TRACK RECORD</div>
-      </div>
-    `;
+        <div style=&quot;padding:14px 28px;color:var(--mu);font-size:12.5px;border-bottom:1px solid var(--b1)&quot;>Calls are scored once they reach their target or after 90 days. Accuracy appears as soon as the first one resolves.</div>
+      `;
+    } else {
+      // Caso 3: ya hay accuracy real
+      html = `
+        <div class=&quot;tr-hero&quot;>
+          <div class=&quot;tr-big&quot;>
+            <span class=&quot;tr-acc&quot;>${s.accuracy}%</span>
+            <span class=&quot;tr-acc-label&quot;>Velu accuracy</span>
+          </div>
+          <div class=&quot;tr-divider&quot;></div>
+          <div class=&quot;tr-stat2&quot;><span class=&quot;tr-stat2-n&quot;>${s.resolved}</span><span class=&quot;tr-stat2-l&quot;>Resolved</span></div>
+          <div class=&quot;tr-stat2&quot;><span class=&quot;tr-stat2-n&quot; style=&quot;color:var(--g)&quot;>${s.hits}</span><span class=&quot;tr-stat2-l&quot;>Hits</span></div>
+          <div class=&quot;tr-stat2&quot;><span class=&quot;tr-stat2-n&quot;>${s.open}</span><span class=&quot;tr-stat2-l&quot;>In progress</span></div>
+          <div class=&quot;tr-tag&quot;>LIVE TRACK RECORD</div>
+        </div>
+      `;
+    }
 
     // Detalle de llamadas (Pro) o teaser (Free)
     if (plan === 'free') {
