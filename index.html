@@ -3566,6 +3566,24 @@ function closeAnalysis() {
   document.body.style.overflow = '';
 }
 
+
+/* Escuchar sesion y refresh desde la pagina principal */
+window.addEventListener('message', function(ev) {
+  if (!ev.data) return;
+  if (ev.data.type === 'velu-session') {
+    __sessionEmail = ev.data.email || null;
+  }
+  if (ev.data.type === 'velu-refresh') {
+    (async function() {
+      await verifyPlanWithServer();
+      await loadWatchlist();
+      loadScreener();
+      loadTrackRecord();
+      renderWatchlistPanel();
+    })();
+  }
+});
+
 /* ── INIT ──────────────────────────────────────── */
 (async function initTerminal() {
   await requestSessionFromParent();
@@ -3712,6 +3730,15 @@ function closeAnalysis() {
         try {
           if (frame.contentWindow && typeof frame.contentWindow.refreshUnifiedUser === 'function') {
             frame.contentWindow.refreshUnifiedUser();
+          }
+        } catch (_) {}
+        // Empujar la sesion actual al terminal y pedirle que revalide el plan
+        try {
+          const s = this.getSession();
+          const em = (s && s.user && s.user.email) ? s.user.email : null;
+          if (frame && frame.contentWindow) {
+            frame.contentWindow.postMessage({ type: 'velu-session', email: em }, '*');
+            frame.contentWindow.postMessage({ type: 'velu-refresh' }, '*');
           }
         } catch (_) {}
       };
