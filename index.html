@@ -4162,9 +4162,17 @@ async function loadRadar(force) {
     __radarVisible = 15;
 
     if (__radarStocks.length === 0) {
-      body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>◎</div>' +
-        'No early-stage setups clear the bar right now. The radar is strict on purpose — ' +
-        'it would rather show you nothing than a deteriorating business.</div>';
+      var d = data.diagnostics || {};
+      var detail = '';
+      if (d.quotesOk === 0) {
+        detail = 'Market data is not responding right now.';
+      } else if (d.withFundamentals === 0) {
+        detail = 'Price data came through for ' + d.quotesOk + ' companies, but the fundamentals feed did not respond. That is a data issue on our side, not a market signal.';
+      } else {
+        detail = 'Scanned ' + d.quotesOk + ' companies. None are showing an early inflection today — the radar is strict on purpose.';
+      }
+      body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>◎</div>' + detail +
+        '<div style=&quot;margin-top:14px&quot;><button class=&quot;scr-more-btn&quot; onclick=&quot;loadRadar(true)&quot;>↻ Try again</button></div></div>';
       badge.textContent = '0 FOUND';
       return;
     }
