@@ -31,12 +31,24 @@ function themeOf(sym) {
   return null;
 }
 
-async function fmp(path, FMP) {
+async function fmp(path, FMP, tag) {
   try {
     const r = await fetch(`https://financialmodelingprep.com/stable/${path}&apikey=${FMP}`);
-    if (!r.ok) return null;
-    return await r.json();
-  } catch { return null; }
+    if (!r.ok) {
+      if (tag) console.error(`FMP ${tag} HTTP ${r.status} for ${path.slice(0, 60)}`);
+      return null;
+    }
+    const j = await r.json();
+    // FMP a veces responde 200 con un objeto de error en vez de un arreglo
+    if (j && !Array.isArray(j) && (j['Error Message'] || j.error || j.message)) {
+      if (tag) console.error(`FMP ${tag} error payload:`, JSON.stringify(j).slice(0, 160));
+      return null;
+    }
+    return j;
+  } catch (e) {
+    if (tag) console.error(`FMP ${tag} threw:`, e.message);
+    return null;
+  }
 }
 
 // Que tan temprano esta el movimiento. Este es el factor decisivo:
@@ -76,7 +88,7 @@ export default async function handler(req, res) {
     const quotes = [];
     for (let i = 0; i < ALL.length; i += BATCH) {
       const slice = ALL.slice(i, i + BATCH);
-      const rs = await Promise.all(slice.map(s => fmp(`quote?symbol=${s}`, FMP)));
+      const rs = await Promise.all(slice.map(s => fmp(`quote?symbol=${s}`, FMP, 'quote')));
       rs.forEach(arr => {
         const q = Array.isArray(arr) ? arr[0] : null;
         // Exigir datos completos: si le falta cualquiera de estos, el analisis
@@ -105,8 +117,8 @@ export default async function handler(req, res) {
       const results = await Promise.all(slice.map(async (item) => {
         const sym = item.q.symbol;
         const [ratios, income] = await Promise.all([
-          fmp(`ratios-ttm?symbol=${sym}`, FMP),
-          fmp(`income-statement?symbol=${sym}&period=annual&limit=4`, FMP)
+          fmp(`ratios-ttm?symbol=${sym}`, FMP, 'ratios'),
+          fmp(`income-statement?symbol=${sym}&period=annual&limit=4`, FMP, 'income')
         ]);
         return { item, ratios: Array.isArray(ratios) ? ratios[0] : null,
                  income: Array.isArray(income) ? income : null };
@@ -229,12 +241,18 @@ export default async function handler(req, res) {
       };
     });
 
-    const ranked = scored
-      // Sin datos de ingresos no hay tesis de inflexion que evaluar
-      .filter(s => s.revYoY !== null)
-      .filter(s => s.radarScore >= 35)
-      .sort((a, b) => b.radarScore - a.radarScore)
-      .slice(0, 20);
+    // Preferimos las que tienen fundamentales; si no alcanzan, completamos
+    // con las mejores restantes en vez de dejar el radar vacio.
+    const sortedAll = scored.slice().sort((a, b) => b.radarScore - a.radarScore);
+    const withFund = sortedAll.filter(s => s.revYoY !== null && s.radarScore >= 35);
+    const withoutFund = sortedAll.filter(s => !(s.revYoY !== null && s.radarScore >= 35));
+
+    let ranked = withFund.slice(0, 20);
+    if (ranked.length < 5) {
+      ranked = ranked.concat(withoutFund.slice(0, 8 - ranked.length));
+    }
+
+    const fundamentalsAvailable = scored.filter(s => s.revYoY !== null).length;
 
     const themeCounts = {};
     ranked.forEach(s => { if (s.theme) themeCounts[s.theme] = (themeCounts[s.theme] || 0) + 1; });
@@ -245,6 +263,12 @@ export default async function handler(req, res) {
       scanned: quotes.length,
       universe: ALL.length,
       themeBreakdown: themeCounts,
+      diagnostics: {
+        quotesOk: quotes.length,
+        finalistsEvaluated: scored.length,
+        withFundamentals: fundamentalsAvailable,
+        passedThreshold: withFund.length
+      },
       generatedAt: new Date().toISOString()
     });
 
