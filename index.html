@@ -2349,13 +2349,13 @@ async function submitSignup() {
 
   // Save email to waitlist
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
+    await fetch(`${SUPABASE_URL}/rest/v1/waitlist?on_conflict=email`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'apikey': SUPABASE_KEY,
         'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Prefer': 'return=minimal'
+        'Prefer': 'resolution=merge-duplicates,return=minimal'
       },
       body: JSON.stringify({ email, plan: 'free', source: 'signup_modal' })
     });
@@ -3831,14 +3831,19 @@ async function analyzeTicker(symbol, fromScreener) {
 
   } catch (err) {
     console.error('Analysis error:', err);
+    var notFound = err && err.message && err.message.toLowerCase().indexOf('not found') !== -1;
+    var msg = notFound
+      ? 'We could not pull market data for ' + ticker + '. This can happen with smaller listings and secondary exchanges.'
+      : 'The analysis service is busy right now. Give it a moment and try again.';
     panel.innerHTML = `
       <div class=&quot;ap-head&quot;>
         <button class=&quot;ap-close&quot; onclick=&quot;closeAnalysis()&quot;>×</button>
         <div class=&quot;ap-ticker-row&quot;><span class=&quot;ap-ticker&quot;>${ticker}</span></div>
       </div>
       <div class=&quot;error-box&quot;>
-        <div class=&quot;err-ico&quot;>⚠</div>
-        Could not analyze ${ticker}. ${err.message.includes('not found') ? 'Ticker not found — check the symbol.' : 'The analysis service may be busy. Try again.'}
+        <div class=&quot;err-ico&quot;>${notFound ? '◎' : '⚠'}</div>
+        ${msg}
+        ${notFound ? '' : '<div style=&quot;margin-top:14px&quot;><button class=&quot;scr-more-btn&quot; onclick=&quot;analyzeTicker(\'' + ticker + '\', true)&quot;>↻ Retry</button></div>'}
       </div>
     `;
   }
