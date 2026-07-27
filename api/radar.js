@@ -82,24 +82,38 @@ function themeOf(sym) {
   return null;
 }
 
-async function fmp(path, FMP, tag) {
-  try {
-    const r = await fetch(`https://financialmodelingprep.com/stable/${path}&apikey=${FMP}`);
-    if (!r.ok) {
-      if (tag) console.error(`FMP ${tag} HTTP ${r.status} for ${path.slice(0, 60)}`);
-      return null;
+async function fmp(path, FMP, tag, tries) {
+  tries = tries || 1;
+  let lastStatus = null;
+  for (let i = 0; i < tries; i++) {
+    // Espera progresiva antes de reintentar: mas larga si fue saturacion (429)
+    if (i > 0) {
+      const wait = lastStatus === 429 ? 1200 * i : 500 * i;
+      await new Promise(r => setTimeout(r, wait));
     }
-    const j = await r.json();
-    // FMP a veces responde 200 con un objeto de error en vez de un arreglo
-    if (j && !Array.isArray(j) && (j['Error Message'] || j.error || j.message)) {
-      if (tag) console.error(`FMP ${tag} error payload:`, JSON.stringify(j).slice(0, 160));
-      return null;
+    try {
+      const r = await fetch(`https://financialmodelingprep.com/stable/${path}&apikey=${FMP}`);
+      lastStatus = r.status;
+      if (!r.ok) {
+        if (tag) console.error(`FMP ${tag} HTTP ${r.status} for ${path.slice(0, 60)}`);
+        continue;
+      }
+      const j = await r.json();
+      // FMP a veces responde 200 con un objeto de error en vez de un arreglo
+      if (j && !Array.isArray(j) && (j['Error Message'] || j.error || j.message)) {
+        if (tag) console.error(`FMP ${tag} error payload:`, JSON.stringify(j).slice(0, 160));
+        continue;
+      }
+      // Arreglo vacio: puede ser transitorio, vale la pena reintentar
+      if (Array.isArray(j) && j.length === 0 && i < tries - 1) {
+        continue;
+      }
+      return j;
+    } catch (e) {
+      if (tag) console.error(`FMP ${tag} threw:`, e.message);
     }
-    return j;
-  } catch (e) {
-    if (tag) console.error(`FMP ${tag} threw:`, e.message);
-    return null;
   }
+  return null;
 }
 
 // Que tan temprano esta el movimiento. Este es el factor decisivo:
@@ -214,8 +228,8 @@ export default async function handler(req, res) {
       const results = await Promise.all(slice.map(async (item) => {
         const sym = item.q.symbol;
         const [ratios, income] = await Promise.all([
-          fmp(`ratios-ttm?symbol=${sym}`, FMP, 'ratios'),
-          fmp(`income-statement?symbol=${sym}&period=annual&limit=4`, FMP, 'income')
+          fmp(`ratios-ttm?symbol=${sym}`, FMP, 'ratios', 3),
+          fmp(`income-statement?symbol=${sym}&period=annual&limit=4`, FMP, 'income', 3)
         ]);
         return { item, ratios: Array.isArray(ratios) ? ratios[0] : null,
                  income: Array.isArray(income) ? income : null };
