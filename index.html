@@ -2285,14 +2285,14 @@ function selectPlan(plan) {
 async function startCheckoutFromParent(email, plan) {
   try {
     // Si ya tiene un plan de pago activo, esto es un CAMBIO de plan, no una compra nueva
-    const curRes = await fetch('/api/check-subscription?email=' + encodeURIComponent(email));
+    const curRes = await fetch('/api/billing?email=' + encodeURIComponent(email));
     const cur = await curRes.json();
 
     if (cur.plan && (cur.plan === 'pro' || cur.plan === 'terminal') && cur.plan !== plan) {
-      const upRes = await fetch('/api/upgrade-subscription', {
+      const upRes = await fetch('/api/billing', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, newPlan: plan })
+        body: JSON.stringify({ action: 'upgrade', email, newPlan: plan })
       });
       const upData = await upRes.json();
 
@@ -2311,10 +2311,10 @@ async function startCheckoutFromParent(email, plan) {
     }
 
     // Compra nueva (usuario Free, o no se encontro la suscripcion existente)
-    const res = await fetch('/api/create-checkout', {
+    const res = await fetch('/api/billing', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, plan })
+      body: JSON.stringify({ action: 'checkout', email, plan })
     });
     const data = await res.json();
     if (data.url) {
@@ -3551,7 +3551,7 @@ async function verifyPlanWithServer() {
   var email = getUserEmail();
   if (!email) { __verifiedPlan = 'free'; updatePlanBadge(); return 'free'; }
   try {
-    var res = await fetch('/api/check-subscription?email=' + encodeURIComponent(email));
+    var res = await fetch('/api/billing?email=' + encodeURIComponent(email));
     var data = await res.json();
     __verifiedPlan = data.plan || 'free';
   } catch (e) {
@@ -3604,10 +3604,10 @@ async function openPlanSwitch(targetPlan) {
   if (btn) { btn.disabled = true; btn.textContent = 'Updating…'; }
 
   try {
-    var res = await fetch('/api/upgrade-subscription', {
+    var res = await fetch('/api/billing', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, newPlan: targetPlan })
+      body: JSON.stringify({ action: 'upgrade', email: email, newPlan: targetPlan })
     });
     var data = await res.json();
 
@@ -3670,10 +3670,10 @@ async function startCheckout(plan) {
     return;
   }
   try {
-    var res = await fetch('/api/create-checkout', {
+    var res = await fetch('/api/billing', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, plan: plan })
+      body: JSON.stringify({ action: 'checkout', email: email, plan: plan })
     });
     var data = await res.json();
     if (data.url) {
@@ -4293,7 +4293,7 @@ async function loadApiKey() {
   if (!email) { box.innerHTML = '<div class=&quot;term-empty&quot;>Sign in to view your key.</div>'; return; }
 
   try {
-    var res = await fetch('/api/api-key?email=' + encodeURIComponent(email));
+    var res = await fetch('/api/terminal-tools?tool=apikey&email=' + encodeURIComponent(email));
     var data = await res.json();
     if (!res.ok || !data.apiKey) {
       box.innerHTML = '<div class=&quot;term-empty&quot;>' + (data.error || 'Could not load your key.') + '</div>';
@@ -4356,7 +4356,7 @@ async function loadScreenerHistory() {
   if (!email) return;
 
   try {
-    var res = await fetch('/api/screener-history?email=' + encodeURIComponent(email) + '&days=30');
+    var res = await fetch('/api/terminal-tools?tool=history&email=' + encodeURIComponent(email) + '&days=30');
     var data = await res.json();
     if (!res.ok) {
       box.innerHTML = '<div class=&quot;term-empty&quot;>' + (data.error || 'History unavailable.') + '</div>';
