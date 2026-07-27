@@ -133,15 +133,19 @@ async function fetchQuote(symbol, FMP) {
 }
 
 async function fetchPE(symbol, FMP) {
-  try {
-    const r = await fetch(`https://financialmodelingprep.com/stable/ratios-ttm?symbol=${symbol}&apikey=${FMP}`);
-    if (!r.ok) return null;
-    const arr = await r.json();
-    const row = Array.isArray(arr) ? arr[0] : null;
-    return row ? row.priceToEarningsRatioTTM : null;
-  } catch {
-    return null;
+  for (let i = 0; i < 3; i++) {
+    if (i > 0) await new Promise(r => setTimeout(r, 500 * i));
+    try {
+      const r = await fetch(`https://financialmodelingprep.com/stable/ratios-ttm?symbol=${symbol}&apikey=${FMP}`);
+      if (!r.ok) continue;
+      const arr = await r.json();
+      const row = Array.isArray(arr) ? arr[0] : null;
+      if (row && typeof row.priceToEarningsRatioTTM === 'number') return row.priceToEarningsRatioTTM;
+    } catch {
+      // reintentar
+    }
   }
+  return null;
 }
 
 const SUPABASE_URL = 'https://osrjmchajyrgdlucniid.supabase.co';
