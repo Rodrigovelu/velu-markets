@@ -2969,6 +2969,7 @@ document.addEventListener('DOMContentLoaded', () => {
     .rad-row .col-rev, .rad-row .col-stage { display: none; }
   }
 
+  .loading-sub { font-size: 12px; color: var(--dim); margin-top: 6px; text-align: center; max-width: 320px; }
 </style>
 </head>
 <body>
@@ -3625,21 +3626,53 @@ async function loadRadar(force) {
   if (!body) return;
   if (__radarLoaded && !force) { renderRadar(); return; }
 
-  body.innerHTML = '<div class=&quot;loading&quot;><div class=&quot;spinner&quot;></div><div class=&quot;loading-txt&quot;>Scanning thematic universe for early inflections...</div></div>';
+  body.innerHTML = '<div class=&quot;loading&quot;><div class=&quot;spinner&quot;></div>' +
+    '<div class=&quot;loading-txt&quot;>Scanning 76 companies across 10 structural themes...</div>' +
+    '<div class=&quot;loading-sub&quot;>This one takes a few seconds — it reads fundamentals, not just prices.</div></div>';
   badge.textContent = 'SCANNING...';
 
+  // El radar hace muchas mas llamadas que el screener, asi que le damos
+  // margen amplio antes de rendirnos.
+  var controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+  var timer = setTimeout(function() { if (controller) controller.abort(); }, 90000);
+
   try {
-    var res = await fetch('/api/radar');
-    if (!res.ok) throw new Error('radar failed');
-    var data = await res.json();
-    __radarStocks = data.stocks || [];
+    var opts = controller ? { signal: controller.signal } : {};
+    var res = await fetch('/api/radar', opts);
+    clearTimeout(timer);
+
+    var data = null;
+    try { data = await res.json(); } catch (pe) { data = null; }
+
+    if (!res.ok || !data) {
+      var msg = (data && data.error) ? data.error : ('Request failed (' + res.status + ')');
+      throw new Error(msg);
+    }
+    if (data.error) throw new Error(data.error);
+
+    __radarStocks = Array.isArray(data.stocks) ? data.stocks : [];
     __radarScanned = data.scanned || 0;
     __radarLoaded = true;
     __radarVisible = 15;
+
+    if (__radarStocks.length === 0) {
+      body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>◎</div>' +
+        'No early-stage setups clear the bar right now. The radar is strict on purpose — ' +
+        'it would rather show you nothing than a deteriorating business.</div>';
+      badge.textContent = '0 FOUND';
+      return;
+    }
+
     renderRadar();
+
   } catch (e) {
+    clearTimeout(timer);
     console.error('Radar error:', e);
-    body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>⚠</div>Could not load the radar. The market data service may be busy. Try again in a moment.</div>';
+    var human = (e && e.name === 'AbortError')
+      ? 'The scan took longer than expected. Tap refresh to try again.'
+      : 'Could not load the radar right now. Tap refresh to try again.';
+    body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>⚠</div>' + human +
+      '<div style=&quot;margin-top:14px&quot;><button class=&quot;scr-more-btn&quot; onclick=&quot;loadRadar(true)&quot;>↻ Retry</button></div></div>';
     badge.textContent = 'ERROR';
   }
 }
