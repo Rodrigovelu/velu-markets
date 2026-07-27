@@ -313,6 +313,23 @@ export default async function handler(req, res) {
     const themeCounts = {};
     ranked.forEach(s => { if (s.theme) themeCounts[s.theme] = (themeCounts[s.theme] || 0) + 1; });
 
+    // Guardar snapshot para el historial (plan Terminal)
+    try {
+      const SB = 'https://osrjmchajyrgdlucniid.supabase.co';
+      const SK = process.env.SUPABASE_KEY || 'sb_publishable_uL4sQ_T3HiCD6ZZ20D5thw_sc_gTK5F';
+      const rows = ranked.slice(0, 15).map(s => ({
+        ticker: s.symbol, company: s.name, engine: 'radar',
+        score: s.radarScore, price: s.price,
+        from_52high: s.from52High, sector: s.theme
+      }));
+      await fetch(`${SB}/rest/v1/screener_history`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SK,
+                   'Authorization': `Bearer ${SK}`, 'Prefer': 'return=minimal' },
+        body: JSON.stringify(rows)
+      });
+    } catch (e) { console.warn('History save failed:', e.message); }
+
     return res.status(200).json({
       count: ranked.length,
       stocks: ranked,
