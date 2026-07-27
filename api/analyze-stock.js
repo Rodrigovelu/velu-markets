@@ -219,6 +219,43 @@ async function fetchSectorContext(ticker, FMP, ownFrom52High) {
 }
 // Análisis en vivo de una acción con 3 agentes de Velu + veredicto Buy/Hold/Sell
 
+
+// Trae un endpoint de FMP con reintento. El quote es critico: si falla por
+// saturacion momentanea, reintentamos antes de darnos por vencidos.
+async function fmpFetch(url, tries) {
+  tries = tries || 1;
+  let lastStatus = null;
+  for (let i = 0; i < tries; i++) {
+    // Espera progresiva: si es saturacion, darle tiempo real a FMP
+    if (i > 0) {
+      const wait = lastStatus === 429 ? 1500 * i : 600 * i;
+      await new Promise(s => setTimeout(s, wait));
+    }
+    try {
+      const r = await fetch(url);
+      lastStatus = r.status;
+      if (r.ok) {
+        const j = await r.json();
+        // FMP a veces responde 200 con un objeto de error
+        if (j && !Array.isArray(j) && (j['Error Message'] || j.error || j.message)) {
+          console.error('FMP error payload:', JSON.stringify(j).slice(0, 200));
+          continue;
+        }
+        // Arreglo vacio = el simbolo no devolvio datos; reintentar por si fue transitorio
+        if (Array.isArray(j) && j.length === 0) {
+          console.error('FMP empty array for', url.split('symbol=')[1]);
+          continue;
+        }
+        return j;
+      }
+      console.error('FMP HTTP', r.status, url.split('?')[0].split('/').pop());
+    } catch (e) {
+      console.error('FMP threw:', e.message);
+    }
+  }
+  return { __failed: true, status: lastStatus };
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -242,36 +279,40 @@ export default async function handler(req, res) {
     const toDate = _today.toISOString().slice(0, 10);
     const fromDate = _yearAgo.toISOString().slice(0, 10);
 
-    const [quoteRes, ratiosRes, consensusRes, newsRes, historyRes, incomeRes] = await Promise.all([
-      fetch(`https://financialmodelingprep.com/stable/quote?symbol=${ticker}&apikey=${FMP}`),
-      fetch(`https://financialmodelingprep.com/stable/ratios-ttm?symbol=${ticker}&apikey=${FMP}`),
-      fetch(`https://financialmodelingprep.com/stable/price-target-consensus?symbol=${ticker}&apikey=${FMP}`),
-      fetch(`https://financialmodelingprep.com/stable/news/stock?symbols=${ticker}&limit=6&apikey=${FMP}`),
-      fetch(`https://financialmodelingprep.com/stable/historical-price-eod/light?symbol=${ticker}&from=${fromDate}&to=${toDate}&apikey=${FMP}`),
-      fetch(`https://financialmodelingprep.com/stable/income-statement?symbol=${ticker}&period=annual&limit=5&apikey=${FMP}`)
+    const base = 'https://financialmodelingprep.com/stable';
+
+    // FASE 1 — el precio es indispensable. Con reintento por si FMP satura.
+    const quoteArr = await fmpFetch(`${base}/quote?symbol=${ticker}&apikey=${FMP}`, 4);
+    const quote = Array.isArray(quoteArr) ? quoteArr[0] : null;
+
+    if (!quote || typeof quote.price !== 'number') {
+      const rateLimited = quoteArr && quoteArr.__failed && quoteArr.status === 429;
+      console.error('Quote unavailable for', ticker, '- raw:', JSON.stringify(quoteArr).slice(0, 200));
+      return res.status(rateLimited ? 429 : 404).json({
+        error: rateLimited
+          ? 'Market data is rate limited right now'
+          : `Could not load market data for ${ticker}`,
+        ticker,
+        rateLimited: !!rateLimited
+      });
+    }
+
+    // FASE 2 — lo demas es opcional: si algo falla, el analisis sigue.
+    const [ratiosArr, consensusArr, newsArr, histArr, incArr] = await Promise.all([
+      fmpFetch(`${base}/ratios-ttm?symbol=${ticker}&apikey=${FMP}`, 2),
+      fmpFetch(`${base}/price-target-consensus?symbol=${ticker}&apikey=${FMP}`, 1),
+      fmpFetch(`${base}/news/stock?symbols=${ticker}&limit=6&apikey=${FMP}`, 1),
+      fmpFetch(`${base}/historical-price-eod/light?symbol=${ticker}&from=${fromDate}&to=${toDate}&apikey=${FMP}`, 1),
+      fmpFetch(`${base}/income-statement?symbol=${ticker}&period=annual&limit=5&apikey=${FMP}`, 2)
     ]);
 
-    const quoteArr = await quoteRes.json();
-    const ratiosArr = await ratiosRes.json();
-
-    const quote = Array.isArray(quoteArr) ? quoteArr[0] : null;
-    const ratios = Array.isArray(ratiosArr) ? ratiosArr[0] : {};
-    let consensus = null;
-    try {
-      const consensusArr = await consensusRes.json();
-      consensus = Array.isArray(consensusArr) && consensusArr[0] ? consensusArr[0] : null;
-    } catch (e) { consensus = null; }
-
-    let news = [];
-    try {
-      const newsArr = await newsRes.json();
-      news = Array.isArray(newsArr) ? newsArr.slice(0, 6) : [];
-    } catch (e) { news = []; }
+    const ratios = Array.isArray(ratiosArr) && ratiosArr[0] ? ratiosArr[0] : {};
+    const consensus = Array.isArray(consensusArr) && consensusArr[0] ? consensusArr[0] : null;
+    const news = Array.isArray(newsArr) ? newsArr.slice(0, 6) : [];
 
     // Historial de precios — reducido a ~130 puntos para un payload ligero
     let history = [];
     try {
-      const histArr = await historyRes.json();
       if (Array.isArray(histArr) && histArr.length > 0) {
         const step = Math.max(1, Math.floor(histArr.length / 130));
         history = histArr
@@ -283,7 +324,6 @@ export default async function handler(req, res) {
     // Fundamentales anuales (5 años) — para que los agentes razonen sobre trayectoria
     let fundamentals = null;
     try {
-      const incArr = await incomeRes.json();
       if (Array.isArray(incArr) && incArr.length >= 2) {
         // Ordenar del mas antiguo al mas reciente
         const rows = incArr
@@ -329,8 +369,6 @@ export default async function handler(req, res) {
         }
       }
     } catch (e) { fundamentals = null; }
-
-    if (!quote) return res.status(404).json({ error: `Ticker ${ticker} not found` });
 
     const from52High = quote.yearHigh ? ((quote.yearHigh - quote.price) / quote.yearHigh) * 100 : 0;
 
