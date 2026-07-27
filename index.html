@@ -1651,9 +1651,9 @@ body{
         <h3 class="eng-title">Radar</h3>
         <p class="eng-sub">Emerging names before the crowd</p>
         <p class="eng-desc">
-          Tracks companies inside structural themes — AI infrastructure, power, nuclear, defense,
-          space — and surfaces the ones whose growth is accelerating while the price still sits near
-          its moving average. The score deliberately penalizes names that already ran.
+          Tracks 250 companies across 15 structural themes — AI infrastructure, power, nuclear, defense,
+          space, critical materials — and surfaces the ones whose growth is accelerating while the price
+          still sits near its moving average. The score deliberately penalizes names that already ran.
         </p>
         <div class="eng-rows" id="engRadar">
           <div class="eng-row">
@@ -4116,7 +4116,7 @@ function switchTab(tab) {
     rB.classList.add('active'); pB.classList.remove('active');
     rP.style.display = ''; pP.style.display = 'none';
     if (tt) tt.textContent = 'Before the crowd notices';
-    if (td) td.textContent = 'Companies inside structural themes whose fundamentals are inflecting but whose price has not run yet. The score deliberately penalizes names that already moved.';
+    if (td) td.textContent = 'Velu tracks 250 companies across 15 structural themes and surfaces the ones whose fundamentals are inflecting before the price has run. The score deliberately penalizes names that already moved.';
     if (!__radarLoaded) loadRadar();
   } else {
     pB.classList.add('active'); rB.classList.remove('active');
@@ -4133,7 +4133,7 @@ async function loadRadar(force) {
   if (__radarLoaded && !force) { renderRadar(); return; }
 
   body.innerHTML = '<div class=&quot;loading&quot;><div class=&quot;spinner&quot;></div>' +
-    '<div class=&quot;loading-txt&quot;>Scanning 76 companies across 10 structural themes...</div>' +
+    '<div class=&quot;loading-txt&quot;>Scanning 250 companies across 15 structural themes...</div>' +
     '<div class=&quot;loading-sub&quot;>This one takes a few seconds — it reads fundamentals, not just prices.</div></div>';
   badge.textContent = 'SCANNING...';
 
