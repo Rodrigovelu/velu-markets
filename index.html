@@ -3825,24 +3825,28 @@ function renderSectorContext(s, sc) {
   var ownW = (own / maxVal) * 100;
   var avgW = (avg / maxVal) * 100;
 
+  var isTheme = sc.groupKind === 'theme';
+  var groupWord = isTheme ? 'theme' : 'sector';
+  var groupLabel = isTheme ? ('the ' + sc.sector + ' theme') : ('the ' + sc.sector + ' sector');
+
   var headline, hlColor, detail;
   if (sc.verdict === 'stock-specific') {
     headline = 'Stock-specific selloff';
     hlColor = 'var(--amber)';
-    detail = s.symbol + ' is down far more than its sector. Whatever is driving this is about the company, not the industry — which means the thesis lives or dies on company fundamentals.';
+    detail = s.symbol + ' is down far more than its peers in ' + groupLabel + '. Whatever is driving this is about the company, not the ' + groupWord + ' — which means the thesis lives or dies on company fundamentals.';
   } else if (sc.verdict === 'sector-wide') {
-    headline = 'Sector-wide selloff';
+    headline = isTheme ? 'Theme-wide selloff' : 'Sector-wide selloff';
     hlColor = 'var(--blue)';
-    detail = 'The whole ' + sc.sector + ' sector is under pressure, with ' + sc.peersDownHard + ' of ' + sc.peerCount + ' peers also down 15%+. This looks like rotation, not a company-specific problem.';
+    detail = 'All of ' + groupLabel + ' is under pressure, with ' + sc.peersDownHard + ' of ' + sc.peerCount + ' peers also down 15%+. This looks like rotation, not a company-specific problem.';
   } else if (sc.verdict === 'outperforming') {
     headline = 'Holding up better than peers';
     hlColor = 'var(--g)';
-    detail = s.symbol + ' has fallen less than the average ' + sc.sector + ' name. Relative strength inside a weak sector is often a quality signal.';
+    detail = s.symbol + ' has fallen less than the average name in ' + groupLabel + '. Relative strength inside a weak group is often a quality signal.';
   } else {
-    headline = 'Down more than its sector';
+    headline = 'Down more than its peers';
     hlColor = 'var(--mu)';
-    detail = 'The ' + sc.sector + ' sector is under pressure too (down ' + avg + '% on average), but ' + s.symbol +
-             ' has fallen harder. Part of this is industry-wide, part is specific to the company — the agents weigh both below.';
+    detail = groupLabel.charAt(0).toUpperCase() + groupLabel.slice(1) + ' is under pressure too (down ' + avg + '% on average), but ' + s.symbol +
+             ' has fallen harder. Part of this is group-wide, part is specific to the company — the agents weigh both below.';
   }
 
   var worst = (sc.worstPeers || []).map(function(p) {
@@ -3851,7 +3855,7 @@ function renderSectorContext(s, sc) {
 
   return `
     <div class=&quot;sector-box&quot;>
-      <div class=&quot;sector-label&quot;>SECTOR CONTEXT · ${sc.sector.toUpperCase()}</div>
+      <div class=&quot;sector-label&quot;>${sc.groupKind === 'theme' ? 'THEME CONTEXT' : 'SECTOR CONTEXT'} · ${sc.sector.toUpperCase()}</div>
       <div class=&quot;sc-headline&quot; style=&quot;color:${hlColor}&quot;>${headline}</div>
 
       <div class=&quot;sc-bars&quot;>
@@ -3861,7 +3865,7 @@ function renderSectorContext(s, sc) {
           <span class=&quot;sc-bar-val&quot;>−${own}%</span>
         </div>
         <div class=&quot;sc-bar-row&quot;>
-          <span class=&quot;sc-bar-lbl&quot;>Sector avg</span>
+          <span class=&quot;sc-bar-lbl&quot;>${isTheme ? 'Theme avg' : 'Sector avg'}</span>
           <div class=&quot;sc-bar-track&quot;><div class=&quot;sc-bar sc-bar-peer&quot; style=&quot;width:${avgW.toFixed(1)}%&quot;></div></div>
           <span class=&quot;sc-bar-val sc-muted&quot;>−${avg}%</span>
         </div>
