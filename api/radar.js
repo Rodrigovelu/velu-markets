@@ -12,19 +12,70 @@
 export const maxDuration = 60;
 
 const THEMES = {
-  'AI Infrastructure & Memory': ['MU','SNDK','WDC','STX','MRVL','AVGO','VRT','SMCI','ANET','CRDO','ALAB','PSTG','NTAP'],
-  'Power & Grid for AI':        ['VST','CEG','NRG','TLN','GEV','PWR','ETN','EMR','AES','NEE'],
-  'Nuclear & Uranium':          ['CCJ','LEU','SMR','OKLO','BWXT','UEC','DNN'],
-  'Defense & Aerospace':        ['LMT','RTX','NOC','GD','LHX','HII','AVAV','KTOS','LDOS'],
-  'Cybersecurity':              ['PANW','CRWD','ZS','FTNT','S','CYBR','TENB','OKTA'],
-  'Robotics & Automation':      ['ISRG','ROK','TER','SYM','PATH','CGNX','ZBRA'],
-  'Space & Satellites':         ['RKLB','ASTS','PL','LUNR','RDW','IRDM'],
-  'Metabolic & Biotech':        ['LLY','VKTX','AMGN','REGN','VRTX','MDGL','ALNY'],
-  'Quantum Computing':          ['IONQ','RGTI','QBTS'],
-  'Critical Materials':         ['MP','ALB','LAC','FCX','TROX','NEM'],
+  'AI Infrastructure & Memory': [
+    'MU', 'SNDK', 'WDC', 'STX', 'MRVL', 'AVGO', 'VRT', 'SMCI', 'ANET', 'CRDO',
+    'ALAB', 'PSTG', 'NTAP', 'LITE', 'COHR', 'FN', 'CIEN', 'APH', 'MPWR', 'NVMI',
+    'ONTO', 'AEIS', 'POWI', 'SITM', 'SLAB', 'AMKR', 'UCTT', 'ICHR', 'FORM', 'ACLS'
+  ],
+  'Semis & Equipment': [
+    'NVDA', 'AMD', 'INTC', 'QCOM', 'TXN', 'ADI', 'NXPI', 'ON', 'SWKS', 'MCHP',
+    'LRCX', 'AMAT', 'KLAC', 'TSM', 'ARM', 'ASML', 'TER', 'ENTG', 'MKSI', 'QRVO',
+    'LSCC', 'RMBS', 'SYNA', 'ALGM', 'WOLF'
+  ],
+  'Power & Grid for AI': [
+    'VST', 'CEG', 'NRG', 'TLN', 'GEV', 'PWR', 'ETN', 'EMR', 'AES', 'NEE',
+    'PEG', 'EXC', 'D', 'SO', 'DUK', 'XEL', 'ED', 'WEC', 'AEP', 'FE',
+    'NI', 'ATO', 'SRE', 'PNW', 'HUBB', 'AZZ', 'BE', 'PLUG'
+  ],
+  'Nuclear & Uranium': [
+    'CCJ', 'LEU', 'SMR', 'OKLO', 'BWXT', 'UEC', 'DNN', 'NXE', 'UUUU', 'URG',
+    'ASPI', 'LTBR'
+  ],
+  'Defense & Aerospace': [
+    'LMT', 'RTX', 'NOC', 'GD', 'LHX', 'HII', 'AVAV', 'KTOS', 'LDOS', 'BAH',
+    'CACI', 'SAIC', 'TDG', 'HWM', 'HEI', 'CW', 'MOG-A', 'AXON', 'PLTR', 'RKLB'
+  ],
+  'Cybersecurity': [
+    'PANW', 'CRWD', 'ZS', 'FTNT', 'S', 'CYBR', 'TENB', 'OKTA', 'QLYS', 'RPD',
+    'VRNS', 'NET', 'DDOG'
+  ],
+  'Robotics & Automation': [
+    'ISRG', 'ROK', 'SYM', 'PATH', 'CGNX', 'ZBRA', 'NDSN', 'IEX', 'GGG', 'THRM',
+    'KNSL', 'JBT', 'MIDD'
+  ],
+  'Space & Satellites': [
+    'ASTS', 'PL', 'LUNR', 'RDW', 'IRDM', 'VSAT', 'GSAT', 'SPCE', 'MNTS'
+  ],
+  'Metabolic & Biotech': [
+    'LLY', 'VKTX', 'AMGN', 'REGN', 'VRTX', 'MDGL', 'ALNY', 'NVO', 'ZLDPF', 'CRSP',
+    'NTLA', 'BEAM', 'SRPT', 'IONS', 'RARE', 'FOLD', 'INSM', 'AXSM', 'NBIX'
+  ],
+  'Quantum Computing': [
+    'IONQ', 'RGTI', 'QBTS', 'QUBT', 'ARQQ'
+  ],
+  'Critical Materials': [
+    'MP', 'ALB', 'LAC', 'FCX', 'TROX', 'NEM', 'SQM', 'PLL', 'SGML', 'UAMY',
+    'USAR', 'TMC', 'CDE', 'HL', 'AA', 'X', 'CLF', 'STLD', 'NUE'
+  ],
+  'Data Centers & Cooling': [
+    'DLR', 'EQIX', 'IRM', 'SWCH', 'MOD', 'LII', 'JCI', 'TT', 'CARR', 'AAON',
+    'FIX', 'APG'
+  ],
+  'Fintech & Digital Assets': [
+    'COIN', 'HOOD', 'SQ', 'PYPL', 'SOFI', 'AFRM', 'UPST', 'MARA', 'RIOT', 'CLSK',
+    'CIFR', 'HUT', 'BITF', 'GLXY'
+  ],
+  'Healthcare Innovation': [
+    'TMO', 'DHR', 'A', 'ILMN', 'TXG', 'PACB', 'NVTA', 'EXAS', 'NTRA', 'TEM',
+    'DOCS', 'HIMS', 'OSCR', 'ALHC'
+  ],
+  'Industrial Reshoring': [
+    'CAT', 'DE', 'URI', 'PH', 'ROP', 'AME', 'FAST', 'WCC', 'MSM', 'GWW',
+    'BLDR', 'MLM', 'VMC', 'SUM', 'EXP', 'ACM', 'J'
+  ],
 };
 
-const BATCH = 50;
+const BATCH = 60;
 
 function themeOf(sym) {
   for (const t in THEMES) if (THEMES[t].indexOf(sym) !== -1) return t;
@@ -84,9 +135,12 @@ export default async function handler(req, res) {
   for (const t in THEMES) THEMES[t].forEach(s => { if (ALL.indexOf(s) === -1) ALL.push(s); });
 
   try {
-    // FASE 1 — quotes de todo el universo tematico
+    // FASE 1 — quotes de todo el universo tematico.
+    // Pausa breve entre lotes para no rebasar el limite de 300 llamadas/minuto.
+    const pause = (ms) => new Promise(r => setTimeout(r, ms));
     const quotes = [];
     for (let i = 0; i < ALL.length; i += BATCH) {
+      if (i > 0) await pause(1200);
       const slice = ALL.slice(i, i + BATCH);
       const rs = await Promise.all(slice.map(s => fmp(`quote?symbol=${s}`, FMP, 'quote')));
       rs.forEach(arr => {
@@ -108,11 +162,13 @@ export default async function handler(req, res) {
     const pre = quotes.map(q => ({
       q,
       pre: timingScore(q.price, q.priceAvg200) + capScore(q.marketCap)
-    })).sort((a, b) => b.pre - a.pre).slice(0, 18);
+    })).sort((a, b) => b.pre - a.pre).slice(0, 30);
 
     // FASE 2 — fundamentales solo de los finalistas
     const enriched = [];
+    await pause(1500);
     for (let i = 0; i < pre.length; i += BATCH) {
+      if (i > 0) await pause(1200);
       const slice = pre.slice(i, i + BATCH);
       const results = await Promise.all(slice.map(async (item) => {
         const sym = item.q.symbol;
