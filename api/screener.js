@@ -144,9 +144,49 @@ async function fetchPE(symbol, FMP) {
   }
 }
 
+const SUPABASE_URL = 'https://osrjmchajyrgdlucniid.supabase.co';
+const CACHE_MINUTES = 15;
+
+async function getCachedScreener(SK) {
+  try {
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/radar_cache?engine=eq.punished&select=data,updated_at`,
+      { headers: { 'apikey': SK, 'Authorization': `Bearer ${SK}` } }
+    );
+    const rows = await r.json();
+    const row = Array.isArray(rows) && rows[0] ? rows[0] : null;
+    if (!row) return null;
+    const ageMin = (Date.now() - new Date(row.updated_at).getTime()) / 60000;
+    if (ageMin > CACHE_MINUTES) return null;
+    return { ...row.data, cached: true, cacheAgeMinutes: Math.round(ageMin) };
+  } catch { return null; }
+}
+
+async function saveScreenerCache(SK, data) {
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/radar_cache?on_conflict=engine`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', 'apikey': SK,
+        'Authorization': `Bearer ${SK}`,
+        'Prefer': 'resolution=merge-duplicates,return=minimal'
+      },
+      body: JSON.stringify({ engine: 'punished', data, updated_at: new Date().toISOString() })
+    });
+  } catch (e) { console.warn('Screener cache save failed:', e.message); }
+}
+
 export default async function handler(req, res) {
   const FMP = process.env.FMP_API_KEY;
   if (!FMP) return res.status(500).json({ error: 'FMP API key not configured' });
+
+  const SK = process.env.SUPABASE_KEY || 'sb_publishable_uL4sQ_T3HiCD6ZZ20D5thw_sc_gTK5F';
+  const forceRefresh = req.query?.refresh === '1';
+
+  if (!forceRefresh) {
+    const cached = await getCachedScreener(SK);
+    if (cached) return res.status(200).json(cached);
+  }
 
   try {
     // 1. Traer quotes en lotes (respeta el límite de 300 llamadas/minuto)
@@ -234,14 +274,18 @@ export default async function handler(req, res) {
       });
     } catch (e) { console.warn('History save failed:', e.message); }
 
-    return res.status(200).json({
+    const payload = {
       count: punished.length,
       stocks: punished,
       scanned: quotes.length,
       universe: UNIVERSE.length,
       sectorBreakdown: sectorCounts,
-      generatedAt: new Date().toISOString()
-    });
+      generatedAt: new Date().toISOString(),
+      cached: false
+    };
+
+    await saveScreenerCache(SK, payload);
+    return res.status(200).json(payload);
 
   } catch (err) {
     console.error('Screener error:', err);
