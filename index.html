@@ -3542,6 +3542,9 @@ document.addEventListener('DOMContentLoaded', () => {
     .pb-btn { flex: 1; }
   }
 
+
+  .radar-fresh { font-family: var(--mono); font-size: 10px; color: var(--dim); margin-left: 6px; }
+
 </style>
 </head>
 <body>
@@ -3634,8 +3637,9 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class=&quot;screener-title&quot;>
             ⚡ Punishment Screener
             <span class=&quot;screener-badge&quot; id=&quot;screenerCount&quot;>SCANNING...</span>
+            <span class=&quot;radar-fresh&quot; id=&quot;screenerFreshness&quot;></span>
           </div>
-          <button class=&quot;refresh-btn&quot; onclick=&quot;loadScreener()&quot;>↻ Refresh</button>
+          <button class=&quot;refresh-btn&quot; onclick=&quot;loadScreener(true)&quot;>↻ Refresh</button>
         </div>
         <div id=&quot;screenerBody&quot;>
           <div class=&quot;loading&quot;>
@@ -3652,8 +3656,9 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class=&quot;screener-title&quot;>
             📡 Radar
             <span class=&quot;screener-badge&quot; id=&quot;radarCount&quot;>READY</span>
+            <span class=&quot;radar-fresh&quot; id=&quot;radarFreshness&quot;></span>
           </div>
-          <button class=&quot;refresh-btn&quot; onclick=&quot;loadRadar(true)&quot;>↻ Refresh</button>
+          <button class=&quot;refresh-btn&quot; onclick=&quot;loadRadar(true, true)&quot;>↻ Refresh</button>
         </div>
         <div id=&quot;radarBody&quot;>
           <div class=&quot;loading&quot;>
@@ -4253,14 +4258,17 @@ var __sortBy = 'punishment';
 var __pageSize = 15;
 var __visibleCount = 15;
 
-async function loadScreener() {
+var __screenerUpdatedAt = null;
+
+async function loadScreener(hardRefresh) {
   const body = document.getElementById('screenerBody');
   const countBadge = document.getElementById('screenerCount');
-  body.innerHTML = '<div class=&quot;loading&quot;><div class=&quot;spinner&quot;></div><div class=&quot;loading-txt&quot;>Scanning 176 stocks for mispriced opportunities...</div></div>';
+  body.innerHTML = '<div class=&quot;loading&quot;><div class=&quot;spinner&quot;></div><div class=&quot;loading-txt&quot;>' +
+    (hardRefresh ? 'Rescanning 176 stocks right now...' : 'Loading the screener...') + '</div></div>';
   countBadge.textContent = 'SCANNING...';
 
   try {
-    const res = await fetch('/api/screener');
+    const res = await fetch('/api/screener' + (hardRefresh ? '?refresh=1' : ''));
     if (!res.ok) throw new Error('Screener request failed');
     const data = await res.json();
 
@@ -4273,6 +4281,7 @@ async function loadScreener() {
     __allStocks = data.stocks;
     __scannedCount = data.scanned || 0;
     __visibleCount = __pageSize;
+    __screenerUpdatedAt = data.generatedAt || new Date().toISOString();
     renderScreener();
 
   } catch (err) {
@@ -4332,6 +4341,19 @@ function renderScreener() {
   const filtered = getFilteredStocks();
 
   countBadge.textContent = filtered.length + ' OF ' + __scannedCount + ' SCANNED';
+
+  var sFreshEl = document.getElementById('screenerFreshness');
+  if (sFreshEl) {
+    if (__screenerUpdatedAt) {
+      var sMins = Math.max(0, Math.round((Date.now() - new Date(__screenerUpdatedAt).getTime()) / 60000));
+      sFreshEl.textContent = sMins < 1 ? 'Updated just now'
+        : sMins === 1 ? 'Updated 1 min ago'
+        : sMins < 60 ? 'Updated ' + sMins + ' min ago'
+        : 'Updated ' + Math.round(sMins/60) + 'h ago';
+    } else {
+      sFreshEl.textContent = '';
+    }
+  }
 
   // Sectores disponibles en los resultados
   var sectors = ['All'];
@@ -4654,15 +4676,21 @@ function switchTab(tab) {
   }
 }
 
-async function loadRadar(force) {
+var __radarUpdatedAt = null;
+
+async function loadRadar(force, hardRefresh) {
   var body = document.getElementById('radarBody');
   var badge = document.getElementById('radarCount');
   if (!body) return;
   if (__radarLoaded && !force) { renderRadar(); return; }
 
   body.innerHTML = '<div class=&quot;loading&quot;><div class=&quot;spinner&quot;></div>' +
-    '<div class=&quot;loading-txt&quot;>Scanning 250 companies across 15 structural themes...</div>' +
-    '<div class=&quot;loading-sub&quot;>This one takes a few seconds — it reads fundamentals, not just prices.</div></div>';
+    '<div class=&quot;loading-txt&quot;>' + (hardRefresh
+      ? 'Rescanning 250 companies right now...'
+      : 'Loading the radar...') + '</div>' +
+    '<div class=&quot;loading-sub&quot;>' + (hardRefresh
+      ? 'This one takes a few seconds — it reads fundamentals, not just prices.'
+      : 'Velu recalculates this every 20 minutes, so results stay stable between visits.') + '</div></div>';
   badge.textContent = 'SCANNING...';
 
   // El radar hace muchas mas llamadas que el screener, asi que le damos
@@ -4672,7 +4700,8 @@ async function loadRadar(force) {
 
   try {
     var opts = controller ? { signal: controller.signal } : {};
-    var res = await fetch('/api/radar', opts);
+    var url = '/api/radar' + (hardRefresh ? '?refresh=1' : '');
+    var res = await fetch(url, opts);
     clearTimeout(timer);
 
     var data = null;
@@ -4688,6 +4717,7 @@ async function loadRadar(force) {
     __radarScanned = data.scanned || 0;
     __radarLoaded = true;
     __radarVisible = 15;
+    __radarUpdatedAt = data.generatedAt || new Date().toISOString();
 
     if (__radarStocks.length === 0) {
       var d = data.diagnostics || {};
@@ -4700,7 +4730,7 @@ async function loadRadar(force) {
         detail = 'Scanned ' + d.quotesOk + ' companies. None are showing an early inflection today — the radar is strict on purpose.';
       }
       body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>◎</div>' + detail +
-        '<div style=&quot;margin-top:14px&quot;><button class=&quot;scr-more-btn&quot; onclick=&quot;loadRadar(true)&quot;>↻ Try again</button></div></div>';
+        '<div style=&quot;margin-top:14px&quot;><button class=&quot;scr-more-btn&quot; onclick=&quot;loadRadar(true, true)&quot;>↻ Try again</button></div></div>';
       badge.textContent = '0 FOUND';
       return;
     }
@@ -4714,7 +4744,7 @@ async function loadRadar(force) {
       ? 'The scan took longer than expected. Tap refresh to try again.'
       : 'Could not load the radar right now. Tap refresh to try again.';
     body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>⚠</div>' + human +
-      '<div style=&quot;margin-top:14px&quot;><button class=&quot;scr-more-btn&quot; onclick=&quot;loadRadar(true)&quot;>↻ Retry</button></div></div>';
+      '<div style=&quot;margin-top:14px&quot;><button class=&quot;scr-more-btn&quot; onclick=&quot;loadRadar(true, true)&quot;>↻ Retry</button></div></div>';
     badge.textContent = 'ERROR';
   }
 }
@@ -4741,6 +4771,19 @@ function renderRadar() {
   }
 
   badge.textContent = list.length + ' OF ' + __radarScanned + ' SCANNED';
+
+  var freshEl = document.getElementById('radarFreshness');
+  if (freshEl) {
+    if (__radarUpdatedAt) {
+      var mins = Math.max(0, Math.round((Date.now() - new Date(__radarUpdatedAt).getTime()) / 60000));
+      freshEl.textContent = mins < 1 ? 'Updated just now'
+        : mins === 1 ? 'Updated 1 min ago'
+        : mins < 60 ? 'Updated ' + mins + ' min ago'
+        : 'Updated ' + Math.round(mins/60) + 'h ago';
+    } else {
+      freshEl.textContent = '';
+    }
+  }
 
   if (list.length === 0) {
     body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>◎</div>No early-stage setups in this theme right now.</div>';
