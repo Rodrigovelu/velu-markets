@@ -2179,10 +2179,16 @@ async function completeOnboarding() {
   // Si se registro eligiendo Pro o Terminal, mandarlo a pagar antes de entrar
   var pendingPlan = null;
   try { pendingPlan = localStorage.getItem('veluPendingPlan'); } catch (e) {}
+
   if (pendingPlan === 'pro' || pendingPlan === 'terminal') {
-    try { localStorage.removeItem('veluPendingPlan'); } catch (e) {}
-    startCheckoutFromParent(state.pendingUserEmail, pendingPlan);
-    return;
+    var planLabel = pendingPlan === 'terminal' ? 'Terminal' : 'Pro';
+    // No borramos la intencion todavia: si el checkout falla, el usuario
+    // debe poder reintentarlo desde el terminal en vez de perderla.
+    var ok = await startCheckoutFromParent(state.pendingUserEmail, pendingPlan);
+    if (ok) return;   // el navegador ya va camino a Stripe
+
+    alert('We could not open the ' + planLabel + ' checkout. You are in on the free plan for now — ' +
+          'use the upgrade button inside the terminal whenever you are ready.');
   }
 
   goToTerminal(true);
@@ -2271,6 +2277,15 @@ window.__veluDesiredPlan = 'free';
 
 function selectPlan(plan) {
   window.__veluDesiredPlan = plan;
+  // Guardar de inmediato: la variable en memoria se pierde si el usuario
+  // recarga, cambia de modal o el navegador reinicia el contexto.
+  try {
+    if (plan === 'pro' || plan === 'terminal') {
+      localStorage.setItem('veluPendingPlan', plan);
+    } else {
+      localStorage.removeItem('veluPendingPlan');
+    }
+  } catch (e) {}
   const session = (window.__veluApp && window.__veluApp.getSession) ? window.__veluApp.getSession() : null;
 
   if (plan === 'free') {
@@ -2293,6 +2308,7 @@ function selectPlan(plan) {
 }
 
 async function startCheckoutFromParent(email, plan) {
+  // Devuelve true si el navegador va a Stripe, false si no se pudo
   try {
     // Si ya tiene un plan de pago activo, esto es un CAMBIO de plan, no una compra nueva
     const curRes = await fetch('/api/billing?email=' + encodeURIComponent(email));
@@ -2308,15 +2324,16 @@ async function startCheckoutFromParent(email, plan) {
 
       if (upRes.ok) {
         const label = plan === 'terminal' ? 'Terminal' : 'Pro';
+        try { localStorage.removeItem('veluPendingPlan'); } catch (e) {}
         alert('You are now on ' + label + '. The price difference was charged automatically — no new card needed.');
         goToTerminal(true);
-        return;
+        return true;
       }
       if (upData.needsCheckout) {
         // Caso raro: se perdio el registro de la suscripcion en Stripe -> seguir con checkout normal
       } else {
         alert(upData.error || 'Could not change your plan. Please try again.');
-        return;
+        return false;
       }
     }
 
@@ -2329,11 +2346,13 @@ async function startCheckoutFromParent(email, plan) {
     const data = await res.json();
     if (data.url) {
       window.location.href = data.url;
-    } else {
-      alert('Could not start checkout. Please try again.');
+      return true;
     }
+    console.error('Checkout returned no URL:', data);
+    return false;
   } catch (e) {
-    alert('Could not start checkout. Please try again.');
+    console.error('Checkout failed:', e);
+    return false;
   }
 }
 
@@ -2456,12 +2475,17 @@ async function submitSignup() {
     createdAt: new Date().toISOString()
   });
 
-  // Recordar que plan eligio: al terminar el onboarding lo mandamos a pagar
-  const desiredPlan = window.__veluDesiredPlan || 'free';
+  // Recordar que plan eligio. Preferimos lo guardado, que sobrevive recargas.
+  let desiredPlan = 'free';
+  try { desiredPlan = localStorage.getItem('veluPendingPlan') || window.__veluDesiredPlan || 'free'; }
+  catch (e) { desiredPlan = window.__veluDesiredPlan || 'free'; }
+
   createdUser.plan = 'free';
   createdUser.planInterest = desiredPlan;
   upsertUser(createdUser);
-  try { localStorage.setItem('veluPendingPlan', desiredPlan); } catch (e) {}
+  if (desiredPlan === 'pro' || desiredPlan === 'terminal') {
+    try { localStorage.setItem('veluPendingPlan', desiredPlan); } catch (e) {}
+  }
 
   closeSignup();
   openOnboarding(createdUser);
@@ -3426,6 +3450,29 @@ document.addEventListener('DOMContentLoaded', () => {
   .plan-switch:disabled { opacity: .6; cursor: default; }
   @media (max-width: 768px) { .plan-switch { display: none !important; } }
 
+
+  .pending-banner { display: flex; align-items: center; justify-content: space-between; gap: 18px;
+    padding: 15px 20px; margin-bottom: 20px; border-radius: 13px;
+    background: linear-gradient(120deg, rgba(255,176,32,.10), rgba(255,176,32,.03));
+    border: 1px solid rgba(255,176,32,.32); }
+  .pb-left { display: flex; align-items: center; gap: 13px; min-width: 0; }
+  .pb-icon { font-size: 17px; color: var(--amber); flex-shrink: 0; }
+  .pb-title { font-size: 14px; font-weight: 650; color: var(--ink); margin-bottom: 2px; }
+  .pb-sub { font-size: 12.5px; color: var(--mu); line-height: 1.45; }
+  .pb-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .pb-btn { font-family: var(--sans); font-size: 13px; font-weight: 600; padding: 9px 16px;
+    border-radius: 9px; background: var(--amber); color: #1A1200; border: none; cursor: pointer;
+    white-space: nowrap; }
+  .pb-btn:hover { opacity: .88; }
+  .pb-x { width: 26px; height: 26px; border-radius: 7px; background: transparent;
+    border: 1px solid var(--b2); color: var(--dim); cursor: pointer; font-size: 14px; line-height: 1; }
+  .pb-x:hover { color: var(--ink); }
+  @media (max-width: 700px) {
+    .pending-banner { flex-direction: column; align-items: stretch; }
+    .pb-right { justify-content: space-between; }
+    .pb-btn { flex: 1; }
+  }
+
 </style>
 </head>
 <body>
@@ -3460,6 +3507,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <div class=&quot;container&quot;>
   <div class=&quot;main&quot;>
+
+    <div class=&quot;pending-banner&quot; id=&quot;pendingBanner&quot; style=&quot;display:none&quot;>
+      <div class=&quot;pb-left&quot;>
+        <span class=&quot;pb-icon&quot;>◈</span>
+        <div>
+          <div class=&quot;pb-title&quot; id=&quot;pbTitle&quot;>Your upgrade wasn't completed</div>
+          <div class=&quot;pb-sub&quot; id=&quot;pbSub&quot;>You picked a paid plan at signup but checkout didn't finish. Pick it up whenever you want.</div>
+        </div>
+      </div>
+      <div class=&quot;pb-right&quot;>
+        <button class=&quot;pb-btn&quot; id=&quot;pbBtn&quot;>Complete upgrade</button>
+        <button class=&quot;pb-x&quot; id=&quot;pbDismiss&quot;>×</button>
+      </div>
+    </div>
 
     <!-- Bienvenida / sugerencia (no interrumpe) -->
     <div class=&quot;welcome-card&quot; id=&quot;welcomeCard&quot; style=&quot;display:none&quot;>
@@ -4321,6 +4382,43 @@ function bindScreenerControls(body) {
 
 
 
+
+
+/* ── AVISO DE PLAN PENDIENTE ───────────────────────── */
+function setupPendingBanner() {
+  var el = document.getElementById('pendingBanner');
+  if (!el) return;
+
+  var pending = null;
+  try { pending = localStorage.getItem('veluPendingPlan'); } catch (e) {}
+  if (pending !== 'pro' && pending !== 'terminal') return;
+
+  // Si ya lo tiene, limpiar y no mostrar nada
+  if (getUserPlan() === pending) {
+    try { localStorage.removeItem('veluPendingPlan'); } catch (e) {}
+    return;
+  }
+
+  var label = pending === 'terminal' ? 'Terminal ($99/mo)' : 'Pro ($29/mo)';
+  var t = document.getElementById('pbTitle');
+  var s = document.getElementById('pbSub');
+  var b = document.getElementById('pbBtn');
+  var x = document.getElementById('pbDismiss');
+
+  if (t) t.textContent = 'You selected ' + label + ' but checkout never completed';
+  if (s) s.textContent = 'You are on the free plan right now. Finish the upgrade to unlock everything.';
+  if (b) {
+    b.textContent = 'Complete ' + (pending === 'terminal' ? 'Terminal' : 'Pro');
+    b.onclick = function() { startCheckout(pending); };
+  }
+  if (x) {
+    x.onclick = function() {
+      el.style.display = 'none';
+      try { localStorage.removeItem('veluPendingPlan'); } catch (e) {}
+    };
+  }
+  el.style.display = 'flex';
+}
 
 /* ── TERMINAL PLAN PANEL ────────────────────────────── */
 var __termLoaded = false;
@@ -5552,7 +5650,8 @@ window.addEventListener('message', function(ev) {
   loadTrackRecord();
   renderWatchlistPanel();
   renderMyCalls();
-
+  showTerminalTabIfEligible();
+  setupPendingBanner();
   setupWelcomeCard();
 })();
 </script>
