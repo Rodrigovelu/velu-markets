@@ -79,7 +79,14 @@ export default async function handler(req, res) {
       const rs = await Promise.all(slice.map(s => fmp(`quote?symbol=${s}`, FMP)));
       rs.forEach(arr => {
         const q = Array.isArray(arr) ? arr[0] : null;
-        if (q && q.price && q.price > 2) quotes.push(q);
+        // Exigir datos completos: si le falta cualquiera de estos, el analisis
+        // posterior fallaria, asi que mejor no listarla.
+        if (q && q.symbol && q.name && q.price > 2 &&
+            typeof q.yearHigh === 'number' && q.yearHigh > 0 &&
+            typeof q.priceAvg200 === 'number' && q.priceAvg200 > 0 &&
+            typeof q.marketCap === 'number' && q.marketCap > 0) {
+          quotes.push(q);
+        }
       });
     }
     if (quotes.length === 0) return res.status(500).json({ error: 'No market data' });
@@ -223,6 +230,8 @@ export default async function handler(req, res) {
     });
 
     const ranked = scored
+      // Sin datos de ingresos no hay tesis de inflexion que evaluar
+      .filter(s => s.revYoY !== null)
       .filter(s => s.radarScore >= 35)
       .sort((a, b) => b.radarScore - a.radarScore)
       .slice(0, 20);
