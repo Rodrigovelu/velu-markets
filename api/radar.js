@@ -24,7 +24,7 @@ const THEMES = {
   'Critical Materials':         ['MP','ALB','LAC','FCX','TROX','NEM'],
 };
 
-const BATCH = 40;
+const BATCH = 50;
 
 function themeOf(sym) {
   for (const t in THEMES) if (THEMES[t].indexOf(sym) !== -1) return t;
@@ -89,7 +89,7 @@ export default async function handler(req, res) {
     const pre = quotes.map(q => ({
       q,
       pre: timingScore(q.price, q.priceAvg200) + capScore(q.marketCap)
-    })).sort((a, b) => b.pre - a.pre).slice(0, 26);
+    })).sort((a, b) => b.pre - a.pre).slice(0, 18);
 
     // FASE 2 — fundamentales solo de los finalistas
     const enriched = [];
@@ -129,38 +129,48 @@ export default async function handler(req, res) {
           const m0 = rows[n-2].revenue ? rows[n-2].netIncome / rows[n-2].revenue : null;
           if (m1 != null && m0 != null) marginDelta = (m1 - m0) * 100;
 
-          // Crecimiento
+          // Crecimiento — y castigo si los ingresos caen
           if (revYoY >= 40) inflection += 18;
           else if (revYoY >= 20) inflection += 14;
           else if (revYoY >= 10) inflection += 9;
           else if (revYoY >= 3)  inflection += 5;
+          else if (revYoY < 0)   inflection -= 10;
 
-          // Aceleracion — lo que distingue "creciendo" de "despegando"
+          // Aceleracion — lo que distingue "creciendo" de "despegando".
+          // Una empresa que crece pero cada vez MENOS no es una inflexion.
           if (revAccel != null) {
             if (revAccel >= 15) inflection += 12;
             else if (revAccel >= 5) inflection += 8;
             else if (revAccel > 0)  inflection += 4;
+            else if (revAccel <= -30) inflection -= 12;
+            else if (revAccel <= -10) inflection -= 6;
           }
 
-          // Expansion de margen
+          // Margenes: expansion suma, colapso resta
           if (marginDelta != null) {
             if (marginDelta >= 3) inflection += 5;
             else if (marginDelta > 0.5) inflection += 3;
+            else if (marginDelta <= -15) inflection -= 10;
+            else if (marginDelta <= -3)  inflection -= 5;
           }
         }
       }
 
       // --- Valuacion contra crecimiento (25 pts) ---
-      let valuation = 6, pe = null, pegLike = null;
+      let valuation = 4, pe = null, pegLike = null;
       if (ratios && typeof ratios.priceToEarningsRatioTTM === 'number') {
         pe = ratios.priceToEarningsRatioTTM;
-        if (pe > 0 && revYoY != null && revYoY > 0) {
+        if (pe < 0) {
+          // Sin utilidades: no hay valuacion que sostenga la tesis todavia
+          valuation = -6;
+        } else if (pe > 0 && revYoY != null && revYoY > 0) {
           pegLike = pe / revYoY;
           if (pegLike < 0.3) valuation = 25;
           else if (pegLike < 0.6) valuation = 21;
           else if (pegLike < 1.0) valuation = 16;
           else if (pegLike < 2.0) valuation = 10;
-          else valuation = 4;
+          else if (pegLike < 4.0) valuation = 5;
+          else valuation = 0;
         } else if (pe > 0 && pe < 20) {
           valuation = 12;
         }
@@ -168,7 +178,16 @@ export default async function handler(req, res) {
 
       const timing = timingScore(q.price, q.priceAvg200);
       const radarCap = capScore(q.marketCap);
-      const total = Math.round(inflection + valuation + timing + radarCap);
+
+      // Puerta de calidad: solo premia cuando las tres piezas apuntan igual
+      // (crece, acelera y expande margenes) y cuando ya hay utilidades.
+      let quality = 0;
+      if (revYoY != null && revYoY > 0 &&
+          revAccel != null && revAccel > 0 &&
+          marginDelta != null && marginDelta > 0) quality += 10;
+      if (pe != null && pe > 0) quality += 5;
+
+      const total = Math.round(inflection + valuation + timing + radarCap + quality);
 
       const from52High = q.yearHigh ? ((q.yearHigh - q.price) / q.yearHigh) * 100 : null;
       const vsMA200 = q.priceAvg200 ? ((q.price - q.priceAvg200) / q.priceAvg200) * 100 : null;
@@ -198,13 +217,13 @@ export default async function handler(req, res) {
         vsMA200: vsMA200 != null ? Math.round(vsMA200 * 10) / 10 : null,
         from52High: from52High != null ? Math.round(from52High * 10) / 10 : null,
         stage,
-        scores: { inflection, valuation, timing, radar: radarCap },
+        scores: { inflection, valuation, timing, radar: radarCap, quality },
         radarScore: total
       };
     });
 
     const ranked = scored
-      .filter(s => s.radarScore >= 25)
+      .filter(s => s.radarScore >= 35)
       .sort((a, b) => b.radarScore - a.radarScore)
       .slice(0, 20);
 
