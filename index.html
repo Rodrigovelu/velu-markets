@@ -2175,6 +2175,16 @@ async function completeOnboarding() {
   try { localStorage.setItem('veluWelcomeTicker', welcomeTicker); } catch(e) {}
 
   closeOnboarding();
+
+  // Si se registro eligiendo Pro o Terminal, mandarlo a pagar antes de entrar
+  var pendingPlan = null;
+  try { pendingPlan = localStorage.getItem('veluPendingPlan'); } catch (e) {}
+  if (pendingPlan === 'pro' || pendingPlan === 'terminal') {
+    try { localStorage.removeItem('veluPendingPlan'); } catch (e) {}
+    startCheckoutFromParent(state.pendingUserEmail, pendingPlan);
+    return;
+  }
+
   goToTerminal(true);
 }
 
@@ -2328,17 +2338,46 @@ async function startCheckoutFromParent(email, plan) {
 }
 
 /* Detectar retorno de Stripe Checkout */
-function handleCheckoutReturn() {
+async function handleCheckoutReturn() {
   const params = new URLSearchParams(window.location.search);
-  if (params.get('checkout') === 'success') {
-    setTimeout(() => {
-      alert("Payment successful! Welcome to Velu Pro. Your access is now active.");
-      window.history.replaceState({}, '', window.location.pathname);
-      goToTerminal(true);
-    }, 300);
-  } else if (params.get('checkout') === 'cancelled') {
+
+  if (params.get('checkout') === 'cancelled') {
     window.history.replaceState({}, '', window.location.pathname);
+    return;
   }
+  if (params.get('checkout') !== 'success') return;
+
+  const paidPlan = params.get('plan') || 'pro';
+  const label = paidPlan === 'terminal' ? 'Terminal' : 'Pro';
+  window.history.replaceState({}, '', window.location.pathname);
+
+  const session = (window.__veluApp && window.__veluApp.getSession) ? window.__veluApp.getSession() : null;
+  const email = (session && session.user && session.user.email) ? session.user.email : null;
+
+  if (!email) {
+    alert('Payment successful! Welcome to Velu ' + label + '.');
+    goToTerminal(true);
+    return;
+  }
+
+  // El webhook de Stripe puede tardar unos segundos. Esperamos a que el plan
+  // se refleje antes de entrar, para no mandar al usuario a la vista Free.
+  let confirmed = false;
+  for (let i = 0; i < 6; i++) {
+    try {
+      const r = await fetch('/api/billing?email=' + encodeURIComponent(email));
+      const d = await r.json();
+      if (d.plan === paidPlan) { confirmed = true; break; }
+    } catch (e) {}
+    await new Promise(s => setTimeout(s, 1500));
+  }
+
+  if (confirmed) {
+    alert('Payment successful — you are on Velu ' + label + '. Everything is unlocked.');
+  } else {
+    alert('Payment received. Your ' + label + ' access is being activated — it may take a moment to appear.');
+  }
+  goToTerminal(true);
 }
 
 async function savePlanInterest(email, plan) {
@@ -2417,16 +2456,12 @@ async function submitSignup() {
     createdAt: new Date().toISOString()
   });
 
-  // If they wanted Pro/Terminal, capture that interest
+  // Recordar que plan eligio: al terminar el onboarding lo mandamos a pagar
   const desiredPlan = window.__veluDesiredPlan || 'free';
-  if (desiredPlan === 'pro' || desiredPlan === 'terminal') {
-    savePlanInterest(email, desiredPlan);
-  }
-
-  // Store the plan on the user (free by default; pro/terminal are "waitlisted" but still use free tier)
   createdUser.plan = 'free';
   createdUser.planInterest = desiredPlan;
   upsertUser(createdUser);
+  try { localStorage.setItem('veluPendingPlan', desiredPlan); } catch (e) {}
 
   closeSignup();
   openOnboarding(createdUser);
@@ -3080,7 +3115,7 @@ document.addEventListener('DOMContentLoaded', () => {
   @media (max-width: 768px) { .share-hint { display: none; } }
 
 
-  .plan-badge { font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 6px; letter-spacing: .08em; background: var(--panel2); color: var(--mu); border: 1px solid var(--b2); }
+  .plan-badge { cursor: pointer; font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 6px; letter-spacing: .08em; background: var(--panel2); color: var(--mu); border: 1px solid var(--b2); }
   .plan-badge.is-pro { background: rgba(0,229,160,.12); color: var(--g); border-color: rgba(0,229,160,.35); }
 
 
@@ -3416,7 +3451,7 @@ document.addEventListener('DOMContentLoaded', () => {
   </div>
   <div class=&quot;topbar-right&quot;>
     <div class=&quot;status-live&quot;><span class=&quot;status-dot&quot;></span> Live</div>
-    <span class=&quot;plan-badge&quot; id=&quot;planBadge&quot;>FREE</span>
+    <span class=&quot;plan-badge&quot; id=&quot;planBadge&quot; title=&quot;Click to refresh your plan&quot; onclick=&quot;refreshPlan()&quot;>FREE</span>
     <button class=&quot;plan-switch&quot; id=&quot;planSwitch&quot; style=&quot;display:none&quot; onclick=&quot;openPlanSwitch()&quot;></button>
     <div class=&quot;clock&quot; id=&quot;clock&quot;>--:--:--</div>
     <button onclick=&quot;window.parent.postMessage('velu-exit','*')&quot; style=&quot;font-family:var(--mono);font-size:11px;padding:7px 14px;border-radius:8px;background:var(--panel2);border:1px solid var(--b2);color:var(--mu);cursor:pointer;&quot;>← Home</button>
@@ -3560,6 +3595,22 @@ async function verifyPlanWithServer() {
   updatePlanBadge();
   updatePlanSwitchLink();
   return __verifiedPlan;
+}
+
+
+async function refreshPlan() {
+  var b = document.getElementById('planBadge');
+  if (b) b.textContent = '···';
+  var before = __verifiedPlan;
+  await verifyPlanWithServer();
+  updatePlanBadge();
+  updatePlanSwitchLink();
+  showTerminalTabIfEligible();
+  if (__verifiedPlan !== before) {
+    loadScreener();
+    if (__radarLoaded) loadRadar(true);
+    loadTrackRecord();
+  }
 }
 
 function updatePlanBadge() {
@@ -4643,7 +4694,10 @@ async function analyzeTicker(symbol, fromScreener) {
 
     if (!res.ok) {
       const err = await res.json();
-      throw new Error(err.error || 'Analysis failed');
+      const e = new Error(err.error || 'Analysis failed');
+      e.rateLimited = !!err.rateLimited;
+      e.status = res.status;
+      throw e;
     }
 
     const { stockData, analysis, news, history, fundamentals, sectorContext } = await res.json();
@@ -4655,19 +4709,19 @@ async function analyzeTicker(symbol, fromScreener) {
 
   } catch (err) {
     console.error('Analysis error:', err);
-    var notFound = err && err.message && err.message.toLowerCase().indexOf('not found') !== -1;
-    var msg = notFound
-      ? 'We could not pull market data for ' + ticker + '. This can happen with smaller listings and secondary exchanges.'
-      : 'The analysis service is busy right now. Give it a moment and try again.';
+    var rateLimited = err && (err.rateLimited || err.status === 429);
+    var msg = rateLimited
+      ? 'The market data feed hit its rate limit — this usually happens right after a full screener scan. Wait about a minute and try again.'
+      : 'Market data did not come through for ' + ticker + ' on this attempt. This is usually momentary — try again.';
     panel.innerHTML = `
       <div class=&quot;ap-head&quot;>
         <button class=&quot;ap-close&quot; onclick=&quot;closeAnalysis()&quot;>×</button>
         <div class=&quot;ap-ticker-row&quot;><span class=&quot;ap-ticker&quot;>${ticker}</span></div>
       </div>
       <div class=&quot;error-box&quot;>
-        <div class=&quot;err-ico&quot;>${notFound ? '◎' : '⚠'}</div>
+        <div class=&quot;err-ico&quot;>⚠</div>
         ${msg}
-        ${notFound ? '' : '<div style=&quot;margin-top:14px&quot;><button class=&quot;scr-more-btn&quot; onclick=&quot;analyzeTicker(\'' + ticker + '\', true)&quot;>↻ Retry</button></div>'}
+        <div style=&quot;margin-top:14px&quot;><button class=&quot;scr-more-btn&quot; onclick=&quot;analyzeTicker('${ticker}', true)&quot;>↻ Retry</button></div>
       </div>
     `;
   }
