@@ -2,18 +2,57 @@
 
 // Mapa de sectores para comparar cada accion contra sus pares
 const SECTOR_PEERS = {
-  'Communication': ['META', 'NFLX', 'RBLX', 'DIS', 'CMCSA', 'T', 'VZ', 'TMUS', 'WBD', 'PARA', 'EA', 'TTWO', 'ROKU', 'SPOT', 'PINS', 'SNAP'],
-  'Consumer Discretionary': ['AMZN', 'TSLA', 'HD', 'LOW', 'NKE', 'SBUX', 'MCD', 'CMG', 'LULU', 'TGT', 'TJX', 'ROST', 'BKNG', 'MAR', 'HLT', 'RCL', 'CCL', 'F', 'GM', 'RIVN', 'ABNB', 'UBER', 'DASH'],
-  'Consumer Staples': ['PG', 'KO', 'PEP', 'COST', 'WMT', 'CL', 'KMB', 'GIS', 'HSY', 'MDLZ', 'STZ', 'KHC'],
-  'Energy': ['XOM', 'CVX', 'COP', 'EOG', 'SLB', 'PSX', 'VLO', 'MPC', 'OXY', 'DVN', 'HAL', 'KMI'],
-  'Financials': ['V', 'MA', 'PYPL', 'SQ', 'COIN', 'HOOD', 'AXP', 'SCHW', 'JPM', 'BAC', 'WFC', 'GS', 'MS', 'C', 'BLK', 'COF', 'USB', 'PNC'],
-  'Healthcare': ['JNJ', 'UNH', 'PFE', 'MRK', 'ABBV', 'LLY', 'TMO', 'ABT', 'DHR', 'BMY', 'AMGN', 'GILD', 'CVS', 'CI', 'HUM', 'MRNA', 'BNTX', 'REGN', 'VRTX', 'BIIB', 'ISRG', 'MDT', 'SYK', 'BSX'],
-  'Industrials': ['BA', 'CAT', 'DE', 'GE', 'HON', 'LMT', 'RTX', 'NOC', 'GD', 'MMM', 'UPS', 'FDX', 'UNP', 'CSX', 'EMR', 'ETN'],
-  'Materials': ['LIN', 'APD', 'SHW', 'FCX', 'NEM'],
-  'Real Estate': ['AMT', 'PLD', 'CCI', 'EQIX', 'SPG', 'O'],
-  'Semiconductors': ['NVDA', 'AMD', 'INTC', 'AVGO', 'QCOM', 'TXN', 'MU', 'ADI', 'NXPI', 'MRVL', 'ON', 'SWKS', 'MCHP', 'LRCX', 'AMAT', 'KLAC', 'TSM', 'ARM'],
-  'Technology': ['AAPL', 'MSFT', 'GOOGL', 'CRM', 'ORCL', 'ADBE', 'NOW', 'INTU', 'SNOW', 'DDOG', 'MDB', 'TEAM', 'OKTA', 'TWLO', 'NET', 'CRWD', 'PANW', 'ZS', 'PLTR', 'SHOP', 'ZM', 'DOCU', 'U'],
-  'Utilities': ['NEE', 'DUK', 'SO'],
+  'Communication': [
+    'CMCSA', 'DIS', 'EA', 'IRDM', 'META', 'NFLX', 'PARA', 'PINS', 'RBLX', 'ROKU',
+    'SNAP', 'SPOT', 'T', 'TMUS', 'TTWO', 'VZ', 'WBD'
+  ],
+  'Consumer Discretionary': [
+    'ABNB', 'AMZN', 'BKNG', 'CCL', 'CMG', 'DASH', 'F', 'GM', 'HD', 'HLT',
+    'LOW', 'LULU', 'MAR', 'MCD', 'NKE', 'RCL', 'RIVN', 'ROST', 'SBUX', 'TGT',
+    'TJX', 'TSLA', 'UBER'
+  ],
+  'Consumer Staples': [
+    'CL', 'COST', 'GIS', 'HSY', 'KHC', 'KMB', 'KO', 'MDLZ', 'PEP', 'PG',
+    'STZ', 'WMT'
+  ],
+  'Energy': [
+    'BWXT', 'CCJ', 'COP', 'CVX', 'DNN', 'DVN', 'EOG', 'HAL', 'KMI', 'LEU',
+    'MPC', 'OKLO', 'OXY', 'PSX', 'SLB', 'SMR', 'UEC', 'VLO', 'XOM'
+  ],
+  'Financials': [
+    'AXP', 'BAC', 'BLK', 'C', 'COF', 'COIN', 'GS', 'HOOD', 'JPM', 'MA',
+    'MS', 'PNC', 'PYPL', 'SCHW', 'SQ', 'USB', 'V', 'WFC'
+  ],
+  'Healthcare': [
+    'ABBV', 'ABT', 'ALNY', 'AMGN', 'BIIB', 'BMY', 'BNTX', 'BSX', 'CI', 'CVS',
+    'DHR', 'GILD', 'HUM', 'ISRG', 'JNJ', 'LLY', 'MDGL', 'MDT', 'MRK', 'MRNA',
+    'PFE', 'REGN', 'SYK', 'TMO', 'UNH', 'VKTX', 'VRTX'
+  ],
+  'Industrials': [
+    'ASTS', 'AVAV', 'BA', 'CAT', 'CSX', 'DE', 'EMR', 'ETN', 'FDX', 'GD',
+    'GE', 'GEV', 'HII', 'HON', 'KTOS', 'LDOS', 'LHX', 'LMT', 'LUNR', 'MMM',
+    'NOC', 'PL', 'PWR', 'RDW', 'RKLB', 'ROK', 'RTX', 'UNP', 'UPS', 'VRT'
+  ],
+  'Materials': [
+    'ALB', 'APD', 'FCX', 'LAC', 'LIN', 'MP', 'NEM', 'SHW', 'TROX'
+  ],
+  'Real Estate': [
+    'AMT', 'CCI', 'EQIX', 'O', 'PLD', 'SPG'
+  ],
+  'Semiconductors': [
+    'ADI', 'ALAB', 'AMAT', 'AMD', 'ARM', 'AVGO', 'CRDO', 'INTC', 'KLAC', 'LRCX',
+    'MCHP', 'MRVL', 'MU', 'NVDA', 'NXPI', 'ON', 'QCOM', 'SNDK', 'STX', 'SWKS',
+    'TER', 'TSM', 'TXN', 'WDC'
+  ],
+  'Technology': [
+    'AAPL', 'ADBE', 'ANET', 'CGNX', 'CRM', 'CRWD', 'CYBR', 'DDOG', 'DOCU', 'FTNT',
+    'GOOGL', 'INTU', 'IONQ', 'MDB', 'MSFT', 'NET', 'NOW', 'NTAP', 'OKTA', 'ORCL',
+    'PANW', 'PATH', 'PLTR', 'PSTG', 'QBTS', 'RGTI', 'S', 'SHOP', 'SMCI', 'SNOW',
+    'SYM', 'TEAM', 'TENB', 'TWLO', 'U', 'ZBRA', 'ZM', 'ZS'
+  ],
+  'Utilities': [
+    'AES', 'CEG', 'DUK', 'NEE', 'NRG', 'SO', 'TLN', 'VST'
+  ],
 };
 
 // Temas estructurales (espejo de api/radar.js) para dar contexto a los agentes
@@ -45,10 +84,25 @@ function findSector(ticker) {
 }
 
 async function fetchSectorContext(ticker, FMP, ownFrom52High) {
+  // Si la accion pertenece a un tema estructural, comparar contra ese grupo
+  // es mas informativo que contra el sector generico.
+  const theme = findTheme(ticker);
   const sector = findSector(ticker);
-  if (!sector) return null;
 
-  const peers = SECTOR_PEERS[sector].filter(t => t !== ticker).slice(0, 12);
+  let groupName, groupList, groupKind;
+  if (theme && THEMES[theme] && THEMES[theme].length >= 5) {
+    groupName = theme;
+    groupList = THEMES[theme];
+    groupKind = 'theme';
+  } else if (sector && SECTOR_PEERS[sector]) {
+    groupName = sector;
+    groupList = SECTOR_PEERS[sector];
+    groupKind = 'sector';
+  } else {
+    return null;
+  }
+
+  const peers = groupList.filter(t => t !== ticker).slice(0, 12);
   if (peers.length < 3) return null;
 
   try {
@@ -83,7 +137,8 @@ async function fetchSectorContext(ticker, FMP, ownFrom52High) {
     else verdict = 'worse-than-sector';
 
     return {
-      sector,
+      sector: groupName,
+      groupKind,
       peerCount: valid.length,
       peerAvgFrom52High: Math.round(avg * 10) / 10,
       peersDownHard: downHard,
