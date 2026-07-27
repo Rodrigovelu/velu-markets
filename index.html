@@ -1504,8 +1504,8 @@ body{
       </div>
       <div class="step">
         <div class="step-n">04</div>
-        <h3 class="step-h">Velu keeps score</h3>
-        <p class="step-p">Every call is tracked against real prices. You see the honest hit rate, so you know exactly how much weight to give the next verdict.</p>
+        <h3 class="step-h">Keep score, your way</h3>
+        <p class="step-p">Velu tracks every call it makes against real prices. You keep a separate list of just the ones you care about — add or drop them whenever you want.</p>
       </div>
     </div>
   </div>
@@ -1520,9 +1520,9 @@ body{
         <h2 class="sec-h">Most analysts never<br>keep score. Velu does.</h2>
         <p class="sec-p" style="margin-top:16px;max-width:480px">Every Buy and Sell call Velu makes is logged with its entry price and target, then tracked over time. No cherry-picking winners. No quietly forgetting losers. You see the real hit rate — and decide for yourself how much to trust the next verdict.</p>
         <div class="tb-points">
-          <div class="tb-point"><span class="tb-check">✓</span> Every call logged automatically</div>
+          <div class="tb-point"><span class="tb-check">✓</span> Every Velu call logged automatically</div>
           <div class="tb-point"><span class="tb-check">✓</span> Scored against real market prices</div>
-          <div class="tb-point"><span class="tb-check">✓</span> Full history unlocked with Pro</div>
+          <div class="tb-point"><span class="tb-check">✓</span> Plus your own list — you pick what to track</div>
         </div>
       </div>
       <div class="tb-right">
@@ -1579,12 +1579,12 @@ body{
       <div class="feat-card">
         <div class="feat-ico">◎</div>
         <h3 class="feat-h">Velu vs Wall Street</h3>
-        <p class="feat-p">See exactly where Velu's price target diverges from the analyst consensus, and by how much. The interesting calls are the ones where Velu disagrees.</p>
+        <p class="feat-p">See exactly where Velu's price target diverges from the analyst consensus, and by how much. Then send the call to anyone on WhatsApp or X in one tap.</p>
       </div>
       <div class="feat-card">
         <div class="feat-ico">◉</div>
-        <h3 class="feat-h">Every call on the record</h3>
-        <p class="feat-p">Each Buy and Sell is logged with its entry price and target, then scored against real market prices over time. No cherry-picking, no quietly forgetting the misses.</p>
+        <h3 class="feat-h">Two records, both honest</h3>
+        <p class="feat-p">Velu scores every call it makes against real prices — no cherry-picking. And you keep your own list: track only the calls you actually care about, add or remove them any time.</p>
       </div>
     </div>
   </div>
@@ -1712,6 +1712,7 @@ body{
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Unlimited AI analyses</span></div>
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Unlimited ticker search</span></div>
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Bull / base / bear scenarios</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Unlimited tracked calls &amp; watchlist</span></div>
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">New-opportunity alerts</span></div>
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Real-time market data</span></div>
         </div>
@@ -2970,6 +2971,90 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   .loading-sub { font-size: 12px; color: var(--dim); margin-top: 6px; text-align: center; max-width: 320px; }
+
+  /* ── DASHBOARD LAYOUT ─────────────────────── */
+  .main { max-width: 1180px; margin: 0 auto; }
+  .dash-top { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 30px; }
+  .disc-header { margin-bottom: 16px; }
+  .disc-header .section-title { margin-bottom: 6px; }
+  .disc-header .section-desc { margin-bottom: 0; }
+
+  /* Welcome card */
+  .welcome-card { display: flex; align-items: center; gap: 20px; padding: 18px 22px; margin-bottom: 24px;
+    background: linear-gradient(120deg, rgba(0,229,160,.07), rgba(0,229,160,.02));
+    border: 1px solid rgba(0,229,160,.25); border-radius: 14px; }
+  .wc-left { flex: 1; min-width: 0; }
+  .wc-kicker { font-family: var(--mono); font-size: 9px; color: var(--g); letter-spacing: .14em; margin-bottom: 5px; }
+  .wc-title { font-size: 16px; font-weight: 650; color: var(--ink); margin-bottom: 3px; }
+  .wc-sub { font-size: 13px; color: var(--mu); line-height: 1.45; }
+  .wc-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .wc-btn { font-family: var(--sans); font-size: 13px; font-weight: 600; padding: 9px 18px; border-radius: 9px;
+    background: var(--g); color: #0A0B0D; border: none; cursor: pointer; white-space: nowrap; transition: opacity .15s; }
+  .wc-btn:hover { opacity: .88; }
+  .wc-dismiss { width: 28px; height: 28px; border-radius: 7px; background: transparent; border: 1px solid var(--b2);
+    color: var(--dim); cursor: pointer; font-size: 15px; line-height: 1; }
+  .wc-dismiss:hover { color: var(--ink); border-color: var(--red); }
+
+  /* Paneles compactos de la fila superior */
+  .watchlist-panel, .mycalls-panel { background: var(--panel); border: 1px solid var(--b1);
+    border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+  .mycalls-panel { }
+  .mc-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px;
+    border-bottom: 1px solid var(--b1); background: var(--bg2); }
+  .mc-title { font-size: 13px; font-weight: 600; color: var(--g); }
+  .mc-count { font-family: var(--mono); font-size: 11px; color: var(--mu);
+    background: var(--panel2); padding: 3px 9px; border-radius: 6px; }
+  .mc-empty { padding: 18px; font-size: 12.5px; color: var(--mu); line-height: 1.5; }
+  .mc-item { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 10px;
+    padding: 11px 18px; border-bottom: 1px solid var(--b1); cursor: pointer; transition: background .12s; }
+  .mc-item:last-child { border-bottom: none; }
+  .mc-item:hover { background: var(--panel2); }
+  .mc-tk { font-family: var(--mono); font-weight: 650; font-size: 13px; }
+  .mc-sub { font-size: 11px; color: var(--dim); }
+  .mc-verdict { font-family: var(--mono); font-size: 9px; font-weight: 700; padding: 3px 7px; border-radius: 5px; }
+  .mc-move { font-family: var(--mono); font-size: 11px; font-weight: 600; }
+  .mc-remove { width: 22px; height: 22px; border-radius: 6px; background: transparent; border: none;
+    color: var(--dim); cursor: pointer; font-size: 14px; line-height: 1; flex-shrink: 0; }
+  .mc-remove:hover { color: var(--red); }
+
+  @media (max-width: 860px) {
+    .dash-top { grid-template-columns: 1fr; }
+    .welcome-card { flex-direction: column; align-items: flex-start; gap: 14px; }
+    .wc-right { width: 100%; }
+    .wc-btn { flex: 1; }
+  }
+
+
+  .search-wrap { position: relative; }
+  .search-hint { position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    font-family: var(--mono); font-size: 11px; color: var(--dim); border: 1px solid var(--b2);
+    border-radius: 5px; padding: 1px 6px; pointer-events: none; }
+  .search-input:focus + .search-hint { color: var(--g); border-color: var(--g2); }
+
+
+  .action-row { display: flex; align-items: center; gap: 16px; margin-top: 28px; padding-top: 22px;
+    border-top: 1px solid var(--b1); flex-wrap: wrap; }
+  .track-btn { font-family: var(--sans); font-size: 13.5px; font-weight: 600; padding: 10px 18px;
+    border-radius: 10px; background: var(--panel2); border: 1px solid var(--b2); color: var(--ink);
+    cursor: pointer; transition: all .15s; }
+  .track-btn:hover { border-color: var(--g2); color: var(--g); }
+  .share-group { display: flex; align-items: center; gap: 7px; margin-left: auto; }
+  .share-lbl { font-family: var(--mono); font-size: 10px; color: var(--dim);
+    text-transform: uppercase; letter-spacing: .08em; margin-right: 2px; }
+  .share-ico-btn { font-family: var(--sans); font-size: 12px; font-weight: 600; padding: 8px 13px;
+    border-radius: 9px; border: 1px solid var(--b2); background: var(--panel2); color: var(--mu);
+    cursor: pointer; transition: all .15s; }
+  .share-ico-btn:hover { color: var(--ink); }
+  .share-ico-btn.wa:hover { border-color: #25D366; color: #25D366; }
+  .share-ico-btn.x:hover { border-color: var(--ink); color: var(--ink); background: var(--b2); }
+  .share-ico-btn.cp:hover { border-color: var(--g2); color: var(--g); }
+  @media (max-width: 640px) {
+    .action-row { flex-direction: column; align-items: stretch; }
+    .track-btn { width: 100%; }
+    .share-group { margin-left: 0; justify-content: space-between; }
+    .share-ico-btn { flex: 1; }
+  }
+
 </style>
 </head>
 <body>
@@ -2986,10 +3071,12 @@ document.addEventListener('DOMContentLoaded', () => {
       type=&quot;text&quot;
       class=&quot;search-input&quot;
       id=&quot;tickerSearch&quot;
-      placeholder=&quot;Search any ticker — AAPL, MRVL, NVDA...&quot;
+      placeholder=&quot;Analyze any ticker — try AAPL, MRVL, NVDA&quot;
       autocomplete=&quot;off&quot;
-      onkeydown=&quot;if(event.key==='Enter')analyzeTicker(this.value)&quot;
+      spellcheck=&quot;false&quot;
+      onkeydown=&quot;if(event.key==='Enter'){analyzeTicker(this.value); this.blur();}&quot;
     >
+    <span class=&quot;search-hint&quot;>↵</span>
   </div>
   <div class=&quot;topbar-right&quot;>
     <div class=&quot;status-live&quot;><span class=&quot;status-dot&quot;></span> Live</div>
@@ -3002,10 +3089,35 @@ document.addEventListener('DOMContentLoaded', () => {
 <div class=&quot;container&quot;>
   <div class=&quot;main&quot;>
 
-    <div class=&quot;watchlist-panel&quot; id=&quot;watchlistPanel&quot; style=&quot;margin-bottom:24px&quot;></div>
+    <!-- Bienvenida / sugerencia (no interrumpe) -->
+    <div class=&quot;welcome-card&quot; id=&quot;welcomeCard&quot; style=&quot;display:none&quot;>
+      <div class=&quot;wc-left&quot;>
+        <div class=&quot;wc-kicker&quot;>START HERE</div>
+        <div class=&quot;wc-title&quot; id=&quot;wcTitle&quot;>Ready when you are</div>
+        <div class=&quot;wc-sub&quot; id=&quot;wcSub&quot;>Pick a stock below, or jump straight into one Velu thinks is worth your time.</div>
+      </div>
+      <div class=&quot;wc-right&quot;>
+        <button class=&quot;wc-btn&quot; id=&quot;wcBtn&quot;>Open analysis</button>
+        <button class=&quot;wc-dismiss&quot; id=&quot;wcDismiss&quot; title=&quot;Dismiss&quot;>×</button>
+      </div>
+    </div>
 
-    <div class=&quot;track-record&quot; id=&quot;trackRecord&quot; style=&quot;margin-bottom:32px&quot;>
-      <div class=&quot;tr-loading&quot; id=&quot;trLoading&quot; style=&quot;padding:24px;text-align:center;color:var(--mu);font-family:var(--mono);font-size:12px&quot;>Loading Velu's track record...</div>
+    <!-- Fila superior: mis listas, compactas y lado a lado -->
+    <div class=&quot;dash-top&quot;>
+      <div class=&quot;watchlist-panel&quot; id=&quot;watchlistPanel&quot;></div>
+      <div class=&quot;mycalls-panel&quot; id=&quot;myCallsPanel&quot;></div>
+    </div>
+
+    <!-- El corazon del producto: los dos motores -->
+    <div class=&quot;disc-header&quot;>
+      <div>
+        <div class=&quot;section-kicker&quot;>DISCOVERY</div>
+        <h1 class=&quot;section-title&quot; id=&quot;discTitle&quot;>Stocks the market is punishing</h1>
+        <p class=&quot;section-desc&quot; id=&quot;discDesc&quot;>
+          Velu scans 176 major US stocks and ranks the ones that have sold off hardest relative to
+          their own highs and moving averages. Click any stock for a full 3-agent analysis.
+        </p>
+      </div>
     </div>
 
     <div class=&quot;disc-tabs&quot;>
@@ -3014,15 +3126,6 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
 
     <div id=&quot;tabPunished&quot;>
-      <div class=&quot;section-kicker&quot;>The Edge Screener</div>
-      <div class=&quot;section-head&quot;>
-        <h1 class=&quot;section-title&quot;>Stocks the market is punishing</h1>
-      </div>
-      <p class=&quot;section-desc&quot;>
-        Velu scans 176 major US stocks every time you refresh, ranking the ones that have sold off hardest
-        relative to their own highs and moving averages. Click any stock for a full 3-agent analysis.
-      </p>
-
       <div class=&quot;screener&quot;>
         <div class=&quot;screener-head&quot;>
           <div class=&quot;screener-title&quot;>
@@ -3041,15 +3144,6 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
 
     <div id=&quot;tabRadar&quot; style=&quot;display:none&quot;>
-      <div class=&quot;section-kicker&quot;>Early Signal Radar</div>
-      <div class=&quot;section-head&quot;>
-        <h1 class=&quot;section-title&quot;>Before the crowd notices</h1>
-      </div>
-      <p class=&quot;section-desc&quot;>
-        Companies inside structural themes whose fundamentals are inflecting but whose price has not run yet.
-        The score deliberately penalizes names that already moved — the point is to find them early, not to admire winners.
-      </p>
-
       <div class=&quot;screener&quot;>
         <div class=&quot;screener-head&quot;>
           <div class=&quot;screener-title&quot;>
@@ -3065,6 +3159,11 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Track record de Velu: credibilidad, al final -->
+    <div class=&quot;track-record&quot; id=&quot;trackRecord&quot; style=&quot;margin-top:34px&quot;>
+      <div class=&quot;tr-loading&quot; style=&quot;padding:24px;text-align:center;color:var(--mu);font-family:var(--mono);font-size:12px&quot;>Loading Velu's track record...</div>
     </div>
 
   </div>
@@ -3170,6 +3269,156 @@ function joinTerminalWaitlist() {
   startCheckout('terminal');
 }
 
+
+
+
+/* ── WELCOME CARD (sugerencia, no interrupcion) ─────── */
+var THEME_TICKER_NAME = {
+  'JPM':'JPMorgan Chase','COIN':'Coinbase','NVDA':'NVIDIA','DIS':'Disney','MRVL':'Marvell Technology'
+};
+
+function setupWelcomeCard() {
+  var card = document.getElementById('welcomeCard');
+  if (!card) return;
+
+  var ticker = null;
+  try { ticker = localStorage.getItem('veluWelcomeTicker'); } catch(e) {}
+
+  var dismissed = false;
+  try { dismissed = localStorage.getItem('veluWelcomeDismissed') === '1'; } catch(e) {}
+  if (dismissed) return;
+
+  var titleEl = document.getElementById('wcTitle');
+  var subEl = document.getElementById('wcSub');
+  var btn = document.getElementById('wcBtn');
+  var dis = document.getElementById('wcDismiss');
+
+  if (ticker) {
+    var nm = THEME_TICKER_NAME[ticker] || ticker;
+    if (titleEl) titleEl.textContent = 'Start with ' + nm;
+    if (subEl) subEl.textContent = 'Based on what you told us you follow, this is a good first read. Three agents, one verdict.';
+    if (btn) {
+      btn.textContent = 'Analyze ' + ticker;
+      btn.onclick = function() {
+        try { localStorage.removeItem('veluWelcomeTicker'); } catch(e) {}
+        analyzeTicker(ticker, true);
+        card.style.display = 'none';
+      };
+    }
+  } else {
+    if (titleEl) titleEl.textContent = 'Two ways to find an edge';
+    if (subEl) subEl.textContent = 'Punished finds quality companies that sold off too hard. Radar finds emerging names before the move. Or search any ticker up top.';
+    if (btn) {
+      btn.textContent = 'See the Radar';
+      btn.onclick = function() { switchTab('radar'); card.style.display = 'none'; };
+    }
+  }
+
+  if (dis) {
+    dis.onclick = function() {
+      card.style.display = 'none';
+      try {
+        localStorage.setItem('veluWelcomeDismissed', '1');
+        localStorage.removeItem('veluWelcomeTicker');
+      } catch(e) {}
+    };
+  }
+
+  card.style.display = 'flex';
+}
+
+/* ── MY CALLS (seleccionadas por el usuario) ────────── */
+var __myCalls = [];
+
+async function loadMyCalls() {
+  var email = getUserEmail();
+  if (!email) { __myCalls = []; return; }
+  try {
+    var res = await fetch(SB_URL + '/rest/v1/user_calls?email=eq.' + encodeURIComponent(email) +
+      '&select=*&order=created_at.desc', {
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+    });
+    var rows = await res.json();
+    __myCalls = Array.isArray(rows) ? rows : [];
+  } catch (e) { __myCalls = []; }
+}
+
+function isTracked(ticker) {
+  return __myCalls.some(function(c) { return c.ticker === ticker; });
+}
+
+async function addToMyCalls(s, a) {
+  var email = getUserEmail();
+  if (!email) return;
+  if (isTracked(s.symbol)) return;
+  try {
+    await fetch(SB_URL + '/rest/v1/user_calls?on_conflict=email,ticker', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY,
+                 'Authorization': 'Bearer ' + SB_KEY,
+                 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify({
+        email: email, ticker: s.symbol, company: s.name || '',
+        verdict: a.verdict, entry_price: s.price,
+        target_price: a.targetPrice, upside: a.upside, status: 'open'
+      })
+    });
+    __myCalls.unshift({
+      ticker: s.symbol, company: s.name || '', verdict: a.verdict,
+      entry_price: s.price, target_price: a.targetPrice, upside: a.upside, status: 'open'
+    });
+    renderMyCalls();
+  } catch (e) { console.warn('add call failed', e); }
+}
+
+async function removeFromMyCalls(ticker, ev) {
+  if (ev) ev.stopPropagation();
+  var email = getUserEmail();
+  if (!email) return;
+  try {
+    await fetch(SB_URL + '/rest/v1/user_calls?email=eq.' + encodeURIComponent(email) +
+      '&ticker=eq.' + ticker, {
+      method: 'DELETE',
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+    });
+    __myCalls = __myCalls.filter(function(c) { return c.ticker !== ticker; });
+    renderMyCalls();
+  } catch (e) { console.warn('remove call failed', e); }
+}
+
+function renderMyCalls() {
+  var panel = document.getElementById('myCallsPanel');
+  if (!panel) return;
+
+  var head = '<div class=&quot;mc-head&quot;><span class=&quot;mc-title&quot;>◎ My Calls</span>' +
+             '<span class=&quot;mc-count&quot;>' + __myCalls.length + '</span></div>';
+
+  if (__myCalls.length === 0) {
+    panel.innerHTML = head +
+      '<div class=&quot;mc-empty&quot;>Run an analysis and tap <strong>Track this call</strong> to follow it here. ' +
+      'Only the ones you pick — you stay in control.</div>';
+    return;
+  }
+
+  var rows = __myCalls.map(function(c) {
+    var vCls = c.verdict === 'BUY' ? 'tv-buy' : c.verdict === 'SELL' ? 'tv-sell' : '';
+    var upTxt = (c.upside != null)
+      ? (c.upside > 0 ? '+' : '') + Number(c.upside).toFixed(0) + '%' : '';
+    var upCls = (c.upside != null && c.upside >= 0) ? 'up' : 'down';
+    return '<div class=&quot;mc-item&quot; onclick=&quot;analyzeTicker(\'' + c.ticker + '\', true)&quot;>' +
+      '<div><div class=&quot;mc-tk&quot;>' + c.ticker + '</div>' +
+      '<div class=&quot;mc-sub&quot;>$' + (c.entry_price != null ? Number(c.entry_price).toFixed(2) : '—') +
+      (c.target_price != null ? ' → $' + Number(c.target_price).toFixed(2) : '') + '</div></div>' +
+      '<div style=&quot;text-align:right&quot;>' +
+        (c.verdict ? '<span class=&quot;mc-verdict ' + vCls + '&quot;>' + c.verdict + '</span>' : '') +
+        (upTxt ? '<div class=&quot;mc-move ' + upCls + '&quot;>' + upTxt + '</div>' : '') +
+      '</div>' +
+      '<button class=&quot;mc-remove&quot; title=&quot;Remove&quot; onclick=&quot;removeFromMyCalls(\'' + c.ticker + '\', event)&quot;>×</button>' +
+      '</div>';
+  }).join('');
+
+  panel.innerHTML = head + rows;
+}
 
 /* ── WATCHLIST ─────────────────────────────────────── */
 var FREE_WATCHLIST_LIMIT = 3;
@@ -3608,15 +3857,21 @@ function switchTab(tab) {
   var rB = document.getElementById('tabBtnRadar');
   var pP = document.getElementById('tabPunished');
   var rP = document.getElementById('tabRadar');
+  var tt = document.getElementById('discTitle');
+  var td = document.getElementById('discDesc');
   if (!pB || !rB || !pP || !rP) return;
 
   if (tab === 'radar') {
     rB.classList.add('active'); pB.classList.remove('active');
     rP.style.display = ''; pP.style.display = 'none';
+    if (tt) tt.textContent = 'Before the crowd notices';
+    if (td) td.textContent = 'Companies inside structural themes whose fundamentals are inflecting but whose price has not run yet. The score deliberately penalizes names that already moved.';
     if (!__radarLoaded) loadRadar();
   } else {
     pB.classList.add('active'); rB.classList.remove('active');
     pP.style.display = ''; rP.style.display = 'none';
+    if (tt) tt.textContent = 'Stocks the market is punishing';
+    if (td) td.textContent = 'Velu scans 176 major US stocks and ranks the ones that have sold off hardest relative to their own highs and moving averages. Click any stock for a full 3-agent analysis.';
   }
 }
 
@@ -4282,21 +4537,97 @@ function renderAnalysis(s, a, news, history, fundamentals, sectorContext) {
         ${a.watchItems.map(w => `<div class=&quot;watch-item&quot;><span class=&quot;watch-bullet&quot;>▸</span><span>${w}</span></div>`).join('')}
       </div>
 
-      <div class=&quot;share-row&quot;>
-        <button class=&quot;share-btn&quot; onclick=&quot;shareAnalysis('${s.symbol}', '${a.verdict}', ${a.targetPrice}, ${a.upside})&quot;>
-          <span>𝕏</span> Share this call
+      <div class=&quot;action-row&quot;>
+        <button class=&quot;track-btn&quot; id=&quot;trackBtn-${s.symbol}&quot;
+          onclick='trackThisCall(${JSON.stringify({symbol:s.symbol,name:s.name,price:s.price})}, ${JSON.stringify({verdict:a.verdict,targetPrice:a.targetPrice,upside:a.upside})})'>
+          ${isTracked(s.symbol) ? '✓ Tracking' : '◎ Track this call'}
         </button>
-        <span class=&quot;share-hint&quot;>Show your network what Velu sees</span>
+        <div class=&quot;share-group&quot;>
+          <span class=&quot;share-lbl&quot;>Share</span>
+          <button class=&quot;share-ico-btn wa&quot; title=&quot;WhatsApp&quot;
+            onclick=&quot;shareWhatsApp(${JSON.stringify(s.symbol)}, ${JSON.stringify(s.name || '')}, ${JSON.stringify(a.verdict)}, ${a.targetPrice}, ${a.upside}, ${s.price})&quot;>
+            <span>WhatsApp</span>
+          </button>
+          <button class=&quot;share-ico-btn x&quot; title=&quot;X&quot;
+            onclick=&quot;shareX(${JSON.stringify(s.symbol)}, ${JSON.stringify(a.verdict)}, ${a.targetPrice}, ${a.upside}, ${s.price})&quot;>
+            <span>𝕏</span>
+          </button>
+          <button class=&quot;share-ico-btn cp&quot; title=&quot;Copy&quot;
+            onclick=&quot;copyCall(${JSON.stringify(s.symbol)}, ${JSON.stringify(s.name || '')}, ${JSON.stringify(a.verdict)}, ${a.targetPrice}, ${a.upside}, ${s.price}, this)&quot;>
+            <span>Copy</span>
+          </button>
+        </div>
       </div>
     </div>
   `;
 }
 
-function shareAnalysis(ticker, verdict, target, upside) {
-  var upsideTxt = upside >= 0 ? '+' + upside + '%' : upside + '%';
-  var text = 'Velu says ' + verdict + ' on $' + ticker + ' — 12mo target $' + target + ' (' + upsideTxt + ' upside).\n\nAI-powered equity analysis at velumarkets.com';
-  var url = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text);
-  window.open(url, '_blank', 'noopener');
+function buildCallMessage(ticker, name, verdict, target, upside, price, style) {
+  var up = (upside != null) ? (upside >= 0 ? '+' + Math.round(upside) : Math.round(upside)) + '%' : '';
+  var arrow = (upside != null && upside >= 0) ? '▲' : '▼';
+  var vEmoji = verdict === 'BUY' ? '🟢' : verdict === 'SELL' ? '🔴' : '🟡';
+
+  if (style === 'whatsapp') {
+    return vEmoji + ' *' + verdict + ' · $' + ticker + '*' + (name ? '\n' + name : '') +
+      '\n\n*Now:* $' + (price != null ? Number(price).toFixed(2) : '—') +
+      '\n*Velu 12-mo target:* $' + target + '  ' + arrow + ' ' + up +
+      '\n\nThree AI agents analyzed the fundamentals, the news behind the move, and how it compares to Wall Street.' +
+      '\n\nSee the full breakdown 👉 velumarkets.com';
+  }
+
+  if (style === 'x') {
+    return vEmoji + ' Velu says ' + verdict + ' on $' + ticker +
+      '\n\nNow $' + (price != null ? Number(price).toFixed(2) : '—') +
+      ' → 12-mo target $' + target + ' (' + arrow + ' ' + up + ')' +
+      '\n\nThree AI agents. One verdict. Every call tracked.' +
+      '\n\nvelumarkets.com';
+  }
+
+  // plain
+  return verdict + ' · $' + ticker + (name ? ' (' + name + ')' : '') +
+    '\nNow $' + (price != null ? Number(price).toFixed(2) : '—') +
+    ' → Velu 12-mo target $' + target + ' (' + arrow + ' ' + up + ')' +
+    '\n\nFull analysis at velumarkets.com';
+}
+
+function shareWhatsApp(ticker, name, verdict, target, upside, price) {
+  var msg = buildCallMessage(ticker, name, verdict, target, upside, price, 'whatsapp');
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+}
+
+function shareX(ticker, verdict, target, upside, price) {
+  var msg = buildCallMessage(ticker, '', verdict, target, upside, price, 'x');
+  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+}
+
+function copyCall(ticker, name, verdict, target, upside, price, btn) {
+  var msg = buildCallMessage(ticker, name, verdict, target, upside, price, 'plain');
+  var done = function() {
+    if (btn) {
+      var orig = btn.innerHTML;
+      btn.innerHTML = '<span>Copied</span>';
+      setTimeout(function(){ btn.innerHTML = orig; }, 1600);
+    }
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(msg).then(done).catch(function(){});
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = msg; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch(e) {}
+    document.body.removeChild(ta);
+  }
+}
+
+function trackThisCall(s, a) {
+  var btn = document.getElementById('trackBtn-' + s.symbol);
+  if (isTracked(s.symbol)) {
+    removeFromMyCalls(s.symbol);
+    if (btn) btn.innerHTML = '◎ Track this call';
+  } else {
+    addToMyCalls(s, a);
+    if (btn) btn.innerHTML = '✓ Tracking';
+  }
 }
 
 
@@ -4343,9 +4674,11 @@ window.addEventListener('message', function(ev) {
     (async function() {
       await verifyPlanWithServer();
       await loadWatchlist();
+      await loadMyCalls();
       loadScreener();
       loadTrackRecord();
       renderWatchlistPanel();
+      renderMyCalls();
     })();
   }
 });
@@ -4360,20 +4693,13 @@ window.addEventListener('message', function(ev) {
   await requestSessionFromParent();
   await verifyPlanWithServer();
   await loadWatchlist();
+  await loadMyCalls();
   loadScreener();
   loadTrackRecord();
   renderWatchlistPanel();
+  renderMyCalls();
 
-  // Value-first onboarding: auto-open analysis of a relevant stock (one time)
-  try {
-    var welcomeTicker = localStorage.getItem('veluWelcomeTicker');
-    if (welcomeTicker) {
-      localStorage.removeItem('veluWelcomeTicker');  // solo una vez
-      setTimeout(function() {
-        analyzeTicker(welcomeTicker, true);  // fromScreener=true para no gastar búsqueda
-      }, 800);
-    }
-  } catch(e) {}
+  setupWelcomeCard();
 })();
 </script>
 </body>
