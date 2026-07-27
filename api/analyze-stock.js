@@ -16,57 +16,124 @@ const SECTOR_PEERS = {
     'STZ', 'WMT'
   ],
   'Energy': [
-    'BWXT', 'CCJ', 'COP', 'CVX', 'DNN', 'DVN', 'EOG', 'HAL', 'KMI', 'LEU',
-    'MPC', 'OKLO', 'OXY', 'PSX', 'SLB', 'SMR', 'UEC', 'VLO', 'XOM'
+    'ASPI', 'BWXT', 'CCJ', 'COP', 'CVX', 'DNN', 'DVN', 'EOG', 'HAL', 'KMI',
+    'LEU', 'LTBR', 'MPC', 'NXE', 'OKLO', 'OXY', 'PSX', 'SLB', 'SMR', 'UEC',
+    'URG', 'UUUU', 'VLO', 'XOM'
   ],
   'Financials': [
-    'AXP', 'BAC', 'BLK', 'C', 'COF', 'COIN', 'GS', 'HOOD', 'JPM', 'MA',
-    'MS', 'PNC', 'PYPL', 'SCHW', 'SQ', 'USB', 'V', 'WFC'
+    'AFRM', 'AXP', 'BAC', 'BITF', 'BLK', 'C', 'CIFR', 'CLSK', 'COF', 'COIN',
+    'GLXY', 'GS', 'HOOD', 'HUT', 'JPM', 'MA', 'MARA', 'MS', 'PNC', 'PYPL',
+    'RIOT', 'SCHW', 'SOFI', 'SQ', 'UPST', 'USB', 'V', 'WFC'
   ],
   'Healthcare': [
-    'ABBV', 'ABT', 'ALNY', 'AMGN', 'BIIB', 'BMY', 'BNTX', 'BSX', 'CI', 'CVS',
-    'DHR', 'GILD', 'HUM', 'ISRG', 'JNJ', 'LLY', 'MDGL', 'MDT', 'MRK', 'MRNA',
-    'PFE', 'REGN', 'SYK', 'TMO', 'UNH', 'VKTX', 'VRTX'
+    'A', 'ABBV', 'ABT', 'ALHC', 'ALNY', 'AMGN', 'AXSM', 'BEAM', 'BIIB', 'BMY',
+    'BNTX', 'BSX', 'CI', 'CRSP', 'CVS', 'DHR', 'DOCS', 'EXAS', 'FOLD', 'GILD',
+    'HIMS', 'HUM', 'ILMN', 'INSM', 'IONS', 'ISRG', 'JNJ', 'LLY', 'MDGL', 'MDT',
+    'MRK', 'MRNA', 'NBIX', 'NTLA', 'NTRA', 'NVO', 'NVTA', 'OSCR', 'PACB', 'PFE',
+    'RARE', 'REGN', 'SRPT', 'SYK', 'TEM', 'TMO', 'TXG', 'UNH', 'VKTX', 'VRTX',
+    'ZLDPF'
   ],
   'Industrials': [
-    'ASTS', 'AVAV', 'BA', 'CAT', 'CSX', 'DE', 'EMR', 'ETN', 'FDX', 'GD',
-    'GE', 'GEV', 'HII', 'HON', 'KTOS', 'LDOS', 'LHX', 'LMT', 'LUNR', 'MMM',
-    'NOC', 'PL', 'PWR', 'RDW', 'RKLB', 'ROK', 'RTX', 'UNP', 'UPS', 'VRT'
+    'AAON', 'ACM', 'AME', 'APG', 'ASTS', 'AVAV', 'AXON', 'AZZ', 'BA', 'BAH',
+    'BE', 'BLDR', 'CACI', 'CARR', 'CAT', 'CSX', 'CW', 'DE', 'EMR', 'ETN',
+    'FAST', 'FDX', 'FIX', 'GD', 'GE', 'GEV', 'GGG', 'GSAT', 'GWW', 'HEI',
+    'HII', 'HON', 'HUBB', 'HWM', 'IEX', 'J', 'JBT', 'JCI', 'KNSL', 'KTOS',
+    'LDOS', 'LHX', 'LII', 'LMT', 'LUNR', 'MIDD', 'MMM', 'MNTS', 'MOD', 'MOG-A',
+    'MSM', 'NDSN', 'NOC', 'PH', 'PL', 'PLUG', 'PWR', 'RDW', 'RKLB', 'ROK',
+    'ROP', 'RTX', 'SAIC', 'SPCE', 'TDG', 'THRM', 'TT', 'UNP', 'UPS', 'URI',
+    'VRT', 'VSAT', 'WCC'
   ],
   'Materials': [
-    'ALB', 'APD', 'FCX', 'LAC', 'LIN', 'MP', 'NEM', 'SHW', 'TROX'
+    'AA', 'ALB', 'APD', 'CDE', 'CLF', 'EXP', 'FCX', 'HL', 'LAC', 'LIN',
+    'MLM', 'MP', 'NEM', 'NUE', 'PLL', 'SGML', 'SHW', 'SQM', 'STLD', 'SUM',
+    'TMC', 'TROX', 'UAMY', 'USAR', 'VMC', 'X'
   ],
   'Real Estate': [
-    'AMT', 'CCI', 'EQIX', 'O', 'PLD', 'SPG'
+    'AMT', 'CCI', 'DLR', 'EQIX', 'IRM', 'O', 'PLD', 'SPG', 'SWCH'
   ],
   'Semiconductors': [
-    'ADI', 'ALAB', 'AMAT', 'AMD', 'ARM', 'AVGO', 'CRDO', 'INTC', 'KLAC', 'LRCX',
-    'MCHP', 'MRVL', 'MU', 'NVDA', 'NXPI', 'ON', 'QCOM', 'SNDK', 'STX', 'SWKS',
-    'TER', 'TSM', 'TXN', 'WDC'
+    'ACLS', 'ADI', 'AEIS', 'ALAB', 'ALGM', 'AMAT', 'AMD', 'AMKR', 'APH', 'ARM',
+    'ASML', 'AVGO', 'CIEN', 'COHR', 'CRDO', 'ENTG', 'FN', 'FORM', 'ICHR', 'INTC',
+    'KLAC', 'LITE', 'LRCX', 'LSCC', 'MCHP', 'MKSI', 'MPWR', 'MRVL', 'MU', 'NVDA',
+    'NVMI', 'NXPI', 'ON', 'ONTO', 'POWI', 'QCOM', 'QRVO', 'RMBS', 'SITM', 'SLAB',
+    'SNDK', 'STX', 'SWKS', 'SYNA', 'TER', 'TSM', 'TXN', 'UCTT', 'WDC', 'WOLF'
   ],
   'Technology': [
-    'AAPL', 'ADBE', 'ANET', 'CGNX', 'CRM', 'CRWD', 'CYBR', 'DDOG', 'DOCU', 'FTNT',
-    'GOOGL', 'INTU', 'IONQ', 'MDB', 'MSFT', 'NET', 'NOW', 'NTAP', 'OKTA', 'ORCL',
-    'PANW', 'PATH', 'PLTR', 'PSTG', 'QBTS', 'RGTI', 'S', 'SHOP', 'SMCI', 'SNOW',
-    'SYM', 'TEAM', 'TENB', 'TWLO', 'U', 'ZBRA', 'ZM', 'ZS'
+    'AAPL', 'ADBE', 'ANET', 'ARQQ', 'CGNX', 'CRM', 'CRWD', 'CYBR', 'DDOG', 'DOCU',
+    'FTNT', 'GOOGL', 'INTU', 'IONQ', 'MDB', 'MSFT', 'NET', 'NOW', 'NTAP', 'OKTA',
+    'ORCL', 'PANW', 'PATH', 'PLTR', 'PSTG', 'QBTS', 'QLYS', 'QUBT', 'RGTI', 'RPD',
+    'S', 'SHOP', 'SMCI', 'SNOW', 'SYM', 'TEAM', 'TENB', 'TWLO', 'U', 'VRNS',
+    'ZBRA', 'ZM', 'ZS'
   ],
   'Utilities': [
-    'AES', 'CEG', 'DUK', 'NEE', 'NRG', 'SO', 'TLN', 'VST'
+    'AEP', 'AES', 'ATO', 'CEG', 'D', 'DUK', 'ED', 'EXC', 'FE', 'NEE',
+    'NI', 'NRG', 'PEG', 'PNW', 'SO', 'SRE', 'TLN', 'VST', 'WEC', 'XEL'
   ],
 };
 
 // Temas estructurales (espejo de api/radar.js) para dar contexto a los agentes
 const THEMES = {
-  'AI Infrastructure & Memory': ['MU','SNDK','WDC','STX','MRVL','AVGO','VRT','SMCI','ANET','CRDO','ALAB','PSTG','NTAP'],
-  'Power & Grid for AI':        ['VST','CEG','NRG','TLN','GEV','PWR','ETN','EMR','AES','NEE'],
-  'Nuclear & Uranium':          ['CCJ','LEU','SMR','OKLO','BWXT','UEC','DNN'],
-  'Defense & Aerospace':        ['LMT','RTX','NOC','GD','LHX','HII','AVAV','KTOS','LDOS'],
-  'Cybersecurity':              ['PANW','CRWD','ZS','FTNT','S','CYBR','TENB','OKTA'],
-  'Robotics & Automation':      ['ISRG','ROK','TER','SYM','PATH','CGNX','ZBRA'],
-  'Space & Satellites':         ['RKLB','ASTS','PL','LUNR','RDW','IRDM'],
-  'Metabolic & Biotech':        ['LLY','VKTX','AMGN','REGN','VRTX','MDGL','ALNY'],
-  'Quantum Computing':          ['IONQ','RGTI','QBTS'],
-  'Critical Materials':         ['MP','ALB','LAC','FCX','TROX','NEM'],
+  'AI Infrastructure & Memory': [
+    'MU', 'SNDK', 'WDC', 'STX', 'MRVL', 'AVGO', 'VRT', 'SMCI', 'ANET', 'CRDO',
+    'ALAB', 'PSTG', 'NTAP', 'LITE', 'COHR', 'FN', 'CIEN', 'APH', 'MPWR', 'NVMI',
+    'ONTO', 'AEIS', 'POWI', 'SITM', 'SLAB', 'AMKR', 'UCTT', 'ICHR', 'FORM', 'ACLS'
+  ],
+  'Semis & Equipment': [
+    'NVDA', 'AMD', 'INTC', 'QCOM', 'TXN', 'ADI', 'NXPI', 'ON', 'SWKS', 'MCHP',
+    'LRCX', 'AMAT', 'KLAC', 'TSM', 'ARM', 'ASML', 'TER', 'ENTG', 'MKSI', 'QRVO',
+    'LSCC', 'RMBS', 'SYNA', 'ALGM', 'WOLF'
+  ],
+  'Power & Grid for AI': [
+    'VST', 'CEG', 'NRG', 'TLN', 'GEV', 'PWR', 'ETN', 'EMR', 'AES', 'NEE',
+    'PEG', 'EXC', 'D', 'SO', 'DUK', 'XEL', 'ED', 'WEC', 'AEP', 'FE',
+    'NI', 'ATO', 'SRE', 'PNW', 'HUBB', 'AZZ', 'BE', 'PLUG'
+  ],
+  'Nuclear & Uranium': [
+    'CCJ', 'LEU', 'SMR', 'OKLO', 'BWXT', 'UEC', 'DNN', 'NXE', 'UUUU', 'URG',
+    'ASPI', 'LTBR'
+  ],
+  'Defense & Aerospace': [
+    'LMT', 'RTX', 'NOC', 'GD', 'LHX', 'HII', 'AVAV', 'KTOS', 'LDOS', 'BAH',
+    'CACI', 'SAIC', 'TDG', 'HWM', 'HEI', 'CW', 'MOG-A', 'AXON', 'PLTR', 'RKLB'
+  ],
+  'Cybersecurity': [
+    'PANW', 'CRWD', 'ZS', 'FTNT', 'S', 'CYBR', 'TENB', 'OKTA', 'QLYS', 'RPD',
+    'VRNS', 'NET', 'DDOG'
+  ],
+  'Robotics & Automation': [
+    'ISRG', 'ROK', 'SYM', 'PATH', 'CGNX', 'ZBRA', 'NDSN', 'IEX', 'GGG', 'THRM',
+    'KNSL', 'JBT', 'MIDD'
+  ],
+  'Space & Satellites': [
+    'ASTS', 'PL', 'LUNR', 'RDW', 'IRDM', 'VSAT', 'GSAT', 'SPCE', 'MNTS'
+  ],
+  'Metabolic & Biotech': [
+    'LLY', 'VKTX', 'AMGN', 'REGN', 'VRTX', 'MDGL', 'ALNY', 'NVO', 'ZLDPF', 'CRSP',
+    'NTLA', 'BEAM', 'SRPT', 'IONS', 'RARE', 'FOLD', 'INSM', 'AXSM', 'NBIX'
+  ],
+  'Quantum Computing': [
+    'IONQ', 'RGTI', 'QBTS', 'QUBT', 'ARQQ'
+  ],
+  'Critical Materials': [
+    'MP', 'ALB', 'LAC', 'FCX', 'TROX', 'NEM', 'SQM', 'PLL', 'SGML', 'UAMY',
+    'USAR', 'TMC', 'CDE', 'HL', 'AA', 'X', 'CLF', 'STLD', 'NUE'
+  ],
+  'Data Centers & Cooling': [
+    'DLR', 'EQIX', 'IRM', 'SWCH', 'MOD', 'LII', 'JCI', 'TT', 'CARR', 'AAON',
+    'FIX', 'APG'
+  ],
+  'Fintech & Digital Assets': [
+    'COIN', 'HOOD', 'SQ', 'PYPL', 'SOFI', 'AFRM', 'UPST', 'MARA', 'RIOT', 'CLSK',
+    'CIFR', 'HUT', 'BITF', 'GLXY'
+  ],
+  'Healthcare Innovation': [
+    'TMO', 'DHR', 'A', 'ILMN', 'TXG', 'PACB', 'NVTA', 'EXAS', 'NTRA', 'TEM',
+    'DOCS', 'HIMS', 'OSCR', 'ALHC'
+  ],
+  'Industrial Reshoring': [
+    'CAT', 'DE', 'URI', 'PH', 'ROP', 'AME', 'FAST', 'WCC', 'MSM', 'GWW',
+    'BLDR', 'MLM', 'VMC', 'SUM', 'EXP', 'ACM', 'J'
+  ],
 };
 
 function findTheme(ticker) {
