@@ -1737,10 +1737,10 @@ body{
         <p class="plan-desc">For professionals</p>
         <div class="plan-feats">
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Everything in Pro</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Historical screener data</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Export analysis to PDF</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">API access</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Dedicated support</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Export any analysis to PDF</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Screener history — see what stays cheap</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">API key reserved for launch</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Direct line to the team</span></div>
         </div>
         <button class="plan-btn pbt-s" onclick="selectPlan('terminal')">Get Terminal</button>
         <p style="text-align:center;font-size:11px;color:var(--dim);margin-top:10px">$990/year — save 2 months</p>
@@ -3306,6 +3306,56 @@ document.addEventListener('DOMContentLoaded', () => {
     .verdict-card { padding: 18px; }
   }
 
+
+  .pdf-btn { font-family: var(--sans); font-size: 13px; font-weight: 600; padding: 10px 16px;
+    border-radius: 10px; background: var(--panel2); border: 1px solid var(--b2);
+    color: var(--ink); cursor: pointer; transition: all .15s; white-space: nowrap; }
+  .pdf-btn:hover { border-color: var(--g2); color: var(--g); }
+  .pdf-btn.locked { color: var(--dim); }
+  .pdf-btn.locked:hover { border-color: var(--amber); color: var(--amber); }
+
+
+  .term-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .term-card { background: var(--panel); border: 1px solid var(--b1); border-radius: 14px; overflow: hidden; }
+  .term-head { display: flex; align-items: center; justify-content: space-between;
+    padding: 15px 20px; border-bottom: 1px solid var(--b1); background: var(--bg2); }
+  .term-title { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .term-tag { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; color: var(--g);
+    background: rgba(0,229,160,.1); padding: 3px 8px; border-radius: 5px; }
+  .term-body { padding: 18px 20px; }
+  .term-loading, .term-empty { font-size: 13px; color: var(--mu); line-height: 1.5; }
+
+  .key-label { font-family: var(--mono); font-size: 9px; color: var(--dim);
+    text-transform: uppercase; letter-spacing: .09em; margin-bottom: 7px; }
+  .key-row { display: flex; align-items: center; gap: 7px; margin-bottom: 8px; }
+  .key-val { flex: 1; font-family: var(--mono); font-size: 12px; color: var(--ink);
+    background: var(--bg2); border: 1px solid var(--b1); border-radius: 8px;
+    padding: 9px 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .key-btn { font-family: var(--mono); font-size: 11px; padding: 8px 12px; border-radius: 8px;
+    background: var(--panel2); border: 1px solid var(--b2); color: var(--mu); cursor: pointer; }
+  .key-btn:hover { color: var(--g); border-color: var(--g2); }
+  .key-meta { font-family: var(--mono); font-size: 10px; color: var(--dim); margin-bottom: 16px; }
+  .key-docs { border-top: 1px solid var(--b1); padding-top: 14px; }
+  .docs-t { font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+  .docs-code { font-family: var(--mono); font-size: 10.5px; color: var(--mu); background: var(--bg2);
+    border: 1px solid var(--b1); border-radius: 8px; padding: 11px 12px; overflow-x: auto;
+    margin: 0 0 10px; line-height: 1.6; white-space: pre; }
+  .docs-note { font-size: 12px; color: var(--mu); line-height: 1.5; }
+
+  .hist-sum { font-size: 12.5px; color: var(--mu); line-height: 1.5; margin-bottom: 14px; }
+  .hist-head { display: grid; grid-template-columns: 1fr 52px 46px 62px; gap: 8px;
+    font-family: var(--mono); font-size: 9px; color: var(--dim); text-transform: uppercase;
+    letter-spacing: .07em; padding-bottom: 7px; border-bottom: 1px solid var(--b1); margin-bottom: 4px; }
+  .hist-row { display: grid; grid-template-columns: 1fr 52px 46px 62px; gap: 8px; align-items: center;
+    padding: 9px 0; border-bottom: 1px solid var(--b1); cursor: pointer; }
+  .hist-row:last-child { border-bottom: none; }
+  .hist-row:hover .hist-tk { color: var(--g); }
+  .hist-tk { font-family: var(--mono); font-weight: 650; font-size: 13px; transition: color .12s; }
+  .hist-app, .hist-days { font-family: var(--mono); font-size: 11px; color: var(--mu); }
+  .hist-chg { font-family: var(--mono); font-size: 11px; text-align: right; color: var(--mu); }
+
+  @media (max-width: 860px) { .term-grid { grid-template-columns: 1fr; } }
+
 </style>
 </head>
 <body>
@@ -3374,6 +3424,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class=&quot;disc-tabs&quot;>
       <button class=&quot;disc-tab active&quot; id=&quot;tabBtnPunished&quot;>⚡ Punished</button>
       <button class=&quot;disc-tab&quot; id=&quot;tabBtnRadar&quot;>📡 Radar</button>
+      <button class=&quot;disc-tab&quot; id=&quot;tabBtnTerminal&quot; style=&quot;display:none&quot;>⌘ Terminal</button>
     </div>
 
     <div id=&quot;tabPunished&quot;>
@@ -3407,6 +3458,30 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class=&quot;loading&quot;>
             <div class=&quot;spinner&quot;></div>
             <div class=&quot;loading-txt&quot;>Scanning thematic universe...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id=&quot;tabTerminal&quot; style=&quot;display:none&quot;>
+      <div class=&quot;term-grid&quot;>
+        <div class=&quot;term-card&quot;>
+          <div class=&quot;term-head&quot;>
+            <span class=&quot;term-title&quot;>⎇ API Access</span>
+            <span class=&quot;term-tag&quot;>TERMINAL</span>
+          </div>
+          <div class=&quot;term-body&quot; id=&quot;apiKeyBody&quot;>
+            <div class=&quot;term-loading&quot;>Loading your key…</div>
+          </div>
+        </div>
+
+        <div class=&quot;term-card&quot;>
+          <div class=&quot;term-head&quot;>
+            <span class=&quot;term-title&quot;>⧗ Screener History</span>
+            <span class=&quot;term-tag&quot; id=&quot;histTag&quot;>30 DAYS</span>
+          </div>
+          <div class=&quot;term-body&quot; id=&quot;histBody&quot;>
+            <div class=&quot;term-loading&quot;>Loading history…</div>
           </div>
         </div>
       </div>
@@ -4096,6 +4171,126 @@ function bindScreenerControls(body) {
 
 
 
+
+/* ── TERMINAL PLAN PANEL ────────────────────────────── */
+var __termLoaded = false;
+
+function showTerminalTabIfEligible() {
+  var btn = document.getElementById('tabBtnTerminal');
+  if (btn && getUserPlan() === 'terminal') btn.style.display = '';
+}
+
+async function loadTerminalPanel() {
+  if (__termLoaded) return;
+  __termLoaded = true;
+  loadApiKey();
+  loadScreenerHistory();
+}
+
+async function loadApiKey() {
+  var box = document.getElementById('apiKeyBody');
+  if (!box) return;
+  var email = getUserEmail();
+  if (!email) { box.innerHTML = '<div class=&quot;term-empty&quot;>Sign in to view your key.</div>'; return; }
+
+  try {
+    var res = await fetch('/api/api-key?email=' + encodeURIComponent(email));
+    var data = await res.json();
+    if (!res.ok || !data.apiKey) {
+      box.innerHTML = '<div class=&quot;term-empty&quot;>' + (data.error || 'Could not load your key.') + '</div>';
+      return;
+    }
+
+    box.innerHTML =
+      '<div class=&quot;key-label&quot;>Your secret key</div>' +
+      '<div class=&quot;key-row&quot;>' +
+        '<code class=&quot;key-val&quot; id=&quot;apiKeyVal&quot; data-full=&quot;' + data.apiKey + '&quot;>' +
+          data.apiKey.slice(0, 14) + '••••••••••••••••' +
+        '</code>' +
+        '<button class=&quot;key-btn&quot; onclick=&quot;toggleKey(this)&quot;>Reveal</button>' +
+        '<button class=&quot;key-btn&quot; onclick=&quot;copyApiKey(this)&quot;>Copy</button>' +
+      '</div>' +
+      '<div class=&quot;key-meta&quot;>' + (data.requestCount || 0) + ' requests · created ' +
+        new Date(data.createdAt).toLocaleDateString() + '</div>' +
+      '<div class=&quot;key-docs&quot;>' +
+        '<div class=&quot;docs-t&quot;>Quick start</div>' +
+        '<pre class=&quot;docs-code&quot;>curl https://velumarkets.com/api/v1/analyze \\\n' +
+        '  -H &quot;Authorization: Bearer YOUR_KEY&quot; \\\n' +
+        '  -d \'{&quot;symbol&quot;:&quot;MRVL&quot;}\'</pre>' +
+        '<div class=&quot;docs-note&quot;>The public API is rolling out to Terminal users. ' +
+        'Your key is reserved and ready — we\'ll email you the moment endpoints go live.</div>' +
+      '</div>';
+  } catch (e) {
+    box.innerHTML = '<div class=&quot;term-empty&quot;>Could not load your key. Try again.</div>';
+  }
+}
+
+function toggleKey(btn) {
+  var el = document.getElementById('apiKeyVal');
+  if (!el) return;
+  var full = el.getAttribute('data-full');
+  if (btn.textContent === 'Reveal') {
+    el.textContent = full;
+    btn.textContent = 'Hide';
+  } else {
+    el.textContent = full.slice(0, 14) + '••••••••••••••••';
+    btn.textContent = 'Reveal';
+  }
+}
+
+function copyApiKey(btn) {
+  var el = document.getElementById('apiKeyVal');
+  if (!el) return;
+  var full = el.getAttribute('data-full');
+  var done = function() {
+    var o = btn.textContent; btn.textContent = 'Copied';
+    setTimeout(function(){ btn.textContent = o; }, 1500);
+  };
+  if (navigator.clipboard) navigator.clipboard.writeText(full).then(done).catch(function(){});
+  else done();
+}
+
+async function loadScreenerHistory() {
+  var box = document.getElementById('histBody');
+  if (!box) return;
+  var email = getUserEmail();
+  if (!email) return;
+
+  try {
+    var res = await fetch('/api/screener-history?email=' + encodeURIComponent(email) + '&days=30');
+    var data = await res.json();
+    if (!res.ok) {
+      box.innerHTML = '<div class=&quot;term-empty&quot;>' + (data.error || 'History unavailable.') + '</div>';
+      return;
+    }
+    if (!data.tickers || data.tickers.length === 0) {
+      box.innerHTML = '<div class=&quot;term-empty&quot;>History builds as the screener runs. ' +
+        'Check back in a few days to see which names keep showing up.</div>';
+      return;
+    }
+
+    var rows = data.tickers.slice(0, 12).map(function(t) {
+      var chg = t.priceChange;
+      var chgTxt = chg == null ? '—' : (chg > 0 ? '+' : '') + chg + '%';
+      var chgCls = chg == null ? '' : (chg >= 0 ? 'up' : 'down');
+      return '<div class=&quot;hist-row&quot; onclick=&quot;analyzeTicker(\'' + t.ticker + '\', true)&quot;>' +
+        '<span class=&quot;hist-tk&quot;>' + t.ticker + '</span>' +
+        '<span class=&quot;hist-app&quot;>' + t.appearances + '×</span>' +
+        '<span class=&quot;hist-days&quot;>' + t.daysTracked + 'd</span>' +
+        '<span class=&quot;hist-chg ' + chgCls + '&quot;>' + chgTxt + '</span>' +
+        '</div>';
+    }).join('');
+
+    box.innerHTML =
+      '<div class=&quot;hist-sum&quot;>' + data.uniqueTickers + ' names across ' + data.snapshots +
+      ' snapshots. The ones appearing most often have stayed cheap the longest.</div>' +
+      '<div class=&quot;hist-head&quot;><span>Ticker</span><span>Seen</span><span>Span</span><span>Price</span></div>' +
+      rows;
+  } catch (e) {
+    box.innerHTML = '<div class=&quot;term-empty&quot;>Could not load history.</div>';
+  }
+}
+
 /* ── DISCOVERY TABS + RADAR ────────────────────── */
 var __radarLoaded = false;
 var __radarStocks = [];
@@ -4106,11 +4301,27 @@ var __radarVisible = 15;
 function switchTab(tab) {
   var pB = document.getElementById('tabBtnPunished');
   var rB = document.getElementById('tabBtnRadar');
+  var mB = document.getElementById('tabBtnTerminal');
   var pP = document.getElementById('tabPunished');
   var rP = document.getElementById('tabRadar');
+  var mP = document.getElementById('tabTerminal');
   var tt = document.getElementById('discTitle');
   var td = document.getElementById('discDesc');
   if (!pB || !rB || !pP || !rP) return;
+
+  if (mP) mP.style.display = 'none';
+  if (mB) mB.classList.remove('active');
+
+  if (tab === 'terminal') {
+    if (mB) mB.classList.add('active');
+    pB.classList.remove('active'); rB.classList.remove('active');
+    pP.style.display = 'none'; rP.style.display = 'none';
+    if (mP) mP.style.display = '';
+    if (tt) tt.textContent = 'Terminal tools';
+    if (td) td.textContent = 'API access and screener history — the layer for people who want the data itself, not just the read.';
+    loadTerminalPanel();
+    return;
+  }
 
   if (tab === 'radar') {
     rB.classList.add('active'); pB.classList.remove('active');
@@ -4687,10 +4898,12 @@ function renderConsensusCompare(s, a) {
 }
 
 var __currentCall = null;
+var __currentExtras = null;
 
 function renderAnalysis(s, a, news, history, fundamentals, sectorContext) {
   // Guardar para que los botones de accion no dependan de atributos inline
   __currentCall = { s: s, a: a };
+  __currentExtras = { fundamentals: fundamentals, sectorContext: sectorContext, news: news };
 
   const panel = document.getElementById('analysisPanel');
   const changeClass = s.changePct >= 0 ? 'up' : 'down';
@@ -4820,6 +5033,9 @@ function renderAnalysis(s, a, news, history, fundamentals, sectorContext) {
         <button class=&quot;track-btn&quot; id=&quot;veluTrackBtn&quot; onclick=&quot;trackThisCall()&quot;>
           ${isTracked(s.symbol) ? '✓ Tracking' : '◎ Track this call'}
         </button>
+        <button class=&quot;pdf-btn ${getUserPlan() === 'terminal' ? '' : 'locked'}&quot; onclick=&quot;exportPDF()&quot;>
+          ${getUserPlan() === 'terminal' ? '⎙ Export PDF' : '🔒 Export PDF'}
+        </button>
         <div class=&quot;share-group&quot;>
           <span class=&quot;share-lbl&quot;>Share</span>
           <button class=&quot;share-ico-btn wa&quot; title=&quot;Share on WhatsApp&quot; onclick=&quot;shareWhatsApp()&quot;>WhatsApp</button>
@@ -4829,6 +5045,195 @@ function renderAnalysis(s, a, news, history, fundamentals, sectorContext) {
       </div>
     </div>
   `;
+}
+
+
+/* ── EXPORT PDF (plan Terminal) ─────────────────────── */
+function exportPDF() {
+  if (getUserPlan() !== 'terminal') {
+    showUpgradeGate('PDF export is a Terminal feature',
+      'Terminal includes PDF export, screener history, and API access.');
+    return;
+  }
+  if (!__currentCall) return;
+
+  var s = __currentCall.s, a = __currentCall.a;
+  var extra = __currentExtras || {};
+  var html = buildPDFDocument(s, a, extra);
+
+  var w = window.open('', '_blank');
+  if (!w) {
+    alert('Please allow pop-ups to export the PDF.');
+    return;
+  }
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
+  // Dar tiempo a que renderice antes de abrir el diálogo de impresión
+  setTimeout(function() { try { w.focus(); w.print(); } catch(e) {} }, 600);
+}
+
+function buildPDFDocument(s, a, extra) {
+  var esc = function(t) {
+    return String(t == null ? '' : t)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  };
+  var num = function(v, d) { return (typeof v === 'number' && isFinite(v)) ? v.toFixed(d == null ? 2 : d) : '—'; };
+  var pct = function(v) { return (typeof v === 'number' && isFinite(v)) ? (v*100).toFixed(1) + '%' : '—'; };
+  var bn  = function(v) { return (typeof v === 'number' && isFinite(v)) ? '$' + (v/1e9).toFixed(1) + 'B' : '—'; };
+  var dash = function(v, pre, suf) {
+    if (v == null || (typeof v === 'number' && !isFinite(v))) return '—';
+    return (pre || '') + v + (suf || '');
+  };
+
+  var today = new Date().toLocaleDateString('en-US',
+    { year:'numeric', month:'long', day:'numeric' });
+  var vColor = a.verdict === 'BUY' ? '#00A86B' : a.verdict === 'SELL' ? '#D93025' : '#E8890C';
+  var upSign = a.upside >= 0 ? '+' : '';
+
+  var agents = (a.agents || []).map(function(ag) {
+    return '<div class=&quot;agent&quot;>' +
+      '<div class=&quot;agent-h&quot;><strong>' + esc(ag.name) + '</strong>' +
+      '<span class=&quot;stance&quot;>' + esc(ag.stance) + '</span></div>' +
+      '<p>' + esc(ag.reasoning) + '</p></div>';
+  }).join('');
+
+  var scen = ['bull','base','bear'].map(function(k) {
+    var sc = a[k]; if (!sc) return '';
+    var lbl = k.toUpperCase();
+    return '<tr><td><strong>' + lbl + '</strong></td><td>' + sc.prob + '%</td><td>' +
+      esc(sc.scenario) + '</td></tr>';
+  }).join('');
+
+  var watch = (a.watchItems || []).map(function(w) {
+    return '<li>' + esc(w) + '</li>';
+  }).join('');
+
+  var f = extra.fundamentals;
+  var fundRows = '';
+  if (f && f.years) {
+    fundRows = f.years.map(function(y) {
+      return '<tr><td>FY' + esc(y.year) + '</td>' +
+        '<td>' + bn(y.revenue) + '</td>' +
+        '<td>' + bn(y.netIncome) + '</td>' +
+        '<td>' + pct(y.netMargin) + '</td></tr>';
+    }).join('');
+  }
+
+  var sc2 = extra.sectorContext;
+  var sectorBlock = '';
+  if (sc2) {
+    sectorBlock = '<div class=&quot;block&quot;><h2>' +
+      (sc2.groupKind === 'theme' ? 'Theme context' : 'Sector context') + ' · ' + esc(sc2.sector) + '</h2>' +
+      '<p>' + esc(s.symbol) + ' is down ' + dash(s.from52High, '', '%') + ' while its ' + sc2.peerCount +
+      ' peers are down ' + dash(sc2.peerAvgFrom52High, '', '%') + ' on average.</p></div>';
+  }
+
+  var whyBlock = a.whyPunished
+    ? '<div class=&quot;block&quot;><h2>Why it moved</h2><p>' + esc(a.whyPunished) + '</p></div>' : '';
+
+  var consBlock = s.wallStreetTarget
+    ? '<div class=&quot;block&quot;><h2>Velu vs Wall Street</h2>' +
+      '<table class=&quot;kv&quot;><tr><td>Velu 12-month target</td><td><strong>$' + dash(a.targetPrice) + '</strong></td></tr>' +
+      '<tr><td>Wall Street consensus</td><td>$' + num(s.wallStreetTarget, 0) + '</td></tr>' +
+      '<tr><td>Analyst range</td><td>$' + num(s.wallStreetLow,0) + ' – $' + num(s.wallStreetHigh,0) + '</td></tr>' +
+      '</table></div>' : '';
+
+  return '<!DOCTYPE html><html><head><meta charset=&quot;utf-8&quot;>' +
+  '<title>Velu Markets · ' + esc(s.symbol) + ' Analysis</title>' +
+  '<style>' +
+  '@page { size: letter; margin: 18mm 16mm; }' +
+  'body { font-family: -apple-system, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif;' +
+  ' color:#14171F; line-height:1.5; font-size:11pt; margin:0; }' +
+  '.hdr { display:flex; justify-content:space-between; align-items:flex-start;' +
+  ' border-bottom:2px solid #14171F; padding-bottom:10px; margin-bottom:20px; }' +
+  '.brand { font-weight:800; font-size:15pt; letter-spacing:-.02em; }' +
+  '.brand span { color:#00A86B; }' +
+  '.meta { text-align:right; font-size:9pt; color:#5E6472; }' +
+  'h1 { font-size:22pt; margin:0 0 2px; letter-spacing:-.02em; }' +
+  '.sub { color:#5E6472; font-size:10pt; margin-bottom:16px; }' +
+  '.verdict { border:2px solid ' + vColor + '; border-radius:8px; padding:14px 16px; margin-bottom:18px; }' +
+  '.vrow { display:flex; align-items:center; gap:20px; margin-bottom:10px; }' +
+  '.vbadge { background:' + vColor + '; color:#fff; font-weight:800; font-size:15pt;' +
+  ' padding:5px 16px; border-radius:5px; letter-spacing:.02em; }' +
+  '.vlbl { font-size:8pt; color:#5E6472; text-transform:uppercase; letter-spacing:.08em; }' +
+  '.vval { font-size:12pt; font-weight:700; }' +
+  '.vtarget { margin-left:auto; text-align:right; }' +
+  '.thesis { font-size:11pt; }' +
+  '.block { margin-bottom:18px; page-break-inside:avoid; }' +
+  'h2 { font-size:12pt; margin:0 0 8px; padding-bottom:5px; border-bottom:1px solid #D8DCE3; }' +
+  'table { width:100%; border-collapse:collapse; font-size:10pt; }' +
+  'td, th { padding:5px 8px; border-bottom:1px solid #EDEFF3; text-align:left; vertical-align:top; }' +
+  'th { background:#F5F7FA; font-size:8.5pt; text-transform:uppercase; letter-spacing:.05em; color:#5E6472; }' +
+  '.kv td:first-child { color:#5E6472; width:45%; }' +
+  '.metrics { display:flex; flex-wrap:wrap; gap:0; border:1px solid #D8DCE3; border-radius:6px; overflow:hidden; }' +
+  '.metric { flex:1 1 16%; padding:9px 11px; border-right:1px solid #EDEFF3; }' +
+  '.metric:last-child { border-right:none; }' +
+  '.metric-l { font-size:7.5pt; color:#5E6472; text-transform:uppercase; letter-spacing:.05em; }' +
+  '.metric-v { font-size:12pt; font-weight:700; }' +
+  '.agent { margin-bottom:11px; padding:10px 12px; background:#F7F9FB; border-radius:6px; page-break-inside:avoid; }' +
+  '.agent-h { display:flex; justify-content:space-between; margin-bottom:4px; font-size:10.5pt; }' +
+  '.stance { font-size:8.5pt; font-weight:700; color:#5E6472; }' +
+  '.agent p { margin:0; font-size:10pt; color:#3A4150; }' +
+  'ul { margin:0; padding-left:18px; font-size:10pt; }' +
+  'li { margin-bottom:4px; }' +
+  '.foot { margin-top:26px; padding-top:10px; border-top:1px solid #D8DCE3;' +
+  ' font-size:8pt; color:#8A909C; line-height:1.45; }' +
+  '@media print { .noprint { display:none; } }' +
+  '</style></head><body>' +
+
+  '<div class=&quot;hdr&quot;><div class=&quot;brand&quot;>VELU <span>MARKETS</span></div>' +
+  '<div class=&quot;meta&quot;>Equity Intelligence Report<br>' + today + '</div></div>' +
+
+  '<h1>' + esc(s.symbol) + '</h1>' +
+  '<div class=&quot;sub&quot;>' + esc(s.name) + (extra.theme ? ' · ' + esc(extra.theme) : '') + '</div>' +
+
+  '<div class=&quot;verdict&quot;><div class=&quot;vrow&quot;>' +
+  '<div class=&quot;vbadge&quot;>' + esc(a.verdict) + '</div>' +
+  '<div><div class=&quot;vlbl&quot;>Conviction</div><div class=&quot;vval&quot;>' + esc(a.conviction) + '</div></div>' +
+  '<div class=&quot;vtarget&quot;><div class=&quot;vlbl&quot;>12-month target</div>' +
+  '<div class=&quot;vval&quot;>$' + dash(a.targetPrice) + ' <span style=&quot;color:' + vColor + '&quot;>' +
+  (a.upside != null ? upSign + a.upside + '%' : '') + '</span></div></div></div>' +
+  '<div class=&quot;thesis&quot;>' + esc(a.thesis) + '</div></div>' +
+
+  '<div class=&quot;block&quot;><div class=&quot;metrics&quot;>' +
+  '<div class=&quot;metric&quot;><div class=&quot;metric-l&quot;>Price</div><div class=&quot;metric-v&quot;>$' + num(s.price) + '</div></div>' +
+  '<div class=&quot;metric&quot;><div class=&quot;metric-l&quot;>From high</div><div class=&quot;metric-v&quot;>' + dash(s.from52High, '−', '%') + '</div></div>' +
+  '<div class=&quot;metric&quot;><div class=&quot;metric-l&quot;>P/E</div><div class=&quot;metric-v&quot;>' + num(s.pe, 1) + '</div></div>' +
+  '<div class=&quot;metric&quot;><div class=&quot;metric-l&quot;>Mkt cap</div><div class=&quot;metric-v&quot;>' + bn(s.marketCap) + '</div></div>' +
+  '<div class=&quot;metric&quot;><div class=&quot;metric-l&quot;>Net margin</div><div class=&quot;metric-v&quot;>' + pct(s.netMargin) + '</div></div>' +
+  '<div class=&quot;metric&quot;><div class=&quot;metric-l&quot;>52w range</div><div class=&quot;metric-v&quot; style=&quot;font-size:9.5pt&quot;>' +
+  ((typeof s.yearLow === 'number' && typeof s.yearHigh === 'number')
+    ? '$' + num(s.yearLow,0) + '–$' + num(s.yearHigh,0) : '—') + '</div></div>' +
+  '</div></div>' +
+
+  '<div class=&quot;block&quot;><h2>Scenarios</h2><table>' +
+  '<tr><th>Case</th><th>Probability</th><th>Outcome</th></tr>' + scen + '</table></div>' +
+
+  whyBlock + sectorBlock +
+
+  (fundRows ? '<div class=&quot;block&quot;><h2>Fundamental trajectory</h2><table>' +
+    '<tr><th>Year</th><th>Revenue</th><th>Net income</th><th>Net margin</th></tr>' +
+    fundRows + '</table>' +
+    (f.revenueCagr != null ? '<p style=&quot;font-size:9.5pt;color:#5E6472;margin-top:6px&quot;>Revenue CAGR: ' +
+      (f.revenueCagr > 0 ? '+' : '') + f.revenueCagr.toFixed(1) + '% · Margins ' + f.marginTrend + '</p>' : '') +
+    '</div>' : '') +
+
+  consBlock +
+
+  '<div class=&quot;block&quot;><h2>Agent analysis</h2>' + agents + '</div>' +
+
+  (watch ? '<div class=&quot;block&quot;><h2>What to watch</h2><ul>' + watch + '</ul></div>' : '') +
+
+  '<div class=&quot;foot&quot;><strong>Disclaimer.</strong> This report is generated by Velu Markets for ' +
+  'informational purposes only and does not constitute investment advice, a recommendation, or an ' +
+  'offer to buy or sell any security. Velu Markets is a software tool, not a registered investment ' +
+  'adviser or broker-dealer. Market data is provided by third parties and may contain errors or delays. ' +
+  'Past performance does not predict future results. You are solely responsible for your own investment ' +
+  'decisions and should consult a qualified financial professional before acting on any information here.' +
+  '<br><br>Generated ' + today + ' · velumarkets.com</div>' +
+
+  '</body></html>';
 }
 
 function buildCallMessage(ticker, name, verdict, target, upside, price, style) {
@@ -4972,6 +5377,7 @@ window.addEventListener('message', function(ev) {
       loadTrackRecord();
       renderWatchlistPanel();
       renderMyCalls();
+      showTerminalTabIfEligible();
     })();
   }
 });
@@ -4982,6 +5388,8 @@ window.addEventListener('message', function(ev) {
   var tb2 = document.getElementById('tabBtnRadar');
   if (tb1) tb1.addEventListener('click', function(){ switchTab('punished'); });
   if (tb2) tb2.addEventListener('click', function(){ switchTab('radar'); });
+  var tb3 = document.getElementById('tabBtnTerminal');
+  if (tb3) tb3.addEventListener('click', function(){ switchTab('terminal'); });
 
   await requestSessionFromParent();
   await verifyPlanWithServer();
