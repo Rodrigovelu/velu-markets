@@ -2362,6 +2362,28 @@ async function handleCheckoutReturn() {
 
   if (params.get('checkout') === 'cancelled') {
     window.history.replaceState({}, '', window.location.pathname);
+
+    // Si venia de un registro nuevo, su cuenta ya existe: completar el onboarding
+    // en plan free y dejar el aviso para retomar el pago cuando quiera.
+    let pendingOnboarding = false;
+    try { pendingOnboarding = localStorage.getItem('veluNeedsOnboarding') === '1'; } catch (e) {}
+
+    if (pendingOnboarding) {
+      const sess = (window.__veluApp && window.__veluApp.getSession) ? window.__veluApp.getSession() : null;
+      let em = (sess && sess.user && sess.user.email) ? sess.user.email : null;
+      if (!em) { try { em = localStorage.getItem('veluPendingEmail'); } catch (e) {} }
+
+      try {
+        localStorage.removeItem('veluNeedsOnboarding');
+        localStorage.removeItem('veluPendingEmail');
+      } catch (e) {}
+
+      const u = em ? getUserByEmail(em) : null;
+      if (u) {
+        if (!sess || !sess.isAuthenticated) setSession(u);
+        if (!u.onboardingCompleted) { openOnboarding(u); return; }
+      }
+    }
     return;
   }
   if (params.get('checkout') !== 'success') return;
@@ -2371,7 +2393,15 @@ async function handleCheckoutReturn() {
   window.history.replaceState({}, '', window.location.pathname);
 
   const session = (window.__veluApp && window.__veluApp.getSession) ? window.__veluApp.getSession() : null;
-  const email = (session && session.user && session.user.email) ? session.user.email : null;
+  let email = (session && session.user && session.user.email) ? session.user.email : null;
+  if (!email) {
+    try { email = localStorage.getItem('veluPendingEmail'); } catch (e) {}
+    // Restaurar la sesion si se perdio en el viaje a Stripe
+    if (email) {
+      const u = getUserByEmail(email);
+      if (u) setSession(u);
+    }
+  }
 
   if (!email) {
     alert('Payment successful! Welcome to Velu ' + label + '.');
@@ -2392,10 +2422,28 @@ async function handleCheckoutReturn() {
   }
 
   if (confirmed) {
+    try { localStorage.removeItem('veluPendingPlan'); } catch (e) {}
     alert('Payment successful — you are on Velu ' + label + '. Everything is unlocked.');
   } else {
     alert('Payment received. Your ' + label + ' access is being activated — it may take a moment to appear.');
   }
+
+  // Si el usuario acababa de registrarse, el onboarding quedo pendiente
+  let needsOnboarding = false;
+  try { needsOnboarding = localStorage.getItem('veluNeedsOnboarding') === '1'; } catch (e) {}
+
+  if (needsOnboarding) {
+    try {
+      localStorage.removeItem('veluNeedsOnboarding');
+      localStorage.removeItem('veluPendingEmail');
+    } catch (e) {}
+    const user = getUserByEmail(email);
+    if (user && !user.onboardingCompleted) {
+      openOnboarding(user);
+      return;
+    }
+  }
+
   goToTerminal(true);
 }
 
@@ -2483,8 +2531,29 @@ async function submitSignup() {
   createdUser.plan = 'free';
   createdUser.planInterest = desiredPlan;
   upsertUser(createdUser);
+
+  // Si eligio un plan de pago, va a Stripe AHORA — antes del onboarding.
+  // Pagar primero respeta su intencion; el onboarding lo hace al volver.
   if (desiredPlan === 'pro' || desiredPlan === 'terminal') {
-    try { localStorage.setItem('veluPendingPlan', desiredPlan); } catch (e) {}
+    // Crear la sesion ANTES de salir a Stripe: al volver, la pagina se recarga
+    // y necesitamos saber quien es para reanudar donde se quedo.
+    setSession(createdUser);
+
+    try {
+      localStorage.setItem('veluPendingPlan', desiredPlan);
+      localStorage.setItem('veluNeedsOnboarding', '1');
+      localStorage.setItem('veluPendingEmail', email);
+    } catch (e) {}
+
+    setLoading('su-btn', true);
+    const planLabel = desiredPlan === 'terminal' ? 'Terminal' : 'Pro';
+    const went = await startCheckoutFromParent(email, desiredPlan);
+    if (went) return;   // el navegador ya va camino a Stripe
+
+    setLoading('su-btn', false);
+    showBanner('su', 'We could not open the ' + planLabel + ' checkout. Continuing on the free plan — you can upgrade from inside the terminal.');
+    try { localStorage.removeItem('veluNeedsOnboarding'); } catch (e) {}
+    await new Promise(r => setTimeout(r, 1800));
   }
 
   closeSignup();
