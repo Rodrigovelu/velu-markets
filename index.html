@@ -2284,6 +2284,33 @@ function selectPlan(plan) {
 
 async function startCheckoutFromParent(email, plan) {
   try {
+    // Si ya tiene un plan de pago activo, esto es un CAMBIO de plan, no una compra nueva
+    const curRes = await fetch('/api/check-subscription?email=' + encodeURIComponent(email));
+    const cur = await curRes.json();
+
+    if (cur.plan && (cur.plan === 'pro' || cur.plan === 'terminal') && cur.plan !== plan) {
+      const upRes = await fetch('/api/upgrade-subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, newPlan: plan })
+      });
+      const upData = await upRes.json();
+
+      if (upRes.ok) {
+        const label = plan === 'terminal' ? 'Terminal' : 'Pro';
+        alert('You are now on ' + label + '. The price difference was charged automatically — no new card needed.');
+        goToTerminal(true);
+        return;
+      }
+      if (upData.needsCheckout) {
+        // Caso raro: se perdio el registro de la suscripcion en Stripe -> seguir con checkout normal
+      } else {
+        alert(upData.error || 'Could not change your plan. Please try again.');
+        return;
+      }
+    }
+
+    // Compra nueva (usuario Free, o no se encontro la suscripcion existente)
     const res = await fetch('/api/create-checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -3356,6 +3383,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   @media (max-width: 860px) { .term-grid { grid-template-columns: 1fr; } }
 
+
+  .plan-switch { font-family: var(--mono); font-size: 10px; padding: 5px 11px; border-radius: 7px;
+    background: rgba(0,229,160,.1); border: 1px solid rgba(0,229,160,.3); color: var(--g);
+    cursor: pointer; white-space: nowrap; transition: all .15s; }
+  .plan-switch:hover { background: rgba(0,229,160,.18); }
+  .plan-switch:disabled { opacity: .6; cursor: default; }
+  @media (max-width: 768px) { .plan-switch { display: none !important; } }
+
 </style>
 </head>
 <body>
@@ -3382,6 +3417,7 @@ document.addEventListener('DOMContentLoaded', () => {
   <div class=&quot;topbar-right&quot;>
     <div class=&quot;status-live&quot;><span class=&quot;status-dot&quot;></span> Live</div>
     <span class=&quot;plan-badge&quot; id=&quot;planBadge&quot;>FREE</span>
+    <button class=&quot;plan-switch&quot; id=&quot;planSwitch&quot; style=&quot;display:none&quot; onclick=&quot;openPlanSwitch()&quot;></button>
     <div class=&quot;clock&quot; id=&quot;clock&quot;>--:--:--</div>
     <button onclick=&quot;window.parent.postMessage('velu-exit','*')&quot; style=&quot;font-family:var(--mono);font-size:11px;padding:7px 14px;border-radius:8px;background:var(--panel2);border:1px solid var(--b2);color:var(--mu);cursor:pointer;&quot;>← Home</button>
   </div>
@@ -3522,6 +3558,7 @@ async function verifyPlanWithServer() {
     __verifiedPlan = 'free';
   }
   updatePlanBadge();
+  updatePlanSwitchLink();
   return __verifiedPlan;
 }
 
@@ -3533,6 +3570,68 @@ function updatePlanBadge() {
   if (p === 'pro' || p === 'terminal') b.classList.add('is-pro');
   else b.classList.remove('is-pro');
 }
+
+/* ── CAMBIAR DE PLAN (Pro <-> Terminal) ────────────── */
+function updatePlanSwitchLink() {
+  var btn = document.getElementById('planSwitch');
+  if (!btn) return;
+  var plan = getUserPlan();
+  if (plan === 'pro') {
+    btn.style.display = '';
+    btn.textContent = '↑ Upgrade to Terminal';
+    btn.onclick = function() { openPlanSwitch('terminal'); };
+  } else if (plan === 'terminal') {
+    btn.style.display = '';
+    btn.textContent = 'Switch to Pro';
+    btn.onclick = function() { openPlanSwitch('pro'); };
+  } else {
+    btn.style.display = 'none';
+  }
+}
+
+async function openPlanSwitch(targetPlan) {
+  var email = getUserEmail();
+  if (!email) return;
+
+  var label = targetPlan === 'terminal' ? 'Terminal ($99/mo)' : 'Pro ($29/mo)';
+  var goingUp = targetPlan === 'terminal';
+  var msg = goingUp
+    ? 'Switch to ' + label + '? Stripe will charge the prorated difference to your card on file today — no new checkout needed.'
+    : 'Switch down to ' + label + '? Your next invoice will reflect the lower price.';
+  if (!confirm(msg)) return;
+
+  var btn = document.getElementById('planSwitch');
+  if (btn) { btn.disabled = true; btn.textContent = 'Updating…'; }
+
+  try {
+    var res = await fetch('/api/upgrade-subscription', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, newPlan: targetPlan })
+    });
+    var data = await res.json();
+
+    if (res.ok) {
+      alert('Done — you are now on ' + label + '.');
+      await verifyPlanWithServer();
+      updatePlanBadge();
+      updatePlanSwitchLink();
+      loadScreener();
+      if (__radarLoaded) loadRadar(true);
+    } else if (data.needsCheckout) {
+      startCheckout(targetPlan);
+    } else {
+      alert(data.error || 'Could not change your plan.');
+      if (btn) { btn.disabled = false; }
+      updatePlanSwitchLink();
+    }
+  } catch (e) {
+    alert('Could not change your plan. Please try again.');
+    if (btn) btn.disabled = false;
+    updatePlanSwitchLink();
+  }
+}
+
 function getPlanInterest() {
   try {
     var auth = JSON.parse(localStorage.getItem('veluAuth') || 'null');
