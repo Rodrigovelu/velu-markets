@@ -94,6 +94,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--san
   display: none; position: fixed; inset: 0; z-index: 150;
   background: var(--w); padding: 88px 28px 40px;
   flex-direction: column; gap: 2px;
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
 }
 .mob-menu.open { display: flex; }
 .mob-close { position: absolute; top: 16px; right: 24px; font-size: 28px; color: var(--mu); line-height: 1; }
@@ -326,6 +327,14 @@ button { cursor: pointer; border: none; background: none; font-family: var(--san
   background: rgba(10,10,8,.55); backdrop-filter: blur(8px);
   align-items: center; justify-content: center; padding: 20px;
   animation: fadeIn .2s ease;
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+}
+@media (max-width: 640px) {
+  .modal-backdrop.open { align-items: flex-start; padding-top: 28px; padding-bottom: 28px; }
+  /* iOS hace zoom automatico si un input tiene font-size menor a 16px */
+  .field-input, .ob-country-input, input[type="text"], input[type="email"], input[type="password"] {
+    font-size: 16px !important;
+  }
 }
 .modal-backdrop.open { display: flex; }
 
@@ -493,6 +502,10 @@ button { cursor: pointer; border: none; background: none; font-family: var(--san
   display:none; position:fixed; inset:0; z-index:9500;
   background:rgba(8,10,9,.56); backdrop-filter:blur(10px);
   align-items:center; justify-content:center; padding:20px;
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
+}
+@media (max-width: 640px) {
+  .ob-backdrop.open { align-items: flex-start; padding-top: 20px; padding-bottom: 20px; }
 }
 .ob-backdrop.open{display:flex;}
 .ob-modal{
@@ -941,6 +954,10 @@ body{
     display:none; position:fixed; inset:0; z-index:10000;
     background:rgba(8,10,9,.52); backdrop-filter:blur(10px);
     align-items:center; justify-content:center; padding:20px;
+    overflow-y:auto; -webkit-overflow-scrolling:touch;
+  }
+  @media (max-width: 640px) {
+    .early-modal-backdrop.open { align-items: flex-start; padding-top: 24px; padding-bottom: 24px; }
   }
   .early-modal-backdrop.open{display:flex !important;}
   .early-modal{
@@ -1366,7 +1383,7 @@ body{
   <button class="mob-close" onclick="closeMob()">✕</button>
   <a class="mob-link" href="#how" onclick="closeMob()">How it works</a>
   <a class="mob-link" href="#features" onclick="closeMob()">Features</a>
-  <a class="mob-link" href="#markets" onclick="closeMob()">Markets</a>
+  <a class="mob-link" href="#markets" onclick="closeMob()">Engines</a>
   <a class="mob-link" href="#pricing" onclick="closeMob()">Pricing</a>
   <div class="mob-auth">
     <button class="mob-btn mob-li" onclick="openLogin();closeMob()">Log in</button>
@@ -2102,9 +2119,11 @@ function openOnboarding(user) {
 
 function closeOnboarding() {
   const modal = document.getElementById('onboardingModal');
-  if (!modal) return;
-  modal.classList.remove('open');
-  modal.setAttribute('aria-hidden', 'true');
+  if (modal) {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+  }
+  document.body.style.overflow = '';
 }
 
 function onboardingNext() {
@@ -2194,6 +2213,123 @@ async function completeOnboarding() {
   goToTerminal(true);
 }
 
+
+/* ═══════════════════════════════════════════════════════
+   COUNTRY SELECTOR (onboarding)
+═══════════════════════════════════════════════════════ */
+const COUNTRIES = [
+  {code:'US',name:'United States',flag:'🇺🇸'},
+  {code:'MX',name:'Mexico',flag:'🇲🇽'},
+  {code:'GB',name:'United Kingdom',flag:'🇬🇧'},
+  {code:'CA',name:'Canada',flag:'🇨🇦'},
+  {code:'AU',name:'Australia',flag:'🇦🇺'},
+  {code:'DE',name:'Germany',flag:'🇩🇪'},
+  {code:'FR',name:'France',flag:'🇫🇷'},
+  {code:'SG',name:'Singapore',flag:'🇸🇬'},
+  {code:'AE',name:'United Arab Emirates',flag:'🇦🇪'},
+  {code:'CH',name:'Switzerland',flag:'🇨🇭'},
+  {code:'NL',name:'Netherlands',flag:'🇳🇱'},
+  {code:'BR',name:'Brazil',flag:'🇧🇷'},
+  {code:'JP',name:'Japan',flag:'🇯🇵'},
+  {code:'KR',name:'South Korea',flag:'🇰🇷'},
+  {code:'IN',name:'India',flag:'🇮🇳'},
+  {code:'ES',name:'Spain',flag:'🇪🇸'},
+  {code:'IT',name:'Italy',flag:'🇮🇹'},
+  {code:'AR',name:'Argentina',flag:'🇦🇷'},
+  {code:'CO',name:'Colombia',flag:'🇨🇴'},
+  {code:'CL',name:'Chile',flag:'🇨🇱'},
+  {code:'PT',name:'Portugal',flag:'🇵🇹'},
+  {code:'SE',name:'Sweden',flag:'🇸🇪'},
+  {code:'NO',name:'Norway',flag:'🇳🇴'},
+  {code:'PL',name:'Poland',flag:'🇵🇱'},
+  {code:'ZA',name:'South Africa',flag:'🇿🇦'},
+  {code:'NG',name:'Nigeria',flag:'🇳🇬'},
+  {code:'TR',name:'Turkey',flag:'🇹🇷'},
+  {code:'SA',name:'Saudi Arabia',flag:'🇸🇦'},
+  {code:'IL',name:'Israel',flag:'🇮🇱'},
+  {code:'HK',name:'Hong Kong',flag:'🇭🇰'},
+  {code:'TW',name:'Taiwan',flag:'🇹🇼'},
+  {code:'TH',name:'Thailand',flag:'🇹🇭'},
+  {code:'ID',name:'Indonesia',flag:'🇮🇩'},
+  {code:'PH',name:'Philippines',flag:'🇵🇭'},
+  {code:'MY',name:'Malaysia',flag:'🇲🇾'},
+  {code:'NZ',name:'New Zealand',flag:'🇳🇿'},
+  {code:'AT',name:'Austria',flag:'🇦🇹'},
+  {code:'BE',name:'Belgium',flag:'🇧🇪'},
+  {code:'PE',name:'Peru',flag:'🇵🇪'},
+  {code:'UY',name:'Uruguay',flag:'🇺🇾'},
+  {code:'EC',name:'Ecuador',flag:'🇪🇨'},
+  {code:'GT',name:'Guatemala',flag:'🇬🇹'},
+  {code:'CR',name:'Costa Rica',flag:'🇨🇷'},
+  {code:'PA',name:'Panama',flag:'🇵🇦'},
+  {code:'DO',name:'Dominican Republic',flag:'🇩🇴'},
+  {code:'VE',name:'Venezuela',flag:'🇻🇪'},
+  {code:'PY',name:'Paraguay',flag:'🇵🇾'},
+  {code:'BO',name:'Bolivia',flag:'🇧🇴'},
+  {code:'OTHER',name:'Other',flag:'🌐'},
+];
+
+let _filteredCountries = [...COUNTRIES];
+
+function renderCountryDropdown(list) {
+  const dd = document.getElementById('obCountryDropdown');
+  if (!dd) return;
+  if (list.length === 0) {
+    dd.innerHTML = '<div class="ob-country-opt" style="color:#aaa;cursor:default">No results found</div>';
+    return;
+  }
+  dd.innerHTML = '';
+  list.forEach(function(c) {
+    var opt = document.createElement('div');
+    opt.className = 'ob-country-opt';
+    opt.innerHTML = '<span class="ob-cflag">' + c.flag + '</span><span>' + c.name + '</span>';
+    opt.addEventListener('mousedown', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      selectCountry(c.code, c.name, c.flag);
+    });
+    dd.appendChild(opt);
+  });
+}
+
+function showCountryDropdown() {
+  renderCountryDropdown(_filteredCountries);
+  var dd = document.getElementById('obCountryDropdown');
+  var wrap = document.querySelector('.ob-country-search-wrap');
+  if (dd && wrap) {
+    var rect = wrap.getBoundingClientRect();
+    dd.style.top = (rect.bottom + 6) + 'px';
+    dd.style.left = rect.left + 'px';
+    dd.style.width = rect.width + 'px';
+    dd.classList.add('open');
+  }
+}
+
+function filterCountries(query) {
+  var q = query.toLowerCase().trim();
+  _filteredCountries = q
+    ? COUNTRIES.filter(function(c) {
+        return c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q);
+      })
+    : [...COUNTRIES];
+  showCountryDropdown();
+}
+
+function selectCountry(code, name, flag) {
+  window.__veluOnboarding.data.country = name;
+  var input = document.getElementById('obCountryInput');
+  var flagEl = document.getElementById('obSelectedFlag');
+  var dd = document.getElementById('obCountryDropdown');
+  if (input) input.value = name;
+  if (flagEl) flagEl.textContent = flag;
+  if (dd) dd.classList.remove('open');
+  updateOnboardingUi();
+  // Auto-avanzar, igual que las tarjetas de seleccion
+  setTimeout(function() {
+    if (window.__veluOnboarding.step < 6) onboardingNext();
+  }, 140);
+}
+
 document.addEventListener('click', e => {
   const card = e.target.closest('[data-ob-group]');
   if (!card) return;
@@ -2206,10 +2342,19 @@ document.addEventListener('click', e => {
   if (window.__veluOnboarding.step < 6) {
     updateOnboardingUi();
     setTimeout(() => {
-      if (window.__veluOnboarding.step < 5) onboardingNext();
+      if (window.__veluOnboarding.step < 6) onboardingNext();
     }, 140);
   } else {
     updateOnboardingUi();
+  }
+});
+
+// Cerrar el dropdown de pais al hacer clic fuera de el
+document.addEventListener('click', function(e) {
+  var dd = document.getElementById('obCountryDropdown');
+  if (!dd) return;
+  if (!e.target.closest('.ob-country-wrap') && !e.target.closest('.ob-country-dropdown')) {
+    dd.classList.remove('open');
   }
 });
 
@@ -2233,6 +2378,30 @@ function socialAuth(provider) {
 function waitMs(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 async function submitLogin() {
+
+/* ── FORGOT PASSWORD ─────────────────────────────────── */
+async function submitForgot() {
+  const email = document.getElementById('fo-email')?.value.trim() || '';
+  let valid = true;
+
+  clearErr('fo-email-err');
+
+  if (!isEmail(email)) { showErr('fo-email-err', 'Please enter a valid email address.'); valid = false; }
+  if (!valid) return false;
+
+  setLoading('fo-btn', true);
+  await waitMs(500);
+  setLoading('fo-btn', false);
+
+  // Por seguridad no revelamos si el correo existe o no — siempre mostramos
+  // el mismo mensaje de exito, igual que hacen los productos reales.
+  const forgotForm = document.getElementById('forgotForm');
+  const forgotSuccess = document.getElementById('forgotSuccess');
+  if (forgotForm) forgotForm.classList.add('hide');
+  if (forgotSuccess) forgotSuccess.classList.add('show');
+  return false;
+}
+
   const email = document.getElementById('li-email')?.value.trim() || '';
   const pw = document.getElementById('li-pw')?.value || '';
   let valid = true;
@@ -3117,6 +3286,7 @@ document.addEventListener('DOMContentLoaded', () => {
   @media (max-width: 768px) {
     .topbar { flex-wrap: wrap; gap: 12px; padding: 12px 16px; }
     .search-wrap { order: 3; max-width: 100%; flex-basis: 100%; }
+    .search-input { font-size: 16px; }
     .main { padding: 16px; }
     .stock-row { grid-template-columns: 32px 1.3fr 80px 90px; font-size: 13px; }
     .stock-row .col-pe, .stock-row .col-punish, .stock-row .col-verdict { display: none; }
