@@ -3072,7 +3072,23 @@ async function loadMarketTape() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  authRestoreSession().then(function() { updateAuthCtas(); });
+  // Restaurar la sesion guardada. Si hay una valida y el usuario ya termino
+  // el onboarding, entra directo al terminal en vez de quedarse en el home.
+  authRestoreSession().then(function(user) {
+    updateAuthCtas();
+    if (!user) return;
+
+    // Si viene de Stripe, handleCheckoutReturn se encarga del destino
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('checkout')) return;
+
+    if (user.onboardingCompleted) {
+      goToTerminal(false);
+    } else {
+      openOnboarding(user);
+    }
+  });
+
   updateAuthCtas();
   handleCheckoutReturn();
   loadMarketTape();
@@ -6254,7 +6270,11 @@ window.addEventListener('message', function(ev) {
     },
 
     init() {
-      this.resetSession();
+      // OJO: no llamar a resetSession() aqui.
+      // resetSession cierra la sesion de Supabase, y esto corre en cada
+      // carga de pagina — borraria la sesion recien creada al registrarse
+      // o al volver de Stripe. Solo limpiamos el estado en memoria.
+      window.__veluUnifiedSession = null;
       this.updateAuthCtas();
       this.showHome(false);
     }
