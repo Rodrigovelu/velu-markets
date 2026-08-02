@@ -353,6 +353,7 @@ button { cursor: pointer; border: none; background: none; font-family: var(--san
 }
 .modal-title-block {}
 .modal-eyebrow { font-size: 10px; color: var(--dim); font-family: var(--mono); letter-spacing: .1em; margin-bottom: 6px; }
+.modal-sub { font-size: 13px; color: var(--mu); margin-top: 5px; line-height: 1.45; }
 .modal-title { font-family: var(--serif); font-size: 26px; font-weight: 700; color: var(--ink); }
 .modal-close {
   width: 32px; height: 32px; border-radius: 50%;
@@ -1099,8 +1100,9 @@ body{
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="signupTitle">
     <div class="modal-header">
       <div class="modal-title-block">
-        <div class="modal-eyebrow">EARLY ACCESS · PERSONALIZED ONBOARDING</div>
-        <div class="modal-title" id="signupTitle">Create account</div>
+        <div class="modal-eyebrow">GET STARTED</div>
+        <div class="modal-title" id="signupTitle">Create your account</div>
+        <div class="modal-sub">Free forever. No card required.</div>
       </div>
       <button class="modal-close" onclick="closeSignup()" aria-label="Close">✕</button>
     </div>
@@ -1109,14 +1111,10 @@ body{
       <!-- Success -->
       <div class="modal-success" id="signupSuccess">
         <div class="success-ico">⬡</div>
-        <div class="success-h">Estás en la lista</div>
+        <div class="success-h">You're in</div>
         <div class="success-p">
-          Velu Markets está en beta cerrada.<br>
-          Te avisamos cuando tu acceso esté listo.<br><br>
+          Setting up your terminal…<br><br>
           <strong id="signupSuccessEmail"></strong>
-        </div>
-        <div style="margin-top:14px;font-size:13px;color:var(--mu)">
-          Eres el número <strong style="color:var(--g2)">#<span id="waitlistPos">—</span></strong> en la lista
         </div>
       </div>
 
@@ -1745,8 +1743,8 @@ body{
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">New-opportunity alerts</span></div>
           <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Real-time market data</span></div>
         </div>
-        <button class="plan-btn pbt-f" onclick="selectPlan('pro')">Start free trial</button>
-        <p style="text-align:center;font-size:11px;color:var(--dim);margin-top:10px">$290/year — save 2 months</p>
+        <button class="plan-btn pbt-f" onclick="selectPlan('pro')">Start 7-day free trial</button>
+        <p style="text-align:center;font-size:11px;color:var(--dim);margin-top:10px">Card required · Cancel anytime before day 7</p>
       </div>
 
       <div class="plan">
@@ -1805,8 +1803,22 @@ body{
 ═══════════════════════════════════════════════════════ */
 function openLogin()  { document.getElementById('loginModal').classList.add('open');  document.body.style.overflow='hidden'; }
 function closeLogin() { document.getElementById('loginModal').classList.remove('open'); clearForm('li'); resetBtn('li-btn','Log in'); document.body.style.overflow=''; }
-function openSignup()  { document.getElementById('signupModal').classList.add('open');  document.body.style.overflow='hidden'; }
-function closeSignup() { document.getElementById('signupModal').classList.remove('open'); clearForm('su'); resetBtn('su-btn','Create account'); document.body.style.overflow=''; }
+function openSignup()  {
+  document.getElementById('signupModal').classList.add('open');
+  document.body.style.overflow='hidden';
+  // Mostrar el modal acorde al plan que eligio
+  const sf = document.getElementById('signupForm');
+  const ss = document.getElementById('signupSuccess');
+  if (sf) sf.classList.remove('hide');
+  if (ss) ss.classList.remove('show');
+  if (typeof applySignupPlanContext === 'function') applySignupPlanContext();
+}
+function closeSignup() {
+  document.getElementById('signupModal').classList.remove('open');
+  clearForm('su');
+  resetBtn('su-btn','Create account');
+  document.body.style.overflow='';
+}
 function openForgot()  { closeLogin(); setTimeout(()=>{ document.getElementById('forgotModal').classList.add('open'); },200); }
 function closeForgot() { document.getElementById('forgotModal').classList.remove('open'); clearForm('fo'); resetBtn('fo-btn','Send reset link'); document.body.style.overflow=''; }
 function switchToSignup() { closeLogin(); setTimeout(openSignup, 200); }
@@ -2616,6 +2628,7 @@ window.__veluDesiredPlan = 'free';
 
 function selectPlan(plan) {
   window.__veluDesiredPlan = plan;
+
   // Guardar de inmediato: la variable en memoria se pierde si el usuario
   // recarga, cambia de modal o el navegador reinicia el contexto.
   try {
@@ -2625,26 +2638,62 @@ function selectPlan(plan) {
       localStorage.removeItem('veluPendingPlan');
     }
   } catch (e) {}
-  const session = (window.__veluApp && window.__veluApp.getSession) ? window.__veluApp.getSession() : null;
 
+  const session = (window.__veluApp && window.__veluApp.getSession) ? window.__veluApp.getSession() : null;
+  const loggedIn = !!(session && session.isAuthenticated && session.user && session.user.email);
+
+  // ── FREE ──────────────────────────────────────────────
   if (plan === 'free') {
-    // Free: open signup (or go to terminal if already logged in)
-    if (session && session.isAuthenticated) {
-      goToTerminal(false);
-    } else {
-      openSignup();
-    }
+    if (loggedIn) { goToTerminal(false); }
+    else { openSignup(); }
     return;
   }
 
-  // Pro or Terminal: si ya tiene sesión, mandarlo directo a pagar
-  if (session && session.isAuthenticated && session.user && session.user.email) {
+  // ── PRO / TERMINAL ────────────────────────────────────
+  // Si ya tiene cuenta, va directo a pagar (o a cambiar de plan).
+  if (loggedIn) {
     startCheckoutFromParent(session.user.email, plan);
+    return;
+  }
+
+  // Sin cuenta: primero se registra, y al terminar va a Stripe.
+  openSignup();
+}
+
+/* Ajusta el modal de registro segun el plan elegido, para que el
+   usuario sepa exactamente que esta contratando. */
+function applySignupPlanContext() {
+  var plan = 'free';
+  try { plan = localStorage.getItem('veluPendingPlan') || window.__veluDesiredPlan || 'free'; }
+  catch (e) { plan = window.__veluDesiredPlan || 'free'; }
+
+  var eyebrow = document.querySelector('#signupModal .modal-eyebrow');
+  var title   = document.querySelector('#signupModal .modal-title');
+  var sub     = document.querySelector('#signupModal .modal-sub');
+  var btnLbl  = document.querySelector('#su-btn .btn-label');
+  var terms   = document.querySelector('#signupModal .modal-terms');
+
+  if (plan === 'pro') {
+    if (eyebrow) eyebrow.textContent = 'VELU PRO · 7-DAY FREE TRIAL';
+    if (title)   title.textContent   = 'Start your Pro trial';
+    if (sub)     sub.textContent     = 'Free for 7 days, then $29/month. Card required — cancel anytime before the trial ends and you will not be charged.';
+    if (btnLbl)  btnLbl.textContent  = 'Continue to payment';
+    if (terms)   terms.textContent   = 'Next step: add your card on Stripe. Your trial starts immediately.';
+  } else if (plan === 'terminal') {
+    if (eyebrow) eyebrow.textContent = 'VELU TERMINAL · $99/MONTH';
+    if (title)   title.textContent   = 'Get Terminal access';
+    if (sub)     sub.textContent     = 'PDF export, screener history, and API access. Billed $99/month starting today.';
+    if (btnLbl)  btnLbl.textContent  = 'Continue to payment';
+    if (terms)   terms.textContent   = 'Next step: complete payment on Stripe, then set up your terminal.';
   } else {
-    // Sin sesión — abrir signup primero; al terminar el onboarding lo mandamos a pagar
-    openSignup();
+    if (eyebrow) eyebrow.textContent = 'GET STARTED';
+    if (title)   title.textContent   = 'Create your account';
+    if (sub)     sub.textContent     = 'Free forever. No card required.';
+    if (btnLbl)  btnLbl.textContent  = 'Create account';
+    if (terms)   terms.textContent   = 'After account creation, we will tailor the terminal to your profile in under a minute.';
   }
 }
+
 
 async function startCheckoutFromParent(email, plan) {
   // Devuelve true si el navegador va a Stripe, false si no se pudo
@@ -2708,20 +2757,16 @@ async function handleCheckoutReturn() {
     try { pendingOnboarding = localStorage.getItem('veluNeedsOnboarding') === '1'; } catch (e) {}
 
     if (pendingOnboarding) {
-      const sess = (window.__veluApp && window.__veluApp.getSession) ? window.__veluApp.getSession() : null;
-      let em = (sess && sess.user && sess.user.email) ? sess.user.email : null;
-      if (!em) { try { em = localStorage.getItem('veluPendingEmail'); } catch (e) {} }
+      // Recuperar la sesion real: la pagina se recargo al volver de Stripe
+      const u = await authRestoreSession();
 
       try {
         localStorage.removeItem('veluNeedsOnboarding');
         localStorage.removeItem('veluPendingEmail');
       } catch (e) {}
 
-      const u = em ? getUserByEmail(em) : null;
-      if (u) {
-        if (!sess || !sess.isAuthenticated) setSession(u);
-        if (!u.onboardingCompleted) { openOnboarding(u); return; }
-      }
+      if (u && !u.onboardingCompleted) { openOnboarding(u); return; }
+      if (u) { goToTerminal(false); return; }
     }
     return;
   }
@@ -2731,15 +2776,12 @@ async function handleCheckoutReturn() {
   const label = paidPlan === 'terminal' ? 'Terminal' : 'Pro';
   window.history.replaceState({}, '', window.location.pathname);
 
-  const session = (window.__veluApp && window.__veluApp.getSession) ? window.__veluApp.getSession() : null;
+  // Al volver de Stripe la pagina se recargo: recuperar la sesion real
+  let restored = await authRestoreSession();
+  let session = (window.__veluApp && window.__veluApp.getSession) ? window.__veluApp.getSession() : null;
   let email = (session && session.user && session.user.email) ? session.user.email : null;
   if (!email) {
     try { email = localStorage.getItem('veluPendingEmail'); } catch (e) {}
-    // Restaurar la sesion si se perdio en el viaje a Stripe
-    if (email) {
-      const u = getUserByEmail(email);
-      if (u) setSession(u);
-    }
   }
 
   if (!email) {
@@ -2776,7 +2818,7 @@ async function handleCheckoutReturn() {
       localStorage.removeItem('veluNeedsOnboarding');
       localStorage.removeItem('veluPendingEmail');
     } catch (e) {}
-    const user = getUserByEmail(email);
+    const user = restored || getUserByEmail(email);
     if (user && !user.onboardingCompleted) {
       openOnboarding(user);
       return;
@@ -3072,25 +3114,28 @@ async function loadMarketTape() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Restaurar la sesion guardada. Si hay una valida y el usuario ya termino
-  // el onboarding, entra directo al terminal en vez de quedarse en el home.
-  authRestoreSession().then(function(user) {
+  // Arranque ordenado: si venimos de Stripe, ese flujo manda.
+  // Si no, restauramos la sesion y decidimos a donde va el usuario.
+  (async function bootSession() {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('checkout')) {
+      await handleCheckoutReturn();
+      updateAuthCtas();
+      return;
+    }
+
+    var user = await authRestoreSession();
     updateAuthCtas();
     if (!user) return;
-
-    // Si viene de Stripe, handleCheckoutReturn se encarga del destino
-    var params = new URLSearchParams(window.location.search);
-    if (params.get('checkout')) return;
 
     if (user.onboardingCompleted) {
       goToTerminal(false);
     } else {
       openOnboarding(user);
     }
-  });
+  })();
 
   updateAuthCtas();
-  handleCheckoutReturn();
   loadMarketTape();
   setInterval(loadMarketTape, 90000);
   loadHeroPreview();
@@ -6270,13 +6315,11 @@ window.addEventListener('message', function(ev) {
     },
 
     init() {
-      // OJO: no llamar a resetSession() aqui.
-      // resetSession cierra la sesion de Supabase, y esto corre en cada
-      // carga de pagina — borraria la sesion recien creada al registrarse
-      // o al volver de Stripe. Solo limpiamos el estado en memoria.
+      // No llamamos a resetSession(): cerraria la sesion de Supabase en cada
+      // carga de pagina. Y NO decidimos la vista aqui — authRestoreSession()
+      // es asincrono y debe ser quien decida si va al home o al terminal.
       window.__veluUnifiedSession = null;
       this.updateAuthCtas();
-      this.showHome(false);
     }
   };
 
