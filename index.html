@@ -2170,7 +2170,22 @@ function goToTerminal(showModal = true) {
   if (window.__veluApp && typeof window.__veluApp.goToTerminal === 'function') {
     return window.__veluApp.goToTerminal(showModal);
   }
-  if (typeof showTerminal === 'function') return showTerminal(showModal);
+  if (typeof window.showTerminal === 'function') return window.showTerminal(showModal);
+
+  // Si llegamos aqui, el modulo principal aun no cargo. Reintentamos
+  // en vez de dejar al usuario varado en el home sin explicacion.
+  console.warn('Velu: terminal not ready yet, retrying...');
+  let tries = 0;
+  const t = setInterval(function() {
+    tries++;
+    if (window.__veluApp && typeof window.__veluApp.goToTerminal === 'function') {
+      clearInterval(t);
+      window.__veluApp.goToTerminal(showModal);
+    } else if (tries > 40) {
+      clearInterval(t);
+      console.error('Velu: terminal failed to load.');
+    }
+  }, 50);
 }
 
 function updateAuthCtas() {
@@ -3114,27 +3129,9 @@ async function loadMarketTape() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Arranque ordenado: si venimos de Stripe, ese flujo manda.
-  // Si no, restauramos la sesion y decidimos a donde va el usuario.
-  (async function bootSession() {
-    var params = new URLSearchParams(window.location.search);
-    if (params.get('checkout')) {
-      await handleCheckoutReturn();
-      updateAuthCtas();
-      return;
-    }
-
-    var user = await authRestoreSession();
-    updateAuthCtas();
-    if (!user) return;
-
-    if (user.onboardingCompleted) {
-      goToTerminal(false);
-    } else {
-      openOnboarding(user);
-    }
-  })();
-
+  // OJO: el arranque de sesion NO va aqui.
+  // goToTerminal depende de window.__veluApp, que se define en un bloque
+  // <script> posterior. Se ejecuta al final del archivo, cuando ya existe.
   updateAuthCtas();
   loadMarketTape();
   setInterval(loadMarketTape, 90000);
@@ -6269,9 +6266,16 @@ window.addEventListener('message', function(ev) {
       closeSignup();
       closeForgot();
 
-      document.getElementById('unifiedHomeView').style.display = 'none';
-      document.getElementById('unifiedTerminalView').style.display = 'block';
-      document.getElementById('unifiedTerminalView').setAttribute('aria-hidden', 'false');
+      const homeView = document.getElementById('unifiedHomeView');
+      const termView = document.getElementById('unifiedTerminalView');
+      if (!homeView || !termView) {
+        console.error('Velu: view containers missing', { homeView: !!homeView, termView: !!termView });
+        return;
+      }
+
+      homeView.style.display = 'none';
+      termView.style.display = 'block';
+      termView.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
 
       if (showEarlyModal) this.openEarlyAccess();
@@ -6333,6 +6337,34 @@ window.addEventListener('message', function(ev) {
   document.addEventListener('DOMContentLoaded', () => {
     veluApp.init();
     resetOnboardingState();
+
+    // Arranque de sesion: aqui window.__veluApp ya existe, asi que
+    // goToTerminal() puede resolverse correctamente.
+    (async function bootSession() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.get('checkout')) {
+          await handleCheckoutReturn();
+          updateAuthCtas();
+          return;
+        }
+
+        const user = await authRestoreSession();
+        updateAuthCtas();
+
+        if (!user) { veluApp.showHome(false); return; }
+
+        if (user.onboardingCompleted) {
+          veluApp.showTerminal(false);
+        } else {
+          openOnboarding(user);
+        }
+      } catch (e) {
+        console.error('Boot session failed:', e);
+        veluApp.showHome(false);
+      }
+    })();
   });
 
 /* Country Selector */
