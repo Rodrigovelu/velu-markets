@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
-<title>Velu Markets — Prediction Intelligence</title>
+<title>Velu Markets — Equity Intelligence</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/favicon.svg">
+<meta name="theme-color" content="#0A0A08">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -69,7 +72,8 @@ button { cursor: pointer; border: none; background: none; font-family: var(--san
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 28px; height: 62px;
 }
-.nav-logo { font-family: var(--serif); font-size: 21px; font-weight: 700; color: var(--ink); letter-spacing: -.03em; }
+.nav-logo { font-family: var(--serif); font-size: 21px; font-weight: 700; color: var(--ink); letter-spacing: -.03em; display: inline-flex; align-items: center; gap: 9px; }
+.nav-mark { width: 26px; height: 26px; flex-shrink: 0; }
 .nav-links { display: flex; align-items: center; gap: 6px; }
 .nl { font-size: 14px; color: var(--mu); padding: 7px 12px; border-radius: 7px; transition: color .15s, background .15s; }
 .nl:hover { color: var(--ink); background: var(--off); }
@@ -317,6 +321,8 @@ button { cursor: pointer; border: none; background: none; font-family: var(--san
 .f-links { display: flex; gap: 20px; flex-wrap: wrap; }
 .f-link { font-size: 13px; color: var(--dim); transition: color .15s; }
 .f-link:hover { color: var(--ink); }
+.f-name { display: inline-flex; align-items: center; gap: 8px; }
+.f-mark { width: 20px; height: 20px; flex-shrink: 0; }
 .f-legal { font-size: 11px; color: var(--fa); line-height: 1.8; text-align: right; }
 
 /* ══ AUTH MODAL ══════════════════════════════════════════════════
@@ -1425,7 +1431,15 @@ body{
 <!-- Nav -->
 <nav class="nav">
   <div class="nav-inner">
-    <span class="nav-logo">Velu Markets</span>
+    <span class="nav-logo">
+      <svg class="nav-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <path d="M11 13 L32 44" stroke="#C3C3B8" stroke-width="6" stroke-linecap="round"/>
+        <path d="M32 44 L53 7" stroke="#00CC6A" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="32" cy="44" r="7.5" fill="#FFFFFF"/>
+        <circle cx="32" cy="44" r="5" fill="#0A0A08"/>
+      </svg>
+      Velu Markets
+    </span>
     <div class="nav-links">
       <a class="nl" href="#how">How it works</a>
       <a class="nl" href="#features">Features</a>
@@ -1781,8 +1795,16 @@ body{
 <footer class="footer">
   <div class="footer-inner">
     <div>
-      <div class="f-name">Velu Markets</div>
-      <div class="f-copy">Prediction intelligence for global markets · 2026</div>
+      <div class="f-name">
+        <svg class="f-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <path d="M11 13 L32 44" stroke="#C3C3B8" stroke-width="6" stroke-linecap="round"/>
+          <path d="M32 44 L53 7" stroke="#00CC6A" stroke-width="6" stroke-linecap="round"/>
+          <circle cx="32" cy="44" r="7.5" fill="#FFFFFF"/>
+          <circle cx="32" cy="44" r="5" fill="#0A0A08"/>
+        </svg>
+        Velu Markets
+      </div>
+      <div class="f-copy">Equity intelligence · 2026</div>
     </div>
     <div class="f-links">
       <a class="f-link" href="#">Terms</a>
@@ -3233,7 +3255,7 @@ document.addEventListener('DOMContentLoaded', () => {
     letter-spacing: -0.02em;
     display: flex; align-items: center; gap: 8px;
   }
-  .logo-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--g); box-shadow: 0 0 12px var(--g); }
+  .logo-mark { width: 22px; height: 22px; flex-shrink: 0; }
   .logo-sub { color: var(--dim); font-size: 10px; letter-spacing: 0.15em; font-weight: 400; }
 
   .search-wrap { flex: 1; max-width: 520px; position: relative; }
@@ -3936,7 +3958,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <div class=&quot;topbar&quot;>
   <div class=&quot;logo&quot;>
-    <span class=&quot;logo-dot&quot;></span>
+    <svg class=&quot;logo-mark&quot; viewBox=&quot;0 0 64 64&quot; fill=&quot;none&quot; aria-hidden=&quot;true&quot;>
+      <path d=&quot;M11 13 L32 44&quot; stroke=&quot;#4A4F5C&quot; stroke-width=&quot;6.5&quot; stroke-linecap=&quot;round&quot;/>
+      <path d=&quot;M32 44 L53 7&quot; stroke=&quot;#00FF88&quot; stroke-width=&quot;6.5&quot; stroke-linecap=&quot;round&quot;/>
+      <circle cx=&quot;32&quot; cy=&quot;44&quot; r=&quot;7&quot; fill=&quot;#0A0B0D&quot;/>
+      <circle cx=&quot;32&quot; cy=&quot;44&quot; r=&quot;4.6&quot; fill=&quot;#00FF88&quot;/>
+    </svg>
     VELU
     <span class=&quot;logo-sub&quot;>EQUITY INTELLIGENCE</span>
   </div>
