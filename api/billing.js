@@ -155,6 +155,14 @@ export default async function handler(req, res) {
     p.append('subscription_data[metadata][email]', email);
     p.append('subscription_data[metadata][plan]', plan);
 
+    // Pro incluye 7 dias de prueba. Stripe pide la tarjeta igual y cobra
+    // automaticamente cuando termina, salvo que el usuario cancele antes.
+    if (plan === 'pro') {
+      p.append('subscription_data[trial_period_days]', '7');
+      p.append('subscription_data[trial_settings][end_behavior][missing_payment_method]', 'cancel');
+      p.append('payment_method_collection', 'always');
+    }
+
     try {
       const r = await fetch('https://api.stripe.com/v1/checkout/sessions', {
         method: 'POST',
