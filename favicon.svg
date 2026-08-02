@@ -1,0 +1,10 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Velu Markets">
+  <title>Velu Markets</title>
+
+  <rect width="64" height="64" rx="14" fill="#0A0A08"/>
+
+  <!-- Trazos mas gruesos para que se lea a 16px -->
+  <path d="M17 21 L32 43" stroke="#5E6472" stroke-width="6.5" stroke-linecap="round"/>
+  <path d="M32 43 L47 16" stroke="#00FF88" stroke-width="6.5" stroke-linecap="round"/>
+  <circle cx="32" cy="43" r="4.5" fill="#00FF88"/>
+</svg>
