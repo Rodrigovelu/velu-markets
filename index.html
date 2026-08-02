@@ -1016,6 +1016,7 @@ body{
   }
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 <div id="unifiedHomeView">
@@ -1925,20 +1926,31 @@ window.__veluOnboarding = {
   pendingUserEmail: null
 };
 
-function getDemoUsers() {
-  try { return JSON.parse(localStorage.getItem(DEMO_USERS_KEY) || '[]'); }
-  catch (_) { return []; }
-}
+/* ═══════════════════════════════════════════════════════
+   AUTENTICACION REAL — Supabase Auth
+   Las cuentas viven en el servidor, no en el navegador.
+   Se conservan los nombres de funcion originales para no
+   romper el resto del codigo (pagos, onboarding, planes).
+═══════════════════════════════════════════════════════ */
 
-function saveDemoUsers(users) {
-  localStorage.setItem(DEMO_USERS_KEY, JSON.stringify(users));
+const SB_AUTH_URL = 'https://osrjmchajyrgdlucniid.supabase.co';
+const SB_AUTH_KEY = 'sb_publishable_uL4sQ_T3HiCD6ZZ20D5thw_sc_gTK5F';
+
+let __sb = null;
+function sb() {
+  if (!__sb && window.supabase && window.supabase.createClient) {
+    __sb = window.supabase.createClient(SB_AUTH_URL, SB_AUTH_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
+    });
+  }
+  return __sb;
 }
 
 function normalizeUser(user) {
   return {
+    id: user?.id || null,
     name: user?.name || 'Velu User',
     email: user?.email || '',
-    password: user?.password || '',
     provider: user?.provider || 'password',
     createdAt: user?.createdAt || new Date().toISOString(),
     onboardingCompleted: !!user?.onboardingCompleted,
@@ -1946,32 +1958,161 @@ function normalizeUser(user) {
       role: user?.profile?.role || '',
       level: user?.profile?.level || '',
       interest: user?.profile?.interest || '',
-      capital: user?.profile?.capital || ''
+      capital: user?.profile?.capital || '',
+      country: user?.profile?.country || ''
     }
   };
 }
 
-function findUserIndexByEmail(email) {
-  const users = getDemoUsers();
-  return users.findIndex(u => (u.email || '').toLowerCase() === (email || '').toLowerCase());
+// Convierte una fila de app_users al formato que usa la app
+function rowToUser(row, email) {
+  if (!row) return null;
+  return normalizeUser({
+    id: row.id,
+    name: row.name,
+    email: row.email || email,
+    createdAt: row.created_at,
+    onboardingCompleted: row.onboarding_completed,
+    profile: row.profile || {}
+  });
 }
 
-function upsertUser(user) {
-  const users = getDemoUsers();
-  const normalized = normalizeUser(user);
-  const idx = users.findIndex(u => (u.email || '').toLowerCase() === normalized.email.toLowerCase());
-  if (idx >= 0) users[idx] = { ...normalizeUser(users[idx]), ...normalized, profile: { ...normalizeUser(users[idx]).profile, ...normalized.profile } };
-  else users.push(normalized);
-  saveDemoUsers(users);
-  return normalized;
+/* ── Registro ─────────────────────────────────────────── */
+async function authSignUp(email, password, name) {
+  const client = sb();
+  if (!client) return { error: 'Auth unavailable. Please refresh the page.' };
+
+  const { data, error } = await client.auth.signUp({
+    email: email,
+    password: password,
+    options: { data: { name: name } }
+  });
+
+  if (error) {
+    const m = (error.message || '').toLowerCase();
+    if (m.indexOf('already registered') !== -1 || m.indexOf('already been registered') !== -1) {
+      return { error: 'An account with this email already exists. Log in instead.' };
+    }
+    return { error: error.message || 'Could not create your account.' };
+  }
+  if (!data.user) return { error: 'Could not create your account.' };
+
+  // Crear su fila en app_users
+  const row = {
+    id: data.user.id,
+    email: email,
+    name: name,
+    onboarding_completed: false,
+    profile: {}
+  };
+  await client.from('app_users').upsert(row, { onConflict: 'id' });
+
+  return { user: rowToUser(row, email) };
 }
 
-function getUserByEmail(email) {
-  const users = getDemoUsers();
-  const found = users.find(u => (u.email || '').toLowerCase() === (email || '').toLowerCase());
-  return found ? normalizeUser(found) : null;
+/* ── Login ────────────────────────────────────────────── */
+async function authSignIn(email, password) {
+  const client = sb();
+  if (!client) return { error: 'Auth unavailable. Please refresh the page.' };
+
+  const { data, error } = await client.auth.signInWithPassword({
+    email: email, password: password
+  });
+
+  if (error) {
+    const m = (error.message || '').toLowerCase();
+    if (m.indexOf('invalid login') !== -1) {
+      return { error: 'Email or password is incorrect.' };
+    }
+    if (m.indexOf('not confirmed') !== -1) {
+      return { error: 'Please confirm your email before logging in.' };
+    }
+    return { error: error.message || 'Could not sign you in.' };
+  }
+  if (!data.user) return { error: 'Could not sign you in.' };
+
+  // Traer su perfil; si no existe (cuenta vieja), crearlo
+  const { data: rows } = await client.from('app_users')
+    .select('*').eq('id', data.user.id).limit(1);
+
+  let row = Array.isArray(rows) && rows[0] ? rows[0] : null;
+  if (!row) {
+    row = {
+      id: data.user.id,
+      email: data.user.email,
+      name: (data.user.user_metadata && data.user.user_metadata.name) || 'Velu User',
+      onboarding_completed: false,
+      profile: {}
+    };
+    await client.from('app_users').upsert(row, { onConflict: 'id' });
+  }
+
+  return { user: rowToUser(row, data.user.email) };
 }
 
+/* ── Cerrar sesion ────────────────────────────────────── */
+async function authSignOut() {
+  const client = sb();
+  if (client) { try { await client.auth.signOut(); } catch (e) {} }
+  window.__veluUnifiedSession = null;
+  try { localStorage.removeItem('veluAuth'); } catch (e) {}
+}
+
+/* ── Recuperar la sesion al cargar la pagina ──────────── */
+async function authRestoreSession() {
+  const client = sb();
+  if (!client) return null;
+  try {
+    const { data } = await client.auth.getSession();
+    if (!data || !data.session || !data.session.user) return null;
+
+    const u = data.session.user;
+    const { data: rows } = await client.from('app_users')
+      .select('*').eq('id', u.id).limit(1);
+    const row = Array.isArray(rows) && rows[0] ? rows[0] : null;
+    const user = rowToUser(row, u.email) || normalizeUser({ id: u.id, email: u.email });
+    setSession(user);
+    return user;
+  } catch (e) {
+    return null;
+  }
+}
+
+/* ── Guardar cambios del perfil ───────────────────────── */
+async function authSaveProfile(patch) {
+  const client = sb();
+  if (!client) return null;
+  try {
+    const { data } = await client.auth.getUser();
+    if (!data || !data.user) return null;
+
+    const update = { updated_at: new Date().toISOString() };
+    if (patch.name !== undefined) update.name = patch.name;
+    if (patch.onboardingCompleted !== undefined) update.onboarding_completed = patch.onboardingCompleted;
+    if (patch.profile !== undefined) update.profile = patch.profile;
+
+    await client.from('app_users').update(update).eq('id', data.user.id);
+    return true;
+  } catch (e) {
+    return null;
+  }
+}
+
+/* ── Reset de contrasena ──────────────────────────────── */
+async function authResetPassword(email) {
+  const client = sb();
+  if (!client) return { error: 'Auth unavailable.' };
+  try {
+    await client.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin
+    });
+    return { ok: true };
+  } catch (e) {
+    return { ok: true };  // no revelamos si el correo existe
+  }
+}
+
+/* ── Sesion en memoria (igual que antes) ──────────────── */
 function setSession(user) {
   const normalized = normalizeUser(user);
   if (window.__veluApp && typeof window.__veluApp.setSession === 'function') {
@@ -1991,6 +2132,26 @@ function getSession() {
     return window.__veluApp.getSession();
   }
   return window.__veluUnifiedSession || null;
+}
+
+/* ── Compatibilidad: el resto del codigo llama a estas ── */
+function getUserByEmail(email) {
+  const s = getSession();
+  if (s && s.user && (s.user.email || '').toLowerCase() === (email || '').toLowerCase()) {
+    return s.user;
+  }
+  return null;
+}
+
+function upsertUser(user) {
+  const normalized = normalizeUser(user);
+  // Persistir en Supabase sin bloquear la interfaz
+  authSaveProfile({
+    name: normalized.name,
+    onboardingCompleted: normalized.onboardingCompleted,
+    profile: normalized.profile
+  });
+  return normalized;
 }
 
 function goToTerminal(showModal = true) {
@@ -2145,15 +2306,22 @@ async function completeOnboarding() {
   const existing = getUserByEmail(state.pendingUserEmail);
   if (!existing) return;
 
-  const updated = upsertUser({
+  const updated = {
     ...existing,
     onboardingCompleted: true,
     profile: { ...state.data }
-  });
+  };
   setSession(updated);
 
-  const SUPABASE_URL = 'https://osrjmchajyrgdlucniid.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_uL4sQ_T3HiCD6ZZ20D5thw_sc_gTK5F';
+  // Persistir el perfil en la cuenta del usuario (app_users)
+  await authSaveProfile({
+    name: updated.name,
+    onboardingCompleted: true,
+    profile: updated.profile
+  });
+
+  const SUPABASE_URL = SB_AUTH_URL;
+  const SUPABASE_KEY = SB_AUTH_KEY;
 
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/profiles`, {
@@ -2378,30 +2546,6 @@ function socialAuth(provider) {
 function waitMs(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 async function submitLogin() {
-
-/* ── FORGOT PASSWORD ─────────────────────────────────── */
-async function submitForgot() {
-  const email = document.getElementById('fo-email')?.value.trim() || '';
-  let valid = true;
-
-  clearErr('fo-email-err');
-
-  if (!isEmail(email)) { showErr('fo-email-err', 'Please enter a valid email address.'); valid = false; }
-  if (!valid) return false;
-
-  setLoading('fo-btn', true);
-  await waitMs(500);
-  setLoading('fo-btn', false);
-
-  // Por seguridad no revelamos si el correo existe o no — siempre mostramos
-  // el mismo mensaje de exito, igual que hacen los productos reales.
-  const forgotForm = document.getElementById('forgotForm');
-  const forgotSuccess = document.getElementById('forgotSuccess');
-  if (forgotForm) forgotForm.classList.add('hide');
-  if (forgotSuccess) forgotSuccess.classList.add('show');
-  return false;
-}
-
   const email = document.getElementById('li-email')?.value.trim() || '';
   const pw = document.getElementById('li-pw')?.value || '';
   let valid = true;
@@ -2416,27 +2560,53 @@ async function submitForgot() {
   if (!valid) return false;
 
   setLoading('li-btn', true);
-  await waitMs(500);
+
+  // Login REAL contra Supabase — funciona desde cualquier dispositivo
+  const res = await authSignIn(email, pw);
   setLoading('li-btn', false);
 
-  const matchedUser = getUserByEmail(email);
-  if (!matchedUser || matchedUser.password !== pw) {
-    showBanner('li', 'Account not found or password is incorrect. Create an account first in this demo.');
+  if (res.error) {
+    showBanner('li', res.error);
     return false;
   }
 
-  if (!matchedUser.onboardingCompleted) {
+  const user = res.user;
+  setSession(user);
+
+  if (!user.onboardingCompleted) {
     closeLogin();
-    openOnboarding(matchedUser);
+    openOnboarding(user);
     return false;
   }
 
-  setSession(matchedUser);
   const loginForm = document.getElementById('loginForm');
   const loginSuccess = document.getElementById('loginSuccess');
   if (loginForm) loginForm.classList.add('hide');
   if (loginSuccess) loginSuccess.classList.add('show');
   setTimeout(() => { closeLogin(); goToTerminal(true); }, 600);
+  return false;
+}
+
+/* ── FORGOT PASSWORD ─────────────────────────────────── */
+async function submitForgot() {
+  const email = document.getElementById('fo-email')?.value.trim() || '';
+  let valid = true;
+
+  clearErr('fo-email-err');
+
+  if (!isEmail(email)) { showErr('fo-email-err', 'Please enter a valid email address.'); valid = false; }
+  if (!valid) return false;
+
+  setLoading('fo-btn', true);
+  await authResetPassword(email);
+  setLoading('fo-btn', false);
+
+  // Por seguridad no revelamos si el correo existe o no — siempre mostramos
+  // el mismo mensaje de exito, igual que hacen los productos reales.
+  const forgotForm = document.getElementById('forgotForm');
+  const forgotSuccess = document.getElementById('forgotSuccess');
+  if (forgotForm) forgotForm.classList.add('hide');
+  if (forgotSuccess) forgotSuccess.classList.add('show');
   return false;
 }
 
@@ -2658,56 +2828,41 @@ async function submitSignup() {
 
   setLoading('su-btn', true);
 
-  const SUPABASE_URL = 'https://osrjmchajyrgdlucniid.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_uL4sQ_T3HiCD6ZZ20D5thw_sc_gTK5F';
+  // Crear la cuenta REAL en Supabase Auth
+  const res = await authSignUp(email, pw, name);
 
-  // Save email to waitlist
+  if (res.error) {
+    setLoading('su-btn', false);
+    showBanner('su', res.error);
+    return;
+  }
+
+  const createdUser = res.user;
+  setSession(createdUser);
+
+  // Guardar el correo en waitlist (no bloquea el flujo si falla)
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/waitlist?on_conflict=email`, {
+    await fetch(`${SB_AUTH_URL}/rest/v1/waitlist?on_conflict=email`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'apikey': SB_AUTH_KEY,
+        'Authorization': `Bearer ${SB_AUTH_KEY}`,
         'Prefer': 'resolution=merge-duplicates,return=minimal'
       },
       body: JSON.stringify({ email, plan: 'free', source: 'signup_modal' })
     });
-  } catch(e) { console.warn('Waitlist save failed', e); }
+  } catch (e) { console.warn('Waitlist save failed', e); }
 
   setLoading('su-btn', false);
-
-  if (getUserByEmail(email)) {
-    showBanner('su', 'An account with this email already exists. Log in instead.');
-    return;
-  }
-
-  const createdUser = upsertUser({
-    name,
-    email,
-    password: pw,
-    provider: 'password',
-    onboardingCompleted: false,
-    profile: {},
-    createdAt: new Date().toISOString()
-  });
 
   // Recordar que plan eligio. Preferimos lo guardado, que sobrevive recargas.
   let desiredPlan = 'free';
   try { desiredPlan = localStorage.getItem('veluPendingPlan') || window.__veluDesiredPlan || 'free'; }
   catch (e) { desiredPlan = window.__veluDesiredPlan || 'free'; }
 
-  createdUser.plan = 'free';
-  createdUser.planInterest = desiredPlan;
-  upsertUser(createdUser);
-
   // Si eligio un plan de pago, va a Stripe AHORA — antes del onboarding.
-  // Pagar primero respeta su intencion; el onboarding lo hace al volver.
   if (desiredPlan === 'pro' || desiredPlan === 'terminal') {
-    // Crear la sesion ANTES de salir a Stripe: al volver, la pagina se recarga
-    // y necesitamos saber quien es para reanudar donde se quedo.
-    setSession(createdUser);
-
     try {
       localStorage.setItem('veluPendingPlan', desiredPlan);
       localStorage.setItem('veluNeedsOnboarding', '1');
@@ -2728,6 +2883,7 @@ async function submitSignup() {
   closeSignup();
   openOnboarding(createdUser);
 }
+
 
 /* Mobile menu */
 function openMob() { document.getElementById('mobMenu').classList.add('open'); document.body.style.overflow='hidden'; }
@@ -2916,6 +3072,7 @@ async function loadMarketTape() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  authRestoreSession().then(function() { updateAuthCtas(); });
   updateAuthCtas();
   handleCheckoutReturn();
   loadMarketTape();
@@ -5967,6 +6124,8 @@ window.addEventListener('message', function(ev) {
     resetSession() {
       window.__veluUnifiedSession = null;
       try { localStorage.removeItem('veluAuth'); } catch (_) {}
+      // Cerrar tambien la sesion real de Supabase
+      try { if (typeof authSignOut === 'function') authSignOut(); } catch (_) {}
     },
 
     setSession(user) {
