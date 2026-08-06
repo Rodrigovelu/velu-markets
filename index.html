@@ -80,6 +80,13 @@ button { cursor: pointer; border: none; background: none; font-family: var(--san
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 28px; height: 62px;
 }
+
+.lang-switch { display: flex; align-items: center; gap: 2px; background: var(--sm); border-radius: 8px; padding: 3px; }
+.lang-opt { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: .03em;
+  padding: 5px 9px; border-radius: 6px; background: transparent; border: none; color: var(--dim); cursor: pointer; transition: all .15s; }
+.lang-opt:hover { color: var(--ink); }
+.lang-opt.active { background: var(--w); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+@media (max-width: 900px) { .lang-switch { display: none; } }
 .nav-logo { font-family: var(--serif); font-size: 21px; font-weight: 700; color: var(--ink); letter-spacing: -.03em; display: inline-flex; align-items: center; gap: 9px; }
 .nav-mark { width: 26px; height: 26px; flex-shrink: 0; }
 .nav-links { display: flex; align-items: center; gap: 6px; }
@@ -1045,8 +1052,8 @@ body{
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
     <div class="modal-header">
       <div class="modal-title-block">
-        <div class="modal-eyebrow">WELCOME BACK</div>
-        <div class="modal-title" id="loginTitle">Log in</div>
+        <div class="modal-eyebrow" data-i18n="li_eyebrow">WELCOME BACK</div>
+        <div class="modal-title" id="loginTitle" data-i18n="li_title">Log in</div>
       </div>
       <button class="modal-close" onclick="closeLogin()" aria-label="Close">✕</button>
     </div>
@@ -1055,8 +1062,8 @@ body{
       <!-- Success -->
       <div class="modal-success" id="loginSuccess">
         <div class="success-ico">✅</div>
-        <div class="success-h">You're in</div>
-        <div class="success-p">Redirecting you to the terminal…</div>
+        <div class="success-h" data-i18n="su_success_h">You're in</div>
+        <div class="success-p" data-i18n="li_redirect">Redirecting you to the terminal…</div>
       </div>
 
       <!-- Form -->
@@ -1064,33 +1071,33 @@ body{
         <!-- Google SSO -->
         <button class="btn-social" onclick="socialAuth('google')">
           <svg class="social-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Continue with Google
+          <span data-i18n="su_google">Continue with Google</span>
         </button>
 
         <div class="form-divider">
           <div class="form-divider-line"></div>
-          <span class="form-divider-txt">or</span>
+          <span class="form-divider-txt" data-i18n="su_or">or</span>
           <div class="form-divider-line"></div>
         </div>
 
         <!-- Email -->
         <div class="field">
-          <label class="field-label" for="li-email">EMAIL</label>
-          <input class="field-input" id="li-email" type="email" placeholder="you@example.com" autocomplete="email">
-          <div class="field-error" id="li-email-err">Please enter a valid email address.</div>
+          <label class="field-label" for="li-email" data-i18n="li_email">EMAIL</label>
+          <input class="field-input" id="li-email" type="email" placeholder="you@example.com" data-i18n-ph="su_email_ph" autocomplete="email">
+          <div class="field-error" id="li-email-err" data-i18n="su_email_err">Please enter a valid email address.</div>
         </div>
 
         <!-- Password -->
         <div class="field">
           <label class="field-label" for="li-pw">
-            PASSWORD
-            <span class="forgot-link" onclick="openForgot()">Forgot password?</span>
+            <span data-i18n="li_pw">PASSWORD</span>
+            <span class="forgot-link" onclick="openForgot()" data-i18n="li_forgot">Forgot password?</span>
           </label>
           <div class="field-pw-wrap">
-            <input class="field-input" id="li-pw" type="password" placeholder="Your password" autocomplete="current-password">
+            <input class="field-input" id="li-pw" type="password" placeholder="Your password" data-i18n-ph="li_pw_ph" autocomplete="current-password">
             <span class="pw-toggle" id="li-pw-toggle" onclick="togglePw('li-pw','li-pw-toggle')">SHOW</span>
           </div>
-          <div class="field-error" id="li-pw-err">Password must be at least 8 characters.</div>
+          <div class="field-error" id="li-pw-err" data-i18n="su_pw_err">Password must be at least 8 characters.</div>
         </div>
 
         <!-- Error banner -->
@@ -1098,11 +1105,11 @@ body{
 
         <button class="btn-submit" id="li-btn" onclick="submitLogin()">
           <div class="spin"></div>
-          <span class="btn-label">Log in</span>
+          <span class="btn-label" data-i18n="li_btn">Log in</span>
         </button>
 
         <div class="modal-switch">
-          Don't have an account? <a onclick="switchToSignup()">Sign up</a>
+          <span data-i18n="li_switch_txt">Don't have an account?</span> <a onclick="switchToSignup()" data-i18n="li_switch_link">Sign up</a>
         </div>
       </div>
     </div>
@@ -1114,9 +1121,9 @@ body{
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="signupTitle">
     <div class="modal-header">
       <div class="modal-title-block">
-        <div class="modal-eyebrow">GET STARTED</div>
-        <div class="modal-title" id="signupTitle">Create your account</div>
-        <div class="modal-sub">Free forever. No card required.</div>
+        <div class="modal-eyebrow" data-i18n="su_eyebrow">GET STARTED</div>
+        <div class="modal-title" id="signupTitle" data-i18n="su_title">Create your account</div>
+        <div class="modal-sub" data-i18n="su_sub">Free forever. No card required.</div>
       </div>
       <button class="modal-close" onclick="closeSignup()" aria-label="Close">✕</button>
     </div>
@@ -1125,9 +1132,9 @@ body{
       <!-- Success -->
       <div class="modal-success" id="signupSuccess">
         <div class="success-ico">⬡</div>
-        <div class="success-h">You're in</div>
+        <div class="success-h" data-i18n="su_success_h">You're in</div>
         <div class="success-p">
-          Setting up your terminal…<br><br>
+          <span data-i18n="su_success_p">Setting up your terminal…</span><br><br>
           <strong id="signupSuccessEmail"></strong>
         </div>
       </div>
@@ -1136,37 +1143,37 @@ body{
       <div class="modal-form" id="signupForm">
         <button class="btn-social" onclick="socialAuth('google')">
           <svg class="social-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Continue with Google
+          <span data-i18n="su_google">Continue with Google</span>
         </button>
 
         <div class="form-divider">
           <div class="form-divider-line"></div>
-          <span class="form-divider-txt">or</span>
+          <span class="form-divider-txt" data-i18n="su_or">or</span>
           <div class="form-divider-line"></div>
         </div>
 
         <!-- Full name -->
         <div class="field">
-          <label class="field-label" for="su-name">FULL NAME</label>
-          <input class="field-input" id="su-name" type="text" placeholder="First and last name" autocomplete="name">
-          <div class="field-error" id="su-name-err">Please enter your name.</div>
+          <label class="field-label" for="su-name" data-i18n="su_name">FULL NAME</label>
+          <input class="field-input" id="su-name" type="text" placeholder="First and last name" data-i18n-ph="su_name_ph" autocomplete="name">
+          <div class="field-error" id="su-name-err" data-i18n="su_name_err">Please enter your name.</div>
         </div>
 
         <!-- Email -->
         <div class="field">
-          <label class="field-label" for="su-email">EMAIL</label>
-          <input class="field-input" id="su-email" type="email" placeholder="you@example.com" autocomplete="email">
-          <div class="field-error" id="su-email-err">Please enter a valid email address.</div>
+          <label class="field-label" for="su-email" data-i18n="su_email">EMAIL</label>
+          <input class="field-input" id="su-email" type="email" placeholder="you@example.com" data-i18n-ph="su_email_ph" autocomplete="email">
+          <div class="field-error" id="su-email-err" data-i18n="su_email_err">Please enter a valid email address.</div>
         </div>
 
         <!-- Password -->
         <div class="field">
           <label class="field-label" for="su-pw">
-            PASSWORD
-            <span class="field-hint">Min. 8 characters</span>
+            <span data-i18n="su_pw">PASSWORD</span>
+            <span class="field-hint" data-i18n="su_pw_hint">Min. 8 characters</span>
           </label>
           <div class="field-pw-wrap">
-            <input class="field-input" id="su-pw" type="password" placeholder="Create a strong password" autocomplete="new-password" oninput="checkPwStrength(this.value)">
+            <input class="field-input" id="su-pw" type="password" placeholder="Create a strong password" data-i18n-ph="su_pw_ph" autocomplete="new-password" oninput="checkPwStrength(this.value)">
             <span class="pw-toggle" id="su-pw-toggle" onclick="togglePw('su-pw','su-pw-toggle')">SHOW</span>
           </div>
           <div class="pw-strength" id="pwStrength" style="display:none;">
@@ -1178,7 +1185,7 @@ body{
             </div>
             <span class="pw-strength-txt" id="pwTxt"></span>
           </div>
-          <div class="field-error" id="su-pw-err">Password must be at least 8 characters.</div>
+          <div class="field-error" id="su-pw-err" data-i18n="su_pw_err">Password must be at least 8 characters.</div>
         </div>
 
         <!-- Error banner -->
@@ -1186,13 +1193,13 @@ body{
 
         <button class="btn-submit" id="su-btn" onclick="submitSignup()">
           <div class="spin"></div>
-          <span class="btn-label">Create account</span>
+          <span class="btn-label" data-i18n="su_btn">Create account</span>
         </button>
 
-        <div class="modal-terms">After account creation, we’ll tailor the terminal to your profile in under a minute.</div>
+        <div class="modal-terms" data-i18n="su_terms">After account creation, we’ll tailor the terminal to your profile in under a minute.</div>
 
         <div class="modal-switch">
-          Already have an account? <a onclick="switchToLogin()">Log in</a>
+          <span data-i18n="su_switch_txt">Already have an account?</span> <a onclick="switchToLogin()" data-i18n="su_switch_link">Log in</a>
         </div>
       </div>
     </div>
@@ -1204,30 +1211,30 @@ body{
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="forgotTitle">
     <div class="modal-header">
       <div class="modal-title-block">
-        <div class="modal-eyebrow">ACCOUNT RECOVERY</div>
-        <div class="modal-title" id="forgotTitle">Reset password</div>
+        <div class="modal-eyebrow" data-i18n="fo_eyebrow">ACCOUNT RECOVERY</div>
+        <div class="modal-title" id="forgotTitle" data-i18n="fo_title">Reset password</div>
       </div>
       <button class="modal-close" onclick="closeForgot()" aria-label="Close">✕</button>
     </div>
     <div class="modal-body">
       <div class="modal-success" id="forgotSuccess">
         <div class="success-ico">📩</div>
-        <div class="success-h">Email sent</div>
-        <div class="success-p">Check your inbox for a password reset link. It expires in 15 minutes.</div>
+        <div class="success-h" data-i18n="fo_success_h">Email sent</div>
+        <div class="success-p" data-i18n="fo_success_p">Check your inbox for a password reset link. It expires in 15 minutes.</div>
       </div>
       <div class="modal-form" id="forgotForm">
-        <p style="font-size:14px;color:var(--mu);margin-bottom:22px;line-height:1.6;font-weight:300;">Enter your email and we'll send a link to reset your password.</p>
+        <p style="font-size:14px;color:var(--mu);margin-bottom:22px;line-height:1.6;font-weight:300;" data-i18n="fo_sub">Enter your email and we'll send a link to reset your password.</p>
         <div class="field">
-          <label class="field-label" for="fo-email">EMAIL</label>
-          <input class="field-input" id="fo-email" type="email" placeholder="you@example.com" autocomplete="email">
-          <div class="field-error" id="fo-email-err">Please enter a valid email address.</div>
+          <label class="field-label" for="fo-email" data-i18n="li_email">EMAIL</label>
+          <input class="field-input" id="fo-email" type="email" placeholder="you@example.com" data-i18n-ph="su_email_ph" autocomplete="email">
+          <div class="field-error" id="fo-email-err" data-i18n="su_email_err">Please enter a valid email address.</div>
         </div>
         <button class="btn-submit" id="fo-btn" onclick="submitForgot()">
           <div class="spin"></div>
-          <span class="btn-label">Send reset link</span>
+          <span class="btn-label" data-i18n="fo_btn">Send reset link</span>
         </button>
         <div class="modal-switch" style="margin-top:16px;">
-          <a onclick="backToLogin()">← Back to log in</a>
+          <a onclick="backToLogin()" data-i18n="fo_back">← Back to log in</a>
         </div>
       </div>
     </div>
@@ -1239,27 +1246,27 @@ body{
 <div class="ob-backdrop" id="onboardingModal" aria-hidden="true">
   <div class="ob-modal" role="dialog" aria-modal="true" aria-labelledby="obTitle">
     <div class="ob-head">
-      <div class="ob-kicker"><span class="ob-kicker-dot"></span> Personalize your terminal</div>
-      <h2 class="ob-title" id="obTitle">Help us tailor Velu to you</h2>
-      <p class="ob-sub">This takes less than a minute and helps us shape your first terminal experience around who you are, how you think, and what you care about most.</p>
+      <div class="ob-kicker"><span class="ob-kicker-dot"></span> <span data-i18n="ob_kicker">Personalize your terminal</span></div>
+      <h2 class="ob-title" id="obTitle" data-i18n="ob_title">Help us tailor Velu to you</h2>
+      <p class="ob-sub" data-i18n="ob_sub">This takes less than a minute and helps us shape your first terminal experience around who you are, how you think, and what you care about most.</p>
       <div class="ob-steps">
-        <span class="ob-step-pill active" data-ob-step-pill="1">Country</span>
-        <span class="ob-step-pill" data-ob-step-pill="2">Identity</span>
-        <span class="ob-step-pill" data-ob-step-pill="3">Experience</span>
-        <span class="ob-step-pill" data-ob-step-pill="4">Focus</span>
-        <span class="ob-step-pill" data-ob-step-pill="5">Capital</span>
-        <span class="ob-step-pill" data-ob-step-pill="6">Profile</span>
+        <span class="ob-step-pill active" data-ob-step-pill="1" data-i18n="ob_pill_country">Country</span>
+        <span class="ob-step-pill" data-ob-step-pill="2" data-i18n="ob_pill_identity">Identity</span>
+        <span class="ob-step-pill" data-ob-step-pill="3" data-i18n="ob_pill_experience">Experience</span>
+        <span class="ob-step-pill" data-ob-step-pill="4" data-i18n="ob_pill_focus">Focus</span>
+        <span class="ob-step-pill" data-ob-step-pill="5" data-i18n="ob_pill_capital">Capital</span>
+        <span class="ob-step-pill" data-ob-step-pill="6" data-i18n="ob_pill_profile">Profile</span>
       </div>
     </div>
 
     <div class="ob-body">
       <div class="ob-screen active" data-ob-step="1">
-        <div class="ob-label">Where are you based?</div>
+        <div class="ob-label" data-i18n="ob_country">Where are you based?</div>
         <div class="ob-country-wrap">
           <div class="ob-country-search-wrap">
             <span class="ob-country-flag" id="obSelectedFlag">🌐</span>
             <input type="text" id="obCountryInput" class="ob-country-input"
-              placeholder="Type to search your country..." autocomplete="off"
+              placeholder="Type to search your country..." data-i18n-ph="ob_country_ph" autocomplete="off"
               oninput="filterCountries(this.value)" onfocus="showCountryDropdown()">
           </div>
           <div class="ob-country-dropdown" id="obCountryDropdown"></div>
@@ -1267,7 +1274,7 @@ body{
       </div>
 
       <div class="ob-screen" data-ob-step="2">
-        <div class="ob-label">What best describes you?</div>
+        <div class="ob-label" data-i18n="ob_role">What best describes you?</div>
         <div class="ob-grid" id="obRoleGrid">
           <button class="ob-card" type="button" data-ob-group="role" data-value="Investor">
             <div class="ob-card-title">Investor</div>
@@ -1297,7 +1304,7 @@ body{
       </div>
 
       <div class="ob-screen" data-ob-step="3">
-        <div class="ob-label">How would you describe your experience level?</div>
+        <div class="ob-label" data-i18n="ob_level">How would you describe your experience level?</div>
         <div class="ob-grid">
           <button class="ob-card" type="button" data-ob-group="level" data-value="Beginner">
             <div class="ob-card-title">Beginner</div>
@@ -1319,7 +1326,7 @@ body{
       </div>
 
       <div class="ob-screen" data-ob-step="4">
-        <div class="ob-label">What matters most to you right now?</div>
+        <div class="ob-label" data-i18n="ob_interest">What matters most to you right now?</div>
         <div class="ob-grid">
           <button class="ob-card" type="button" data-ob-group="interest" data-value="Macro">
             <div class="ob-card-title">Macro</div>
@@ -1345,7 +1352,7 @@ body{
       </div>
 
       <div class="ob-screen" data-ob-step="5">
-        <div class="ob-label">How much capital do you actively manage?</div>
+        <div class="ob-label" data-i18n="ob_capital">How much capital do you actively manage?</div>
         <div class="ob-grid">
           <button class="ob-card" type="button" data-ob-group="capital" data-value="< $10k">
             <div class="ob-card-title">< $10k</div>
@@ -1449,13 +1456,18 @@ body{
       Velu Markets
     </span>
     <div class="nav-links">
-      <a class="nl" href="#how">How it works</a>
-      <a class="nl" href="#features">Features</a>
-      <a class="nl" href="#markets">Engines</a>
-      <a class="nl" href="#pricing">Pricing</a>
+      <a class="nl" href="#how" data-i18n="nav_how">How it works</a>
+      <a class="nl" href="#features" data-i18n="nav_features">Features</a>
+      <a class="nl" href="#markets" data-i18n="nav_engines">Engines</a>
+      <a class="nl" href="#pricing" data-i18n="nav_pricing">Pricing</a>
+      <div class="lang-switch">
+        <button class="lang-opt" data-lang="en" onclick="setLang('en')">EN</button>
+        <button class="lang-opt" data-lang="es" onclick="setLang('es')">ES</button>
+        <button class="lang-opt" data-lang="pt" onclick="setLang('pt')">PT</button>
+      </div>
       <div class="nd"></div>
-      <button class="btn-li" onclick="openLogin()">Log in</button>
-      <button class="btn-su" onclick="openSignup()">Sign up</button>
+      <button class="btn-li" onclick="openLogin()" data-i18n="nav_login">Log in</button>
+      <button class="btn-su" onclick="openSignup()" data-i18n="nav_signup">Sign up</button>
     </div>
     <button class="ham" onclick="openMob()" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -1468,25 +1480,25 @@ body{
   <div class="hero-left">
     <div class="eyebrow">
       <div class="ey-dot"></div>
-      <span class="ey-txt">LIVE · EQUITY INTELLIGENCE · REAL-TIME DATA</span>
+      <span class="ey-txt" data-i18n="hero_kicker">LIVE · EQUITY INTELLIGENCE · REAL-TIME DATA</span>
     </div>
     <h1 class="hero-h1">
-      Where the market<br>is <em>wrong</em>
+      <span data-i18n="hero_h1_1">Where the market is </span><em data-i18n="hero_h1_em">wrong</em>
     </h1>
-    <p class="hero-p">
+    <p class="hero-p" data-i18n="hero_p">
       Velu runs two engines. One finds quality companies the market has punished too hard.
       The other finds emerging names whose fundamentals are inflecting before the crowd notices.
       Three AI agents debate each one and give you a verdict — then Velu keeps score on every call.
     </p>
     <div class="hero-cta">
-      <button class="cta-su" onclick="selectPlan('free')">Start free</button>
-      <button class="cta-li" onclick="openLogin()">Log in</button>
+      <button class="cta-su" onclick="selectPlan('free')" data-i18n="hero_cta_free">Start free</button>
+      <button class="cta-li" onclick="openLogin()" data-i18n="hero_cta_login">Log in</button>
     </div>
     <div class="hero-stats">
-      <div><div class="stat-n">2</div><div class="stat-l">Discovery engines</div></div>
-      <div><div class="stat-n">3</div><div class="stat-l">AI agents per call</div></div>
-      <div><div class="stat-n">Buy/Hold/Sell</div><div class="stat-l">Clear verdict</div></div>
-      <div><div class="stat-n">Tracked</div><div class="stat-l">Every call scored</div></div>
+      <div><div class="stat-n">2</div><div class="stat-l" data-i18n="stat_engines">Discovery engines</div></div>
+      <div><div class="stat-n">3</div><div class="stat-l" data-i18n="stat_agents">AI agents per call</div></div>
+      <div><div class="stat-n">Buy/Hold/Sell</div><div class="stat-l" data-i18n="stat_verdict">Clear verdict</div></div>
+      <div><div class="stat-n">Tracked</div><div class="stat-l" data-i18n="stat_tracked">Every call scored</div></div>
     </div>
   </div>
 
@@ -1533,28 +1545,28 @@ body{
 <!-- How it works -->
 <section class="section bg-off" id="how">
   <div class="sec-inner">
-    <p class="sec-tag" style="text-align:center">HOW IT WORKS</p>
-    <h2 class="sec-h" style="text-align:center">From scan to verdict in seconds</h2>
+    <p class="sec-tag" style="text-align:center" data-i18n="how_kicker">HOW IT WORKS</p>
+    <h2 class="sec-h" style="text-align:center" data-i18n="how_title">From scan to verdict in seconds</h2>
     <div class="steps steps-4">
       <div class="step">
         <div class="step-n">01</div>
-        <h3 class="step-h">Two engines scan</h3>
-        <p class="step-p">One ranks quality companies that have sold off hardest. The other finds emerging names inside structural themes whose growth is accelerating before the price moves.</p>
+        <h3 class="step-h" data-i18n="how1_t">Two engines scan</h3>
+        <p class="step-p" data-i18n="how1_p">One ranks quality companies that have sold off hardest. The other finds emerging names inside structural themes whose growth is accelerating before the price moves.</p>
       </div>
       <div class="step">
         <div class="step-n">02</div>
-        <h3 class="step-h">Three agents debate</h3>
-        <p class="step-p">A macro strategist, a quant and a tail-risk analyst each study the company from their own angle — and one of them argues actively against the thesis.</p>
+        <h3 class="step-h" data-i18n="how2_t">Three agents debate</h3>
+        <p class="step-p" data-i18n="how2_p">A macro strategist, a quant and a tail-risk analyst each study the company from their own angle — and one of them argues actively against the thesis.</p>
       </div>
       <div class="step">
         <div class="step-n">03</div>
-        <h3 class="step-h">You get a verdict</h3>
-        <p class="step-p">Buy, Hold or Sell, with a price target, the reason behind the move, five years of fundamentals, and how Velu compares to Wall Street.</p>
+        <h3 class="step-h" data-i18n="how3_t">You get a verdict</h3>
+        <p class="step-p" data-i18n="how3_p">Buy, Hold or Sell, with a price target, the reason behind the move, five years of fundamentals, and how Velu compares to Wall Street.</p>
       </div>
       <div class="step">
         <div class="step-n">04</div>
-        <h3 class="step-h">Keep score, your way</h3>
-        <p class="step-p">Velu tracks every call it makes against real prices. You keep a separate list of just the ones you care about — add or drop them whenever you want.</p>
+        <h3 class="step-h" data-i18n="how4_t">Keep score, your way</h3>
+        <p class="step-p" data-i18n="how4_p">Velu tracks every call it makes against real prices. You keep a separate list of just the ones you care about — add or drop them whenever you want.</p>
       </div>
     </div>
   </div>
@@ -1565,24 +1577,24 @@ body{
   <div class="sec-inner">
     <div class="tb-wrap">
       <div class="tb-left">
-        <p class="sec-tag">ACCOUNTABLE BY DESIGN</p>
-        <h2 class="sec-h">Most analysts never<br>keep score. Velu does.</h2>
-        <p class="sec-p" style="margin-top:16px;max-width:480px">Every Buy and Sell call Velu makes is logged with its entry price and target, then tracked over time. No cherry-picking winners. No quietly forgetting losers. You see the real hit rate — and decide for yourself how much to trust the next verdict.</p>
+        <p class="sec-tag" data-i18n="track_kicker">ACCOUNTABLE BY DESIGN</p>
+        <h2 class="sec-h"><span data-i18n="track_title1">Most analysts never</span><br><span data-i18n="track_title2">keep score. Velu does.</span></h2>
+        <p class="sec-p" style="margin-top:16px;max-width:480px" data-i18n="track_p">Every Buy and Sell call Velu makes is logged with its entry price and target, then tracked over time. No cherry-picking winners. No quietly forgetting losers. You see the real hit rate — and decide for yourself how much to trust the next verdict.</p>
         <div class="tb-points">
-          <div class="tb-point"><span class="tb-check">✓</span> Every Velu call logged automatically</div>
-          <div class="tb-point"><span class="tb-check">✓</span> Scored against real market prices</div>
-          <div class="tb-point"><span class="tb-check">✓</span> Plus your own list — you pick what to track</div>
+          <div class="tb-point"><span class="tb-check">✓</span> <span data-i18n="track_pt1">Every Velu call logged automatically</span></div>
+          <div class="tb-point"><span class="tb-check">✓</span> <span data-i18n="track_pt2">Scored against real market prices</span></div>
+          <div class="tb-point"><span class="tb-check">✓</span> <span data-i18n="track_pt3">Plus your own list — you pick what to track</span></div>
         </div>
       </div>
       <div class="tb-right">
         <div class="tb-card">
           <div class="tb-card-head">
-            <span class="tb-card-title">VELU TRACK RECORD</span>
+            <span class="tb-card-title" data-i18n="track_card_title">VELU TRACK RECORD</span>
             <span class="tb-live">● LIVE</span>
           </div>
           <div class="tb-big-stat">
             <div class="tb-acc-num" id="tbAccNum">Real</div>
-            <div class="tb-acc-lbl" id="tbAccLbl">accuracy, tracked from day one</div>
+            <div class="tb-acc-lbl" id="tbAccLbl" data-i18n="track_card_lbl">accuracy, tracked from day one</div>
           </div>
           <div class="tb-mini-calls" id="tbMiniCalls">
             <div class="tb-mini-call"><span class="tb-mc-tk">MRVL</span><span class="tb-mc-v tb-buy">BUY</span><span class="tb-mc-r tb-hit">✓ HIT</span></div>
@@ -1598,42 +1610,42 @@ body{
 <!-- Features bento -->
 <section class="section" id="features">
   <div class="sec-inner">
-    <p class="sec-tag" style="text-align:center">INSIDE AN ANALYSIS</p>
-    <h2 class="sec-h" style="text-align:center">Six angles on every stock</h2>
-    <p class="sec-p" style="text-align:center;margin:12px auto 48px;max-width:620px">
+    <p class="sec-tag" style="text-align:center" data-i18n="feat_kicker">INSIDE AN ANALYSIS</p>
+    <h2 class="sec-h" style="text-align:center" data-i18n="feat_title">Six angles on every stock</h2>
+    <p class="sec-p" style="text-align:center;margin:12px auto 48px;max-width:620px" data-i18n="feat_p">
       Other tools hand you charts and leave the thinking to you. Velu does the work, reaches a
       conclusion, and shows you exactly how it got there.
     </p>
     <div class="feats">
       <div class="feat-card">
         <div class="feat-ico">◈</div>
-        <h3 class="feat-h">Three agents, one verdict</h3>
-        <p class="feat-p">A macro strategist, a quant, and a tail-risk analyst each take a position. You get Buy, Hold or Sell with a conviction level and a 12-month target — plus the argument against it.</p>
+        <h3 class="feat-h" data-i18n="feat1_t">Three agents, one verdict</h3>
+        <p class="feat-p" data-i18n="feat1_p">A macro strategist, a quant, and a tail-risk analyst each take a position. You get Buy, Hold or Sell with a conviction level and a 12-month target — plus the argument against it.</p>
       </div>
       <div class="feat-card">
         <div class="feat-ico">◪</div>
-        <h3 class="feat-h">Five years of trajectory</h3>
-        <p class="feat-p">Revenue, earnings and margins year by year, with the growth rate and whether margins are expanding or compressing. Velu compares that trajectory directly against the price move.</p>
+        <h3 class="feat-h" data-i18n="feat2_t">Five years of trajectory</h3>
+        <p class="feat-p" data-i18n="feat2_p">Revenue, earnings and margins year by year, with the growth rate and whether margins are expanding or compressing. Velu compares that trajectory directly against the price move.</p>
       </div>
       <div class="feat-card">
         <div class="feat-ico">⚠</div>
-        <h3 class="feat-h">Why it actually fell</h3>
-        <p class="feat-p">Velu reads the latest news on every company and explains the real catalyst behind the selloff — with the sources linked, so you can judge whether the fear is justified.</p>
+        <h3 class="feat-h" data-i18n="feat3_t">Why it actually fell</h3>
+        <p class="feat-p" data-i18n="feat3_p">Velu reads the latest news on every company and explains the real catalyst behind the selloff — with the sources linked, so you can judge whether the fear is justified.</p>
       </div>
       <div class="feat-card">
         <div class="feat-ico">⚖</div>
-        <h3 class="feat-h">Sector context</h3>
-        <p class="feat-p">Did the whole industry fall, or just this name? Velu compares each stock against a dozen sector peers, so you know if you're looking at rotation or a company-specific problem.</p>
+        <h3 class="feat-h" data-i18n="feat4_t">Sector context</h3>
+        <p class="feat-p" data-i18n="feat4_p">Did the whole industry fall, or just this name? Velu compares each stock against a dozen sector peers, so you know if you're looking at rotation or a company-specific problem.</p>
       </div>
       <div class="feat-card">
         <div class="feat-ico">◎</div>
-        <h3 class="feat-h">Velu vs Wall Street</h3>
-        <p class="feat-p">See exactly where Velu's price target diverges from the analyst consensus, and by how much. Then send the call to anyone on WhatsApp or X in one tap.</p>
+        <h3 class="feat-h" data-i18n="feat5_t">Velu vs Wall Street</h3>
+        <p class="feat-p" data-i18n="feat5_p">See exactly where Velu's price target diverges from the analyst consensus, and by how much. Then send the call to anyone on WhatsApp or X in one tap.</p>
       </div>
       <div class="feat-card">
         <div class="feat-ico">◉</div>
-        <h3 class="feat-h">Two records, both honest</h3>
-        <p class="feat-p">Velu scores every call it makes against real prices — no cherry-picking. And you keep your own list: track only the calls you actually care about, add or remove them any time.</p>
+        <h3 class="feat-h" data-i18n="feat6_t">Two records, both honest</h3>
+        <p class="feat-p" data-i18n="feat6_p">Velu scores every call it makes against real prices — no cherry-picking. And you keep your own list: track only the calls you actually care about, add or remove them any time.</p>
       </div>
     </div>
   </div>
@@ -1642,9 +1654,9 @@ body{
 <!-- Markets preview -->
 <section class="section bg-off" id="markets">
   <div class="sec-inner">
-    <p class="sec-tag" style="text-align:center">TWO DISCOVERY ENGINES</p>
-    <h2 class="sec-h" style="text-align:center">Mispricing works both ways</h2>
-    <p class="sec-p" style="text-align:center;margin:12px auto 48px;max-width:620px">
+    <p class="sec-tag" style="text-align:center" data-i18n="eng_kicker">TWO DISCOVERY ENGINES</p>
+    <h2 class="sec-h" style="text-align:center" data-i18n="eng_title">Mispricing works both ways</h2>
+    <p class="sec-p" style="text-align:center;margin:12px auto 48px;max-width:620px" data-i18n="eng_p">
       A stock can be mispriced because the price fell below the business — or because the business
       is improving faster than the price. Velu hunts both.
     </p>
@@ -1653,9 +1665,9 @@ body{
 
       <div class="engine">
         <div class="eng-icon">⚡</div>
-        <h3 class="eng-title">Punished</h3>
-        <p class="eng-sub">Good companies the market oversold</p>
-        <p class="eng-desc">
+        <h3 class="eng-title" data-i18n="eng1_t">Punished</h3>
+        <p class="eng-sub" data-i18n="eng1_sub">Good companies the market oversold</p>
+        <p class="eng-desc" data-i18n="eng1_p">
           Scans 176 major US stocks and ranks the ones trading furthest below their own highs and
           moving averages — then checks whether the fundamentals justify the fall. When they don't,
           that gap is the opportunity.
@@ -1686,9 +1698,9 @@ body{
         <div class="eng-accent"></div>
         <span class="eng-badge">NEW</span>
         <div class="eng-icon">📡</div>
-        <h3 class="eng-title">Radar</h3>
-        <p class="eng-sub">Emerging names before the crowd</p>
-        <p class="eng-desc">
+        <h3 class="eng-title" data-i18n="eng2_t">Radar</h3>
+        <p class="eng-sub" data-i18n="eng2_sub">Emerging names before the crowd</p>
+        <p class="eng-desc" data-i18n="eng2_p">
           Tracks 250 companies across 15 structural themes — AI infrastructure, power, nuclear, defense,
           space, critical materials — and surfaces the ones whose growth is accelerating while the price
           still sits near its moving average. The score deliberately penalizes names that already ran.
@@ -1717,13 +1729,13 @@ body{
 
     </div>
 
-    <div class="eng-note">
+    <div class="eng-note" data-i18n="eng_note" data-i18n-html>
       A stock that has already multiplied scores <strong>low</strong> on the Radar, not high.
       Finding it afterwards isn't insight — it's history.
     </div>
 
     <div style="text-align:center;margin-top:32px">
-      <button class="cta-su" onclick="selectPlan('free')">Explore both engines free</button>
+      <button class="cta-su" onclick="selectPlan('free')" data-i18n="eng_cta">Explore both engines free</button>
     </div>
   </div>
 </section>
@@ -1731,57 +1743,57 @@ body{
 <!-- Pricing -->
 <section class="section" id="pricing">
   <div class="sec-inner">
-    <p class="sec-tag" style="text-align:center">PRICING</p>
-    <h2 class="sec-h" style="text-align:center">Start free. Upgrade when it pays for itself.</h2>
-    <p class="sec-p" style="text-align:center;margin:12px auto 48px">One good call covers a year of Velu.</p>
+    <p class="sec-tag" style="text-align:center" data-i18n="price_kicker">PRICING</p>
+    <h2 class="sec-h" style="text-align:center" data-i18n="price_title">Start free. Upgrade when it pays for itself.</h2>
+    <p class="sec-p" style="text-align:center;margin:12px auto 48px" data-i18n="price_p">One good call covers a year of Velu.</p>
     <div class="plans">
 
       <div class="plan">
-        <p class="plan-name">Free</p>
+        <p class="plan-name" data-i18n="plan_free">Free</p>
         <div class="plan-price"><span class="price-n">$0</span></div>
-        <p class="plan-desc">Explore the edge</p>
+        <p class="plan-desc" data-i18n="plan_free_desc">Explore the edge</p>
         <div class="plan-feats">
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Top 3 from each engine</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">3 full analyses per month</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Buy / Hold / Sell verdict</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">5 ticker searches per day</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">15-min delayed data</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt" data-i18n="pf_free1">Top 3 from each engine</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt" data-i18n="pf_free2">3 full analyses per month</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt" data-i18n="pf_free3">Buy / Hold / Sell verdict</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt" data-i18n="pf_free4">5 ticker searches per day</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt" data-i18n="pf_free5">15-min delayed data</span></div>
         </div>
-        <button class="plan-btn pbt-s" onclick="selectPlan('free')">Start free</button>
+        <button class="plan-btn pbt-s" onclick="selectPlan('free')" data-i18n="btn_free">Start free</button>
       </div>
 
       <div class="plan feat">
         <div class="plan-accent"></div>
-        <span class="plan-badge pb-f">Most popular</span>
-        <p class="plan-name">Pro</p>
+        <span class="plan-badge pb-f" data-i18n="plan_pro_badge">Most popular</span>
+        <p class="plan-name" data-i18n="plan_pro">Pro</p>
         <div class="plan-price"><span class="price-n green">$29</span><span class="price-period">/month</span></div>
-        <p class="plan-desc">For active investors</p>
+        <p class="plan-desc" data-i18n="plan_pro_desc">For active investors</p>
         <div class="plan-feats">
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Full Punished screener + Radar</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Unlimited AI analyses</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Unlimited ticker search</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Bull / base / bear scenarios</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Unlimited tracked calls &amp; watchlist</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">New-opportunity alerts</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Real-time market data</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt" data-i18n="pf_pro1">Full Punished screener + Radar</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt" data-i18n="pf_pro2">Unlimited AI analyses</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt" data-i18n="pf_pro3">Unlimited ticker search</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt" data-i18n="pf_pro4">Bull / base / bear scenarios</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt" data-i18n="pf_pro5">Unlimited tracked calls &amp; watchlist</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt" data-i18n="pf_pro6">New-opportunity alerts</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt" data-i18n="pf_pro7">Real-time market data</span></div>
         </div>
-        <button class="plan-btn pbt-f" onclick="selectPlan('pro')">Start 7-day free trial</button>
-        <p style="text-align:center;font-size:11px;color:var(--dim);margin-top:10px">Card required · Cancel anytime before day 7</p>
+        <button class="plan-btn pbt-f" onclick="selectPlan('pro')" data-i18n="btn_pro">Start 7-day free trial</button>
+        <p style="text-align:center;font-size:11px;color:var(--dim);margin-top:10px" data-i18n="btn_pro_note">Card required · Cancel anytime before day 7</p>
       </div>
 
       <div class="plan">
-        <p class="plan-name">Terminal</p>
+        <p class="plan-name" data-i18n="plan_terminal">Terminal</p>
         <div class="plan-price"><span class="price-n">$99</span><span class="price-period">/month</span></div>
-        <p class="plan-desc">For professionals</p>
+        <p class="plan-desc" data-i18n="plan_terminal_desc">For professionals</p>
         <div class="plan-feats">
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Everything in Pro</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Export any analysis to PDF</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Screener history — see what stays cheap</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">API key reserved for launch</span></div>
-          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt">Direct line to the team</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt" data-i18n="pf_term1">Everything in Pro</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt" data-i18n="pf_term2">Export any analysis to PDF</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt" data-i18n="pf_term3">Screener history — see what stays cheap</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt" data-i18n="pf_term4">API key reserved for launch</span></div>
+          <div class="pf"><span class="pf-check">✓</span><span class="pf-txt" data-i18n="pf_term5">Direct line to the team</span></div>
         </div>
-        <button class="plan-btn pbt-s" onclick="selectPlan('terminal')">Get Terminal</button>
-        <p style="text-align:center;font-size:11px;color:var(--dim);margin-top:10px">$990/year — save 2 months</p>
+        <button class="plan-btn pbt-s" onclick="selectPlan('terminal')" data-i18n="btn_terminal">Get Terminal</button>
+        <p style="text-align:center;font-size:11px;color:var(--dim);margin-top:10px" data-i18n="btn_terminal_note">$990/year — save 2 months</p>
       </div>
 
     </div>
@@ -1812,13 +1824,13 @@ body{
         </svg>
         Velu Markets
       </div>
-      <div class="f-copy">Equity intelligence · 2026</div>
+      <div class="f-copy" data-i18n="footer_tag">Equity intelligence · 2026</div>
     </div>
     <div class="f-links">
-      <a class="f-link" href="#">Terms</a>
-      <a class="f-link" href="#">Privacy</a>
-      <a class="f-link" href="#">API</a>
-      <a class="f-link" href="#">Contact</a>
+      <a class="f-link" href="#" data-i18n="footer_terms">Terms</a>
+      <a class="f-link" href="#" data-i18n="footer_privacy">Privacy</a>
+      <a class="f-link" href="#" data-i18n="footer_api">API</a>
+      <a class="f-link" href="#" data-i18n="footer_contact">Contact</a>
     </div>
     <div class="f-legal">
       Powered by Claude · Financial Modeling Prep · Real-time market data<br>
@@ -2669,6 +2681,303 @@ async function submitForgot() {
 
 
 /* ── PLAN SELECTION & GATING ─────────────────────────── */
+/* ═══════════════════════════════════════════════════════
+   I18N — LANDING (EN / ES / PT)
+═══════════════════════════════════════════════════════ */
+const I18N_LANDING = {
+en: {
+  nav_how:'How it works', nav_features:'Features', nav_engines:'Engines', nav_pricing:'Pricing',
+  nav_login:'Log in', nav_signup:'Sign up',
+
+  hero_kicker:'LIVE · EQUITY INTELLIGENCE · REAL-TIME DATA',
+  hero_h1_1:'Where the market is ', hero_h1_em:'wrong',
+  hero_p:'Velu runs two engines. One finds quality companies the market has punished too hard. The other finds emerging names whose fundamentals are inflecting before the crowd notices. Three AI agents debate each one and give you a verdict — then Velu keeps score on every call.',
+  hero_cta_free:'Start free', hero_cta_login:'Log in',
+  stat_engines:'Discovery engines', stat_agents:'AI agents per call', stat_verdict:'Clear verdict', stat_tracked:'Every call scored',
+
+  how_kicker:'HOW IT WORKS', how_title:'From scan to verdict in seconds',
+  how1_t:'Two engines scan', how1_p:'One ranks quality companies that have sold off hardest. The other finds emerging names inside structural themes whose growth is accelerating before the price moves.',
+  how2_t:'Three agents debate', how2_p:'A macro strategist, a quant and a tail-risk analyst each study the company from their own angle — and one of them argues actively against the thesis.',
+  how3_t:'You get a verdict', how3_p:'Buy, Hold or Sell, with a price target, the reason behind the move, five years of fundamentals, and how Velu compares to Wall Street.',
+  how4_t:'Keep score, your way', how4_p:'Velu tracks every call it makes against real prices. You keep a separate list of just the ones you care about — add or drop them whenever you want.',
+
+  track_kicker:'ACCOUNTABLE BY DESIGN', track_title1:'Most analysts never', track_title2:'keep score. Velu does.',
+  track_p:'Every Buy and Sell call Velu makes is logged with its entry price and target, then tracked over time. No cherry-picking winners. No quietly forgetting losers. You see the real hit rate — and decide for yourself how much to trust the next verdict.',
+  track_pt1:'Every Velu call logged automatically', track_pt2:'Scored against real market prices', track_pt3:'Plus your own list — you pick what to track',
+  track_card_title:'VELU TRACK RECORD', track_card_lbl:'accuracy, tracked from day one', track_acc_of:' accuracy across {n} resolved calls', track_tracking_1:'call being tracked right now', track_tracking_n:'calls being tracked right now',
+
+  feat_kicker:'INSIDE AN ANALYSIS', feat_title:'Six angles on every stock',
+  feat_p:'Other tools hand you charts and leave the thinking to you. Velu does the work, reaches a conclusion, and shows you exactly how it got there.',
+  feat1_t:'Three agents, one verdict', feat1_p:'A macro strategist, a quant, and a tail-risk analyst each take a position. You get Buy, Hold or Sell with a conviction level and a 12-month target — plus the argument against it.',
+  feat2_t:'Five years of trajectory', feat2_p:'Revenue, earnings and margins year by year, with the growth rate and whether margins are expanding or compressing. Velu compares that trajectory directly against the price move.',
+  feat3_t:'Why it actually fell', feat3_p:'Velu reads the latest news on every company and explains the real catalyst behind the selloff — with the sources linked, so you can judge whether the fear is justified.',
+  feat4_t:'Sector context', feat4_p:"Did the whole industry fall, or just this name? Velu compares each stock against a dozen sector peers, so you know if you're looking at rotation or a company-specific problem.",
+  feat5_t:'Velu vs Wall Street', feat5_p:"See exactly where Velu's price target diverges from the analyst consensus, and by how much. Then send the call to anyone on WhatsApp or X in one tap.",
+  feat6_t:'Two records, both honest', feat6_p:'Velu scores every call it makes against real prices — no cherry-picking. And you keep your own list: track only the calls you actually care about, add or remove them any time.',
+
+  eng_kicker:'TWO DISCOVERY ENGINES', eng_title:'Mispricing works both ways',
+  eng_p:"A stock can be mispriced because the price fell below the business — or because the business is improving faster than the price. Velu hunts both.",
+  eng1_t:'Punished', eng1_sub:'Good companies the market oversold',
+  eng1_p:"Scans 176 major US stocks and ranks the ones trading furthest below their own highs and moving averages — then checks whether the fundamentals justify the fall. When they don't, that gap is the opportunity.",
+  eng2_t:'Radar', eng2_sub:'Emerging names before the crowd',
+  eng2_p:'Tracks 250 companies across 15 structural themes — AI infrastructure, power, nuclear, defense, space, critical materials — and surfaces the ones whose growth is accelerating while the price still sits near its moving average. The score deliberately penalizes names that already ran.',
+  eng_note:"A stock that has already multiplied scores <strong>low</strong> on the Radar, not high. Finding it afterwards isn't insight — it's history.",
+  eng_cta:'Explore both engines free',
+
+  price_kicker:'PRICING', price_title:'Start free. Upgrade when it pays for itself.', price_p:'One good call covers a year of Velu.',
+  plan_free:'Free', plan_free_desc:'Explore the edge',
+  plan_pro:'Pro', plan_pro_desc:'For active investors', plan_pro_badge:'Most popular',
+  plan_terminal:'Terminal', plan_terminal_desc:'For professionals',
+  pf_free1:'Top 3 from each engine', pf_free2:'3 full analyses per month', pf_free3:'Buy / Hold / Sell verdict', pf_free4:'5 ticker searches per day', pf_free5:'15-min delayed data',
+  pf_pro1:'Full Punished screener + Radar', pf_pro2:'Unlimited AI analyses', pf_pro3:'Unlimited ticker search', pf_pro4:'Bull / base / bear scenarios', pf_pro5:'Unlimited tracked calls & watchlist', pf_pro6:'New-opportunity alerts', pf_pro7:'Real-time market data',
+  pf_term1:'Everything in Pro', pf_term2:'Export any analysis to PDF', pf_term3:'Screener history — see what stays cheap', pf_term4:'API key reserved for launch', pf_term5:'Direct line to the team',
+  btn_free:'Start free', btn_pro:'Start 7-day free trial', btn_pro_note:'Card required · Cancel anytime before day 7',
+  btn_terminal:'Get Terminal', btn_terminal_note:'$990/year — save 2 months',
+
+  footer_tag:'Equity intelligence · 2026', footer_terms:'Terms', footer_privacy:'Privacy', footer_api:'API', footer_contact:'Contact',
+
+  su_eyebrow:'GET STARTED', su_title:'Create your account', su_sub:'Free forever. No card required.',
+  su_pro_eyebrow:'VELU PRO · 7-DAY FREE TRIAL', su_pro_title:'Start your Pro trial',
+  su_pro_sub:'Free for 7 days, then $29/month. Card required — cancel anytime before the trial ends and you will not be charged.',
+  su_term_eyebrow:'VELU TERMINAL · $99/MONTH', su_term_title:'Get Terminal access',
+  su_term_sub:'PDF export, screener history, and API access. Billed $99/month starting today.',
+  su_name:'FULL NAME', su_name_ph:'First and last name', su_name_err:'Please enter your name.',
+  su_email:'EMAIL', su_email_ph:'you@example.com', su_email_err:'Please enter a valid email address.',
+  su_pw:'PASSWORD', su_pw_hint:'Min. 8 characters', su_pw_ph:'Create a strong password', su_pw_err:'Password must be at least 8 characters.',
+  su_btn:'Create account', su_btn_pay:'Continue to payment',
+  su_terms:'After account creation, we will tailor the terminal to your profile in under a minute.',
+  su_switch_txt:'Already have an account?', su_switch_link:'Log in', su_google:'Continue with Google', su_or:'or', su_success_h:"You're in", su_success_p:'Setting up your terminal…', su_next_pro:'Next step: add your card on Stripe. Your trial starts immediately.', su_next_term:'Next step: complete payment on Stripe, then set up your terminal.',
+
+  li_eyebrow:'WELCOME BACK', li_title:'Log in',
+  li_email:'EMAIL', li_pw:'PASSWORD', li_btn:'Log in',
+  li_forgot:'Forgot password?', li_switch_txt:"Don't have an account?", li_switch_link:'Sign up', li_redirect:'Redirecting you to the terminal…', li_pw_ph:'Your password',
+
+  fo_eyebrow:'RESET PASSWORD', fo_title:'Forgot your password?',
+  fo_sub:"Enter your email and we'll send you a link to reset it.",
+  fo_btn:'Send reset link', fo_back:'Back to login',
+  fo_success_h:'Email sent', fo_success_p:'Check your inbox for a password reset link. It expires in 15 minutes.', fo_back:'← Back to log in',
+
+  ob_kicker:'PERSONALIZE YOUR TERMINAL', ob_title:'Help us tailor Velu to you',
+  ob_sub:'This takes less than a minute and helps us shape your first terminal experience around who you are, how you think, and what you care about most.',
+  ob_country:'Where are you based?', ob_country_ph:'Type to search your country...',
+  ob_role:'What best describes you?', ob_level:'How would you describe your experience level?',
+  ob_interest:'What matters most to you right now?', ob_capital:'How much capital do you actively manage?', ob_pill_country:'Country', ob_pill_identity:'Identity', ob_pill_experience:'Experience', ob_pill_focus:'Focus', ob_pill_capital:'Capital', ob_pill_profile:'Profile',
+},
+es: {
+  nav_how:'Cómo funciona', nav_features:'Funciones', nav_engines:'Motores', nav_pricing:'Precios',
+  nav_login:'Iniciar sesión', nav_signup:'Registrarse',
+
+  hero_kicker:'EN VIVO · INTELIGENCIA DE ACCIONES · DATOS EN TIEMPO REAL',
+  hero_h1_1:'Donde el mercado ', hero_h1_em:'se equivoca',
+  hero_p:'Velu opera dos motores. Uno encuentra buenas empresas que el mercado castigó de más. El otro encuentra nombres emergentes cuyos fundamentales están mejorando antes de que la mayoría lo note. Tres agentes de IA debaten cada caso y te dan un veredicto — y Velu lleva el marcador de cada llamada.',
+  hero_cta_free:'Empieza gratis', hero_cta_login:'Iniciar sesión',
+  stat_engines:'Motores de descubrimiento', stat_agents:'Agentes de IA por análisis', stat_verdict:'Veredicto claro', stat_tracked:'Cada llamada calificada',
+
+  how_kicker:'CÓMO FUNCIONA', how_title:'De escaneo a veredicto en segundos',
+  how1_t:'Dos motores escanean', how1_p:'Uno clasifica empresas de calidad que cayeron más fuerte. El otro encuentra nombres emergentes dentro de temas estructurales cuyo crecimiento se acelera antes de que se mueva el precio.',
+  how2_t:'Tres agentes debaten', how2_p:'Un estratega macro, un analista cuantitativo y uno de riesgo extremo estudian la empresa desde su propio ángulo — y uno de ellos argumenta activamente en contra de la tesis.',
+  how3_t:'Recibes un veredicto', how3_p:'Comprar, Mantener o Vender, con un precio objetivo, la razón detrás del movimiento, cinco años de fundamentales, y cómo se compara Velu contra Wall Street.',
+  how4_t:'Lleva el marcador a tu manera', how4_p:'Velu rastrea cada llamada que hace contra precios reales. Tú llevas tu propia lista de las que te interesan — agrégalas o quítalas cuando quieras.',
+
+  track_kicker:'RESPONSABLE POR DISEÑO', track_title1:'La mayoría de analistas nunca', track_title2:'lleva el marcador. Velu sí.',
+  track_p:'Cada llamada de Compra y Venta que hace Velu queda registrada con su precio de entrada y objetivo, y se rastrea con el tiempo. Sin elegir solo los aciertos. Sin olvidar discretamente los errores. Ves el porcentaje de aciertos real — y decides cuánto confiar en el próximo veredicto.',
+  track_pt1:'Cada llamada de Velu se registra automáticamente', track_pt2:'Calificada contra precios reales del mercado', track_pt3:'Más tu propia lista — tú eliges qué seguir',
+  track_card_title:'TRACK RECORD DE VELU', track_card_lbl:'de aciertos, medido desde el primer día', track_acc_of:'de aciertos en {n} llamadas resueltas', track_tracking_1:'llamada en seguimiento ahora mismo', track_tracking_n:'llamadas en seguimiento ahora mismo',
+
+  feat_kicker:'DENTRO DE UN ANÁLISIS', feat_title:'Seis ángulos por cada acción',
+  feat_p:'Otras herramientas te dan gráficas y te dejan pensar solo. Velu hace el trabajo, llega a una conclusión, y te muestra exactamente cómo llegó ahí.',
+  feat1_t:'Tres agentes, un veredicto', feat1_p:'Un estratega macro, un cuantitativo y uno de riesgo extremo toman postura. Obtienes Comprar, Mantener o Vender con nivel de convicción y un objetivo a 12 meses — más el argumento en contra.',
+  feat2_t:'Cinco años de trayectoria', feat2_p:'Ingresos, utilidades y márgenes año por año, con la tasa de crecimiento y si los márgenes se expanden o se contraen. Velu compara esa trayectoria directamente contra el movimiento del precio.',
+  feat3_t:'Por qué realmente cayó', feat3_p:'Velu lee las noticias más recientes de cada empresa y explica el catalizador real detrás de la caída — con las fuentes enlazadas, para que juzgues si el temor está justificado.',
+  feat4_t:'Contexto de sector', feat4_p:'¿Cayó toda la industria, o solo esta acción? Velu compara cada acción contra una docena de pares del sector, para que sepas si es rotación o un problema específico de la empresa.',
+  feat5_t:'Velu contra Wall Street', feat5_p:'Ve exactamente dónde el precio objetivo de Velu difiere del consenso de analistas, y por cuánto. Luego comparte la llamada por WhatsApp o X en un toque.',
+  feat6_t:'Dos registros, ambos honestos', feat6_p:'Velu califica cada llamada que hace contra precios reales — sin elegir solo lo bueno. Y tú llevas tu propia lista: sigue solo las llamadas que realmente te importan, agrégalas o quítalas cuando quieras.',
+
+  eng_kicker:'DOS MOTORES DE DESCUBRIMIENTO', eng_title:'La mala valuación funciona en ambos sentidos',
+  eng_p:'Una acción puede estar mal valuada porque el precio cayó por debajo del negocio — o porque el negocio mejora más rápido que el precio. Velu busca ambos casos.',
+  eng1_t:'Castigadas', eng1_sub:'Buenas empresas que el mercado sobrevendió',
+  eng1_p:'Escanea 176 acciones importantes de EE.UU. y clasifica las que cotizan más lejos de sus máximos y medias móviles — luego verifica si los fundamentales justifican la caída. Cuando no lo hacen, esa brecha es la oportunidad.',
+  eng2_t:'Radar', eng2_sub:'Nombres emergentes antes que la mayoría',
+  eng2_p:'Rastrea 250 empresas en 15 temas estructurales — infraestructura de IA, energía, nuclear, defensa, espacio, materiales críticos — y muestra las que aceleran su crecimiento mientras el precio sigue cerca de su media móvil. El puntaje penaliza deliberadamente a las que ya subieron.',
+  eng_note:'Una acción que ya se multiplicó saca <strong>puntaje bajo</strong> en el Radar, no alto. Encontrarla después no es visión — es historia.',
+  eng_cta:'Explora ambos motores gratis',
+
+  price_kicker:'PRECIOS', price_title:'Empieza gratis. Mejora cuando se pague solo.', price_p:'Un buen acierto cubre un año de Velu.',
+  plan_free:'Free', plan_free_desc:'Explora el edge',
+  plan_pro:'Pro', plan_pro_desc:'Para inversionistas activos', plan_pro_badge:'Más popular',
+  plan_terminal:'Terminal', plan_terminal_desc:'Para profesionales',
+  pf_free1:'Top 3 de cada motor', pf_free2:'3 análisis completos al mes', pf_free3:'Veredicto Comprar/Mantener/Vender', pf_free4:'5 búsquedas de tickers al día', pf_free5:'Datos con 15 min de retraso',
+  pf_pro1:'Screener completo de Castigadas + Radar', pf_pro2:'Análisis de IA ilimitados', pf_pro3:'Búsqueda de tickers ilimitada', pf_pro4:'Escenarios alcista/base/bajista', pf_pro5:'Llamadas y watchlist ilimitadas', pf_pro6:'Alertas de nuevas oportunidades', pf_pro7:'Datos de mercado en tiempo real',
+  pf_term1:'Todo lo de Pro', pf_term2:'Exporta cualquier análisis a PDF', pf_term3:'Historial del screener — ve qué se mantiene barato', pf_term4:'Llave de API reservada para el lanzamiento', pf_term5:'Línea directa con el equipo',
+  btn_free:'Empieza gratis', btn_pro:'Prueba gratis de 7 días', btn_pro_note:'Requiere tarjeta · Cancela antes del día 7',
+  btn_terminal:'Obtener Terminal', btn_terminal_note:'$990/año — ahorra 2 meses',
+
+  footer_tag:'Inteligencia de acciones · 2026', footer_terms:'Términos', footer_privacy:'Privacidad', footer_api:'API', footer_contact:'Contacto',
+
+  su_eyebrow:'COMENZAR', su_title:'Crea tu cuenta', su_sub:'Gratis para siempre. Sin tarjeta.',
+  su_pro_eyebrow:'VELU PRO · PRUEBA GRATIS DE 7 DÍAS', su_pro_title:'Comienza tu prueba Pro',
+  su_pro_sub:'Gratis por 7 días, luego $29/mes. Requiere tarjeta — cancela antes de que termine la prueba y no se te cobrará.',
+  su_term_eyebrow:'VELU TERMINAL · $99/MES', su_term_title:'Obtén acceso a Terminal',
+  su_term_sub:'Exportación a PDF, historial del screener, y acceso a API. Se cobra $99/mes desde hoy.',
+  su_name:'NOMBRE COMPLETO', su_name_ph:'Nombre y apellido', su_name_err:'Por favor ingresa tu nombre.',
+  su_email:'CORREO', su_email_ph:'tu@ejemplo.com', su_email_err:'Por favor ingresa un correo válido.',
+  su_pw:'CONTRASEÑA', su_pw_hint:'Mín. 8 caracteres', su_pw_ph:'Crea una contraseña segura', su_pw_err:'La contraseña debe tener al menos 8 caracteres.',
+  su_btn:'Crear cuenta', su_btn_pay:'Continuar al pago',
+  su_terms:'Después de crear tu cuenta, personalizaremos el terminal a tu perfil en menos de un minuto.',
+  su_switch_txt:'¿Ya tienes cuenta?', su_switch_link:'Iniciar sesión', su_google:'Continuar con Google', su_or:'o', su_success_h:'Ya estás dentro', su_success_p:'Configurando tu terminal…', su_next_pro:'Siguiente paso: agrega tu tarjeta en Stripe. Tu prueba comienza de inmediato.', su_next_term:'Siguiente paso: completa el pago en Stripe y configura tu terminal.',
+
+  li_eyebrow:'BIENVENIDO DE VUELTA', li_title:'Iniciar sesión',
+  li_email:'CORREO', li_pw:'CONTRASEÑA', li_btn:'Iniciar sesión',
+  li_forgot:'¿Olvidaste tu contraseña?', li_switch_txt:'¿No tienes cuenta?', li_switch_link:'Regístrate', li_redirect:'Redirigiéndote al terminal…', li_pw_ph:'Tu contraseña',
+
+  fo_eyebrow:'RESTABLECER CONTRASEÑA', fo_title:'¿Olvidaste tu contraseña?',
+  fo_sub:'Ingresa tu correo y te enviaremos un enlace para restablecerla.',
+  fo_btn:'Enviar enlace', fo_back:'Volver a iniciar sesión',
+  fo_success_h:'Correo enviado', fo_success_p:'Revisa tu bandeja de entrada para el enlace de restablecimiento. Expira en 15 minutos.', fo_back:'← Volver a iniciar sesión',
+
+  ob_kicker:'PERSONALIZA TU TERMINAL', ob_title:'Ayúdanos a adaptar Velu a ti',
+  ob_sub:'Esto toma menos de un minuto y nos ayuda a moldear tu primera experiencia en el terminal según quién eres, cómo piensas, y qué te importa más.',
+  ob_country:'¿Dónde te encuentras?', ob_country_ph:'Escribe para buscar tu país...',
+  ob_role:'¿Qué te describe mejor?', ob_level:'¿Cómo describirías tu nivel de experiencia?',
+  ob_interest:'¿Qué te importa más en este momento?', ob_capital:'¿Cuánto capital manejas activamente?', ob_pill_country:'País', ob_pill_identity:'Identidad', ob_pill_experience:'Experiencia', ob_pill_focus:'Enfoque', ob_pill_capital:'Capital', ob_pill_profile:'Perfil',
+},
+pt: {
+  nav_how:'Como funciona', nav_features:'Recursos', nav_engines:'Motores', nav_pricing:'Preços',
+  nav_login:'Entrar', nav_signup:'Cadastrar',
+
+  hero_kicker:'AO VIVO · INTELIGÊNCIA DE AÇÕES · DADOS EM TEMPO REAL',
+  hero_h1_1:'Onde o mercado ', hero_h1_em:'está errado',
+  hero_p:'A Velu opera dois motores. Um encontra boas empresas que o mercado castigou demais. O outro encontra nomes emergentes cujos fundamentos estão melhorando antes que a maioria perceba. Três agentes de IA debatem cada caso e te dão um veredito — e a Velu mantém o placar de cada chamada.',
+  hero_cta_free:'Comece grátis', hero_cta_login:'Entrar',
+  stat_engines:'Motores de descoberta', stat_agents:'Agentes de IA por análise', stat_verdict:'Veredito claro', stat_tracked:'Cada chamada pontuada',
+
+  how_kicker:'COMO FUNCIONA', how_title:'Do scan ao veredito em segundos',
+  how1_t:'Dois motores escaneiam', how1_p:'Um classifica empresas de qualidade que caíram mais forte. O outro encontra nomes emergentes dentro de temas estruturais cujo crescimento acelera antes do preço se mover.',
+  how2_t:'Três agentes debatem', how2_p:'Um estrategista macro, um analista quantitativo e um de risco extremo estudam a empresa sob seu próprio ângulo — e um deles argumenta ativamente contra a tese.',
+  how3_t:'Você recebe um veredito', how3_p:'Comprar, Manter ou Vender, com um preço-alvo, o motivo por trás do movimento, cinco anos de fundamentos, e como a Velu se compara com Wall Street.',
+  how4_t:'Mantenha o placar do seu jeito', how4_p:'A Velu rastreia cada chamada que faz contra preços reais. Você mantém sua própria lista das que importam — adicione ou remova quando quiser.',
+
+  track_kicker:'RESPONSÁVEL POR DESIGN', track_title1:'A maioria dos analistas nunca', track_title2:'mantém o placar. A Velu mantém.',
+  track_p:'Cada chamada de Compra e Venda que a Velu faz é registrada com seu preço de entrada e alvo, depois rastreada ao longo do tempo. Sem escolher só os acertos. Sem esquecer silenciosamente os erros. Você vê a taxa de acerto real — e decide o quanto confiar no próximo veredito.',
+  track_pt1:'Cada chamada da Velu é registrada automaticamente', track_pt2:'Avaliada contra preços reais de mercado', track_pt3:'Mais sua própria lista — você escolhe o que seguir',
+  track_card_title:'HISTÓRICO DA VELU', track_card_lbl:'de precisão, medido desde o primeiro dia', track_acc_of:'de precisão em {n} chamadas resolvidas', track_tracking_1:'chamada sendo rastreada agora', track_tracking_n:'chamadas sendo rastreadas agora',
+
+  feat_kicker:'DENTRO DE UMA ANÁLISE', feat_title:'Seis ângulos em cada ação',
+  feat_p:'Outras ferramentas te dão gráficos e deixam você pensar sozinho. A Velu faz o trabalho, chega a uma conclusão, e mostra exatamente como chegou lá.',
+  feat1_t:'Três agentes, um veredito', feat1_p:'Um estrategista macro, um quantitativo e um de risco extremo assumem uma posição. Você recebe Comprar, Manter ou Vender com nível de convicção e um alvo de 12 meses — mais o argumento contrário.',
+  feat2_t:'Cinco anos de trajetória', feat2_p:'Receita, lucros e margens ano a ano, com a taxa de crescimento e se as margens estão se expandindo ou se contraindo. A Velu compara essa trajetória diretamente com o movimento do preço.',
+  feat3_t:'Por que realmente caiu', feat3_p:'A Velu lê as notícias mais recentes de cada empresa e explica o catalisador real por trás da queda — com as fontes vinculadas, para você julgar se o medo é justificado.',
+  feat4_t:'Contexto do setor', feat4_p:'Todo o setor caiu, ou só essa ação? A Velu compara cada ação com uma dúzia de pares do setor, para você saber se é rotação ou um problema específico da empresa.',
+  feat5_t:'Velu vs Wall Street', feat5_p:'Veja exatamente onde o preço-alvo da Velu diverge do consenso dos analistas, e por quanto. Depois envie a chamada para qualquer pessoa no WhatsApp ou X em um toque.',
+  feat6_t:'Dois históricos, ambos honestos', feat6_p:'A Velu avalia cada chamada que faz contra preços reais — sem escolher só o bom. E você mantém sua própria lista: acompanhe só as chamadas que realmente importam, adicione ou remova quando quiser.',
+
+  eng_kicker:'DOIS MOTORES DE DESCOBERTA', eng_title:'A precificação errada funciona nos dois sentidos',
+  eng_p:'Uma ação pode estar mal precificada porque o preço caiu abaixo do negócio — ou porque o negócio está melhorando mais rápido que o preço. A Velu busca os dois casos.',
+  eng1_t:'Castigadas', eng1_sub:'Boas empresas que o mercado vendeu demais',
+  eng1_p:'Escaneia 176 ações importantes dos EUA e classifica as que negociam mais longe de suas máximas e médias móveis — depois verifica se os fundamentos justificam a queda. Quando não justificam, essa lacuna é a oportunidade.',
+  eng2_t:'Radar', eng2_sub:'Nomes emergentes antes da maioria',
+  eng2_p:'Rastreia 250 empresas em 15 temas estruturais — infraestrutura de IA, energia, nuclear, defesa, espaço, materiais críticos — e destaca as que estão acelerando o crescimento enquanto o preço ainda está perto de sua média móvel. A pontuação penaliza deliberadamente nomes que já subiram.',
+  eng_note:'Uma ação que já multiplicou pontua <strong>baixo</strong> no Radar, não alto. Encontrá-la depois não é visão — é história.',
+  eng_cta:'Explore os dois motores grátis',
+
+  price_kicker:'PREÇOS', price_title:'Comece grátis. Faça upgrade quando se pagar sozinho.', price_p:'Um bom acerto cobre um ano de Velu.',
+  plan_free:'Free', plan_free_desc:'Explore o edge',
+  plan_pro:'Pro', plan_pro_desc:'Para investidores ativos', plan_pro_badge:'Mais popular',
+  plan_terminal:'Terminal', plan_terminal_desc:'Para profissionais',
+  pf_free1:'Top 3 de cada motor', pf_free2:'3 análises completas por mês', pf_free3:'Veredito Comprar/Manter/Vender', pf_free4:'5 buscas de tickers por dia', pf_free5:'Dados com 15 min de atraso',
+  pf_pro1:'Screener completo de Castigadas + Radar', pf_pro2:'Análises de IA ilimitadas', pf_pro3:'Busca de tickers ilimitada', pf_pro4:'Cenários bull/base/bear', pf_pro5:'Chamadas e watchlist ilimitadas', pf_pro6:'Alertas de novas oportunidades', pf_pro7:'Dados de mercado em tempo real',
+  pf_term1:'Tudo do Pro', pf_term2:'Exporte qualquer análise em PDF', pf_term3:'Histórico do screener — veja o que continua barato', pf_term4:'Chave de API reservada para o lançamento', pf_term5:'Linha direta com a equipe',
+  btn_free:'Comece grátis', btn_pro:'Teste grátis de 7 dias', btn_pro_note:'Cartão obrigatório · Cancele antes do dia 7',
+  btn_terminal:'Obter Terminal', btn_terminal_note:'$990/ano — economize 2 meses',
+
+  footer_tag:'Inteligência de ações · 2026', footer_terms:'Termos', footer_privacy:'Privacidade', footer_api:'API', footer_contact:'Contato',
+
+  su_eyebrow:'COMEÇAR', su_title:'Crie sua conta', su_sub:'Grátis para sempre. Sem cartão.',
+  su_pro_eyebrow:'VELU PRO · TESTE GRÁTIS DE 7 DIAS', su_pro_title:'Comece seu teste Pro',
+  su_pro_sub:'Grátis por 7 dias, depois $29/mês. Cartão obrigatório — cancele antes do fim do teste e você não será cobrado.',
+  su_term_eyebrow:'VELU TERMINAL · $99/MÊS', su_term_title:'Obtenha acesso ao Terminal',
+  su_term_sub:'Exportação em PDF, histórico do screener e acesso à API. Cobrado $99/mês a partir de hoje.',
+  su_name:'NOME COMPLETO', su_name_ph:'Nome e sobrenome', su_name_err:'Por favor insira seu nome.',
+  su_email:'E-MAIL', su_email_ph:'voce@exemplo.com', su_email_err:'Por favor insira um e-mail válido.',
+  su_pw:'SENHA', su_pw_hint:'Mín. 8 caracteres', su_pw_ph:'Crie uma senha forte', su_pw_err:'A senha deve ter pelo menos 8 caracteres.',
+  su_btn:'Criar conta', su_btn_pay:'Continuar para pagamento',
+  su_terms:'Após criar a conta, vamos personalizar o terminal para seu perfil em menos de um minuto.',
+  su_switch_txt:'Já tem uma conta?', su_switch_link:'Entrar', su_google:'Continuar com Google', su_or:'ou', su_success_h:'Você está dentro', su_success_p:'Configurando seu terminal…', su_next_pro:'Próximo passo: adicione seu cartão no Stripe. Seu teste começa imediatamente.', su_next_term:'Próximo passo: complete o pagamento no Stripe e configure seu terminal.',
+
+  li_eyebrow:'BEM-VINDO DE VOLTA', li_title:'Entrar',
+  li_email:'E-MAIL', li_pw:'SENHA', li_btn:'Entrar',
+  li_forgot:'Esqueceu a senha?', li_switch_txt:'Não tem uma conta?', li_switch_link:'Cadastre-se', li_redirect:'Redirecionando você para o terminal…', li_pw_ph:'Sua senha',
+
+  fo_eyebrow:'REDEFINIR SENHA', fo_title:'Esqueceu sua senha?',
+  fo_sub:'Digite seu e-mail e enviaremos um link para redefini-la.',
+  fo_btn:'Enviar link', fo_back:'Voltar para o login',
+  fo_success_h:'E-mail enviado', fo_success_p:'Verifique sua caixa de entrada para o link de redefinição. Expira em 15 minutos.', fo_back:'← Voltar para o login',
+
+  ob_kicker:'PERSONALIZE SEU TERMINAL', ob_title:'Ajude-nos a adaptar a Velu para você',
+  ob_sub:'Isso leva menos de um minuto e nos ajuda a moldar sua primeira experiência no terminal de acordo com quem você é, como pensa, e o que mais importa para você.',
+  ob_country:'Onde você está localizado?', ob_country_ph:'Digite para buscar seu país...',
+  ob_role:'O que melhor te descreve?', ob_level:'Como você descreveria seu nível de experiência?',
+  ob_interest:'O que mais importa para você agora?', ob_capital:'Quanto capital você gerencia ativamente?', ob_pill_country:'País', ob_pill_identity:'Identidade', ob_pill_experience:'Experiência', ob_pill_focus:'Foco', ob_pill_capital:'Capital', ob_pill_profile:'Perfil',
+}
+};
+
+
+/* ═══════════════════════════════════════════════════════
+   I18N — MOTOR (deteccion, cambio, aplicacion)
+═══════════════════════════════════════════════════════ */
+function detectLang() {
+  try {
+    var saved = localStorage.getItem('veluLang');
+    if (saved === 'en' || saved === 'es' || saved === 'pt') return saved;
+  } catch (e) {}
+  var nav = ((navigator.language || navigator.userLanguage || 'en') + '').toLowerCase();
+  if (nav.indexOf('es') === 0) return 'es';
+  if (nav.indexOf('pt') === 0) return 'pt';
+  return 'en';
+}
+
+window.__veluLang = detectLang();
+
+function t(key) {
+  var dict = I18N_LANDING[window.__veluLang] || I18N_LANDING.en;
+  var v = dict[key];
+  if (v == null) v = I18N_LANDING.en[key];
+  return v == null ? key : v;
+}
+
+function applyLandingTranslations() {
+  document.documentElement.setAttribute('lang', window.__veluLang);
+
+  document.querySelectorAll('[data-i18n]').forEach(function (el) {
+    var key = el.getAttribute('data-i18n');
+    var val = t(key);
+    if (el.hasAttribute('data-i18n-html')) el.innerHTML = val;
+    else el.textContent = val;
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(function (el) {
+    el.setAttribute('placeholder', t(el.getAttribute('data-i18n-ph')));
+  });
+
+  // Actualizar el interruptor visual
+  document.querySelectorAll('.lang-opt').forEach(function (b) {
+    b.classList.toggle('active', b.getAttribute('data-lang') === window.__veluLang);
+  });
+}
+
+function setLang(lang) {
+  if (lang !== 'en' && lang !== 'es' && lang !== 'pt') return;
+  window.__veluLang = lang;
+  try { localStorage.setItem('veluLang', lang); } catch (e) {}
+  applyLandingTranslations();
+
+  // Sincronizar el terminal (scope de JS aislado dentro del iframe)
+  var fr = document.getElementById('terminalFrame');
+  if (fr && fr.contentWindow) {
+    fr.contentWindow.postMessage({ type: 'velu-lang', lang: lang }, '*');
+  }
+}
+
+
 window.__veluDesiredPlan = 'free';
 
 function selectPlan(plan) {
@@ -2719,23 +3028,23 @@ function applySignupPlanContext() {
   var terms   = document.querySelector('#signupModal .modal-terms');
 
   if (plan === 'pro') {
-    if (eyebrow) eyebrow.textContent = 'VELU PRO · 7-DAY FREE TRIAL';
-    if (title)   title.textContent   = 'Start your Pro trial';
-    if (sub)     sub.textContent     = 'Free for 7 days, then $29/month. Card required — cancel anytime before the trial ends and you will not be charged.';
-    if (btnLbl)  btnLbl.textContent  = 'Continue to payment';
-    if (terms)   terms.textContent   = 'Next step: add your card on Stripe. Your trial starts immediately.';
+    if (eyebrow) eyebrow.textContent = t('su_pro_eyebrow');
+    if (title)   title.textContent   = t('su_pro_title');
+    if (sub)     sub.textContent     = t('su_pro_sub');
+    if (btnLbl)  btnLbl.textContent  = t('su_btn_pay');
+    if (terms)   terms.textContent   = t('su_next_pro');
   } else if (plan === 'terminal') {
-    if (eyebrow) eyebrow.textContent = 'VELU TERMINAL · $99/MONTH';
-    if (title)   title.textContent   = 'Get Terminal access';
-    if (sub)     sub.textContent     = 'PDF export, screener history, and API access. Billed $99/month starting today.';
-    if (btnLbl)  btnLbl.textContent  = 'Continue to payment';
-    if (terms)   terms.textContent   = 'Next step: complete payment on Stripe, then set up your terminal.';
+    if (eyebrow) eyebrow.textContent = t('su_term_eyebrow');
+    if (title)   title.textContent   = t('su_term_title');
+    if (sub)     sub.textContent     = t('su_term_sub');
+    if (btnLbl)  btnLbl.textContent  = t('su_btn_pay');
+    if (terms)   terms.textContent   = t('su_next_term');
   } else {
-    if (eyebrow) eyebrow.textContent = 'GET STARTED';
-    if (title)   title.textContent   = 'Create your account';
-    if (sub)     sub.textContent     = 'Free forever. No card required.';
-    if (btnLbl)  btnLbl.textContent  = 'Create account';
-    if (terms)   terms.textContent   = 'After account creation, we will tailor the terminal to your profile in under a minute.';
+    if (eyebrow) eyebrow.textContent = t('su_eyebrow');
+    if (title)   title.textContent   = t('su_title');
+    if (sub)     sub.textContent     = t('su_sub');
+    if (btnLbl)  btnLbl.textContent  = t('su_btn');
+    if (terms)   terms.textContent   = t('su_terms');
   }
 }
 
@@ -3019,10 +3328,10 @@ async function loadHomeTrackRecord() {
 
     if (s.resolved > 0 && s.accuracy != null) {
       if (numEl) numEl.textContent = s.accuracy + '%';
-      if (lblEl) lblEl.textContent = 'accuracy across ' + s.resolved + ' resolved calls';
+      if (lblEl) lblEl.textContent = t('track_acc_of').replace('{n}', s.resolved);
     } else if (s.open > 0) {
       if (numEl) numEl.textContent = s.open;
-      if (lblEl) lblEl.textContent = s.open === 1 ? 'call being tracked right now' : 'calls being tracked right now';
+      if (lblEl) lblEl.textContent = s.open === 1 ? t('track_tracking_1') : t('track_tracking_n');
     }
 
     // Mostrar calls reales si existen
@@ -3159,6 +3468,9 @@ async function loadMarketTape() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Aplicar traducciones antes que nada, para que no haya parpadeo de ingles
+  applyLandingTranslations();
+
   // OJO: el arranque de sesion NO va aqui.
   // goToTerminal depende de window.__veluApp, que se define en un bloque
   // <script> posterior. Se ejecuta al final del archivo, cuando ya existe.
@@ -3973,7 +4285,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <circle cx=&quot;32&quot; cy=&quot;44&quot; r=&quot;4.6&quot; fill=&quot;#00FF88&quot;/>
     </svg>
     VELU
-    <span class=&quot;logo-sub&quot;>EQUITY INTELLIGENCE</span>
+    <span class=&quot;logo-sub&quot; data-i18n=&quot;logo_sub&quot;>EQUITY INTELLIGENCE</span>
   </div>
   <div class=&quot;search-wrap&quot;>
     <span class=&quot;search-ico&quot;>⌕</span>
@@ -3981,7 +4293,7 @@ document.addEventListener('DOMContentLoaded', () => {
       type=&quot;text&quot;
       class=&quot;search-input&quot;
       id=&quot;tickerSearch&quot;
-      placeholder=&quot;Analyze any ticker — try AAPL, MRVL, NVDA&quot;
+      placeholder=&quot;Analyze any ticker — try AAPL, MRVL, NVDA&quot; data-i18n-ph=&quot;search_ph&quot;
       autocomplete=&quot;off&quot;
       spellcheck=&quot;false&quot;
       onkeydown=&quot;if(event.key==='Enter'){analyzeTicker(this.value); this.blur();}&quot;
@@ -3989,7 +4301,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <span class=&quot;search-hint&quot;>↵</span>
   </div>
   <div class=&quot;topbar-right&quot;>
-    <div class=&quot;status-live&quot;><span class=&quot;status-dot&quot;></span> Live</div>
+    <div class=&quot;status-live&quot;><span class=&quot;status-dot&quot;></span> <span data-i18n=&quot;live&quot;>Live</span></div>
     <span class=&quot;plan-badge&quot; id=&quot;planBadge&quot; title=&quot;Click to refresh your plan&quot; onclick=&quot;refreshPlan()&quot;>FREE</span>
     <button class=&quot;plan-switch&quot; id=&quot;planSwitch&quot; style=&quot;display:none&quot; onclick=&quot;openPlanSwitch()&quot;></button>
     <div class=&quot;clock&quot; id=&quot;clock&quot;>--:--:--</div>
@@ -4037,8 +4349,8 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class=&quot;disc-header&quot;>
       <div>
         <div class=&quot;section-kicker&quot;>DISCOVERY</div>
-        <h1 class=&quot;section-title&quot; id=&quot;discTitle&quot;>Stocks the market is punishing</h1>
-        <p class=&quot;section-desc&quot; id=&quot;discDesc&quot;>
+        <h1 class=&quot;section-title&quot; id=&quot;discTitle&quot; data-i18n=&quot;disc_p_title&quot;>Stocks the market is punishing</h1>
+        <p class=&quot;section-desc&quot; id=&quot;discDesc&quot; data-i18n=&quot;disc_p_desc&quot;>
           Velu scans 176 major US stocks and ranks the ones that have sold off hardest relative to
           their own highs and moving averages. Click any stock for a full 3-agent analysis.
         </p>
@@ -4046,20 +4358,20 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
 
     <div class=&quot;disc-tabs&quot;>
-      <button class=&quot;disc-tab active&quot; id=&quot;tabBtnPunished&quot;>⚡ Punished</button>
-      <button class=&quot;disc-tab&quot; id=&quot;tabBtnRadar&quot;>📡 Radar</button>
-      <button class=&quot;disc-tab&quot; id=&quot;tabBtnTerminal&quot; style=&quot;display:none&quot;>⌘ Terminal</button>
+      <button class=&quot;disc-tab active&quot; id=&quot;tabBtnPunished&quot;>⚡ <span data-i18n=&quot;tab_punished&quot;>Punished</span></button>
+      <button class=&quot;disc-tab&quot; id=&quot;tabBtnRadar&quot;>📡 <span data-i18n=&quot;tab_radar&quot;>Radar</span></button>
+      <button class=&quot;disc-tab&quot; id=&quot;tabBtnTerminal&quot; style=&quot;display:none&quot;>⌘ <span data-i18n=&quot;tab_terminal&quot;>Terminal</span></button>
     </div>
 
     <div id=&quot;tabPunished&quot;>
       <div class=&quot;screener&quot;>
         <div class=&quot;screener-head&quot;>
           <div class=&quot;screener-title&quot;>
-            ⚡ Punishment Screener
-            <span class=&quot;screener-badge&quot; id=&quot;screenerCount&quot;>SCANNING...</span>
+            ⚡ <span data-i18n=&quot;scr_title&quot;>Punishment Screener</span>
+            <span class=&quot;screener-badge&quot; id=&quot;screenerCount&quot; data-i18n=&quot;scr_scanning&quot;>SCANNING...</span>
             <span class=&quot;radar-fresh&quot; id=&quot;screenerFreshness&quot;></span>
           </div>
-          <button class=&quot;refresh-btn&quot; onclick=&quot;loadScreener(true)&quot;>↻ Refresh</button>
+          <button class=&quot;refresh-btn&quot; onclick=&quot;loadScreener(true)&quot;>↻ <span data-i18n=&quot;scr_refresh&quot;>Refresh</span></button>
         </div>
         <div id=&quot;screenerBody&quot;>
           <div class=&quot;loading&quot;>
@@ -4074,11 +4386,11 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class=&quot;screener&quot;>
         <div class=&quot;screener-head&quot;>
           <div class=&quot;screener-title&quot;>
-            📡 Radar
-            <span class=&quot;screener-badge&quot; id=&quot;radarCount&quot;>READY</span>
+            📡 <span data-i18n=&quot;radar_title&quot;>Radar</span>
+            <span class=&quot;screener-badge&quot; id=&quot;radarCount&quot; data-i18n=&quot;radar_ready&quot;>READY</span>
             <span class=&quot;radar-fresh&quot; id=&quot;radarFreshness&quot;></span>
           </div>
-          <button class=&quot;refresh-btn&quot; onclick=&quot;loadRadar(true, true)&quot;>↻ Refresh</button>
+          <button class=&quot;refresh-btn&quot; onclick=&quot;loadRadar(true, true)&quot;>↻ <span data-i18n=&quot;scr_refresh&quot;>Refresh</span></button>
         </div>
         <div id=&quot;radarBody&quot;>
           <div class=&quot;loading&quot;>
@@ -4093,18 +4405,18 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class=&quot;term-grid&quot;>
         <div class=&quot;term-card&quot;>
           <div class=&quot;term-head&quot;>
-            <span class=&quot;term-title&quot;>⎇ API Access</span>
-            <span class=&quot;term-tag&quot;>TERMINAL</span>
+            <span class=&quot;term-title&quot;>⎇ <span data-i18n=&quot;api_key_title&quot;>API Access</span></span>
+            <span class=&quot;term-tag&quot; data-i18n=&quot;api_terminal_tag&quot;>TERMINAL</span>
           </div>
           <div class=&quot;term-body&quot; id=&quot;apiKeyBody&quot;>
-            <div class=&quot;term-loading&quot;>Loading your key…</div>
+            <div class=&quot;term-loading&quot; data-i18n=&quot;key_loading&quot;>Loading your key…</div>
           </div>
         </div>
 
         <div class=&quot;term-card&quot;>
           <div class=&quot;term-head&quot;>
-            <span class=&quot;term-title&quot;>⧗ Screener History</span>
-            <span class=&quot;term-tag&quot; id=&quot;histTag&quot;>30 DAYS</span>
+            <span class=&quot;term-title&quot;>⧗ <span data-i18n=&quot;hist_title&quot;>Screener History</span></span>
+            <span class=&quot;term-tag&quot; id=&quot;histTag&quot; data-i18n=&quot;hist_30d&quot;>30 DAYS</span>
           </div>
           <div class=&quot;term-body&quot; id=&quot;histBody&quot;>
             <div class=&quot;term-loading&quot;>Loading history…</div>
@@ -4421,15 +4733,15 @@ function renderMyCalls() {
   var panel = document.getElementById('myCallsPanel');
   if (!panel) return;
 
-  var head = '<div class=&quot;mc-head&quot;><span class=&quot;mc-title&quot;>◎ My Calls</span>' +
+  var head = '<div class=&quot;mc-head&quot;><span class=&quot;mc-title&quot;>◎ ' + T('mc_title') + '</span>' +
              '<span class=&quot;mc-count&quot;>' + __myCalls.length + '</span></div>';
 
   if (__myCalls.length === 0) {
-    panel.innerHTML = head +
-      '<div class=&quot;mc-empty&quot;>Run an analysis and tap <strong>Track this call</strong> to follow it here. ' +
-      'Only the ones you pick — you stay in control.</div>';
+    panel.innerHTML = head + '<div class=&quot;mc-empty&quot;>' + T('mc_empty') + '</div>';
     return;
   }
+
+  var mcRemoveLbl = T('mc_remove');
 
   var rows = __myCalls.map(function(c) {
     var vCls = c.verdict === 'BUY' ? 'tv-buy' : c.verdict === 'SELL' ? 'tv-sell' : '';
@@ -4444,7 +4756,7 @@ function renderMyCalls() {
         (c.verdict ? '<span class=&quot;mc-verdict ' + vCls + '&quot;>' + c.verdict + '</span>' : '') +
         (upTxt ? '<div class=&quot;mc-move ' + upCls + '&quot;>' + upTxt + '</div>' : '') +
       '</div>' +
-      '<button class=&quot;mc-remove&quot; title=&quot;Remove&quot; onclick=&quot;removeFromMyCalls(\'' + c.ticker + '\', event)&quot;>×</button>' +
+      '<button class=&quot;mc-remove&quot; title=&quot;' + mcRemoveLbl + '&quot; onclick=&quot;removeFromMyCalls(\'' + c.ticker + '\', event)&quot;>×</button>' +
       '</div>';
   }).join('');
 
@@ -4549,8 +4861,8 @@ function renderWatchlistPanel() {
   var limitTxt = plan === 'free' ? (count + '/' + FREE_WATCHLIST_LIMIT) : count;
 
   if (count === 0) {
-    panel.innerHTML = '<div class=&quot;wl-head&quot;><span class=&quot;wl-title&quot;>★ My Watchlist</span><span class=&quot;wl-count&quot;>' + limitTxt + '</span></div>' +
-      '<div class=&quot;wl-empty&quot;>Tap the ★ on any stock to follow it. Your watchlist stays with you across devices.</div>';
+    panel.innerHTML = '<div class=&quot;wl-head&quot;><span class=&quot;wl-title&quot;>★ ' + T('wl_title') + '</span><span class=&quot;wl-count&quot;>' + limitTxt + '</span></div>' +
+      '<div class=&quot;wl-empty&quot;>' + T('wl_empty') + '</div>';
     return;
   }
 
@@ -4562,7 +4874,7 @@ function renderWatchlistPanel() {
       '</div>';
   }).join('');
 
-  panel.innerHTML = '<div class=&quot;wl-head&quot;><span class=&quot;wl-title&quot;>★ My Watchlist</span><span class=&quot;wl-count&quot;>' + limitTxt + '</span></div>' + rows;
+  panel.innerHTML = '<div class=&quot;wl-head&quot;><span class=&quot;wl-title&quot;>★ ' + T('wl_title') + '</span><span class=&quot;wl-count&quot;>' + limitTxt + '</span></div>' + rows;
 }
 
 function updateClock() {
@@ -4684,8 +4996,8 @@ async function loadScreener(hardRefresh) {
   const body = document.getElementById('screenerBody');
   const countBadge = document.getElementById('screenerCount');
   body.innerHTML = '<div class=&quot;loading&quot;><div class=&quot;spinner&quot;></div><div class=&quot;loading-txt&quot;>' +
-    (hardRefresh ? 'Rescanning 176 stocks right now...' : 'Loading the screener...') + '</div></div>';
-  countBadge.textContent = 'SCANNING...';
+    (hardRefresh ? T('scr_rescan_txt') : T('scr_loading_txt')) + '</div></div>';
+  countBadge.textContent = T('scr_scanning');
 
   try {
     const res = await fetch('/api/screener' + (hardRefresh ? '?refresh=1' : ''));
@@ -4693,7 +5005,7 @@ async function loadScreener(hardRefresh) {
     const data = await res.json();
 
     if (!data.stocks || data.stocks.length === 0) {
-      body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>◎</div>No punished stocks match the criteria right now. Markets may be broadly strong today.</div>';
+      body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>◎</div>' + T('err_no_matches') + '</div>';
       countBadge.textContent = '0 FOUND';
       return;
     }
@@ -4706,7 +5018,7 @@ async function loadScreener(hardRefresh) {
 
   } catch (err) {
     console.error('Screener error:', err);
-    body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>⚠</div>Could not load the screener. The market data service may be busy. Try again in a moment.</div>';
+    body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>⚠</div>' + T('err_screener_fail') + '</div>';
     countBadge.textContent = 'ERROR';
   }
 }
@@ -4950,37 +5262,36 @@ async function loadApiKey() {
   var box = document.getElementById('apiKeyBody');
   if (!box) return;
   var email = getUserEmail();
-  if (!email) { box.innerHTML = '<div class=&quot;term-empty&quot;>Sign in to view your key.</div>'; return; }
+  if (!email) { box.innerHTML = '<div class=&quot;term-empty&quot;>' + T('key_signin') + '</div>'; return; }
 
   try {
     var res = await fetch('/api/terminal-tools?tool=apikey&email=' + encodeURIComponent(email));
     var data = await res.json();
     if (!res.ok || !data.apiKey) {
-      box.innerHTML = '<div class=&quot;term-empty&quot;>' + (data.error || 'Could not load your key.') + '</div>';
+      box.innerHTML = '<div class=&quot;term-empty&quot;>' + (data.error || T('key_load_fail')) + '</div>';
       return;
     }
 
     box.innerHTML =
-      '<div class=&quot;key-label&quot;>Your secret key</div>' +
+      '<div class=&quot;key-label&quot;>' + T('key_secret') + '</div>' +
       '<div class=&quot;key-row&quot;>' +
         '<code class=&quot;key-val&quot; id=&quot;apiKeyVal&quot; data-full=&quot;' + data.apiKey + '&quot;>' +
           data.apiKey.slice(0, 14) + '••••••••••••••••' +
         '</code>' +
-        '<button class=&quot;key-btn&quot; onclick=&quot;toggleKey(this)&quot;>Reveal</button>' +
-        '<button class=&quot;key-btn&quot; onclick=&quot;copyApiKey(this)&quot;>Copy</button>' +
+        '<button class=&quot;key-btn&quot; onclick=&quot;toggleKey(this)&quot;>' + T('key_reveal') + '</button>' +
+        '<button class=&quot;key-btn&quot; onclick=&quot;copyApiKey(this)&quot;>' + T('key_copy') + '</button>' +
       '</div>' +
-      '<div class=&quot;key-meta&quot;>' + (data.requestCount || 0) + ' requests · created ' +
+      '<div class=&quot;key-meta&quot;>' + (data.requestCount || 0) + ' ' + T('key_requests') + ' · ' + T('key_created') + ' ' +
         new Date(data.createdAt).toLocaleDateString() + '</div>' +
       '<div class=&quot;key-docs&quot;>' +
-        '<div class=&quot;docs-t&quot;>Quick start</div>' +
+        '<div class=&quot;docs-t&quot;>' + T('key_quickstart') + '</div>' +
         '<pre class=&quot;docs-code&quot;>curl https://velumarkets.com/api/v1/analyze \\\n' +
         '  -H &quot;Authorization: Bearer YOUR_KEY&quot; \\\n' +
         '  -d \'{&quot;symbol&quot;:&quot;MRVL&quot;}\'</pre>' +
-        '<div class=&quot;docs-note&quot;>The public API is rolling out to Terminal users. ' +
-        'Your key is reserved and ready — we\'ll email you the moment endpoints go live.</div>' +
+        '<div class=&quot;docs-note&quot;>' + T('key_note') + '</div>' +
       '</div>';
   } catch (e) {
-    box.innerHTML = '<div class=&quot;term-empty&quot;>Could not load your key. Try again.</div>';
+    box.innerHTML = '<div class=&quot;term-empty&quot;>' + T('key_load_fail') + '</div>';
   }
 }
 
@@ -4988,12 +5299,12 @@ function toggleKey(btn) {
   var el = document.getElementById('apiKeyVal');
   if (!el) return;
   var full = el.getAttribute('data-full');
-  if (btn.textContent === 'Reveal') {
+  if (btn.textContent === T('key_reveal')) {
     el.textContent = full;
-    btn.textContent = 'Hide';
+    btn.textContent = T('key_hide');
   } else {
     el.textContent = full.slice(0, 14) + '••••••••••••••••';
-    btn.textContent = 'Reveal';
+    btn.textContent = T('key_reveal');
   }
 }
 
@@ -5002,7 +5313,7 @@ function copyApiKey(btn) {
   if (!el) return;
   var full = el.getAttribute('data-full');
   var done = function() {
-    var o = btn.textContent; btn.textContent = 'Copied';
+    var o = btn.textContent; btn.textContent = T('key_copied');
     setTimeout(function(){ btn.textContent = o; }, 1500);
   };
   if (navigator.clipboard) navigator.clipboard.writeText(full).then(done).catch(function(){});
@@ -5019,36 +5330,256 @@ async function loadScreenerHistory() {
     var res = await fetch('/api/terminal-tools?tool=history&email=' + encodeURIComponent(email) + '&days=30');
     var data = await res.json();
     if (!res.ok) {
-      box.innerHTML = '<div class=&quot;term-empty&quot;>' + (data.error || 'History unavailable.') + '</div>';
+      box.innerHTML = '<div class=&quot;term-empty&quot;>' + (data.error || T('hist_unavailable')) + '</div>';
       return;
     }
     if (!data.tickers || data.tickers.length === 0) {
-      box.innerHTML = '<div class=&quot;term-empty&quot;>History builds as the screener runs. ' +
-        'Check back in a few days to see which names keep showing up.</div>';
+      box.innerHTML = '<div class=&quot;term-empty&quot;>' + T('hist_empty') + '</div>';
       return;
     }
 
-    var rows = data.tickers.slice(0, 12).map(function(t) {
-      var chg = t.priceChange;
+    var rows = data.tickers.slice(0, 12).map(function(row) {
+      var chg = row.priceChange;
       var chgTxt = chg == null ? '—' : (chg > 0 ? '+' : '') + chg + '%';
       var chgCls = chg == null ? '' : (chg >= 0 ? 'up' : 'down');
-      return '<div class=&quot;hist-row&quot; onclick=&quot;analyzeTicker(\'' + t.ticker + '\', true)&quot;>' +
-        '<span class=&quot;hist-tk&quot;>' + t.ticker + '</span>' +
-        '<span class=&quot;hist-app&quot;>' + t.appearances + '×</span>' +
-        '<span class=&quot;hist-days&quot;>' + t.daysTracked + 'd</span>' +
+      return '<div class=&quot;hist-row&quot; onclick=&quot;analyzeTicker(\'' + row.ticker + '\', true)&quot;>' +
+        '<span class=&quot;hist-tk&quot;>' + row.ticker + '</span>' +
+        '<span class=&quot;hist-app&quot;>' + row.appearances + '×</span>' +
+        '<span class=&quot;hist-days&quot;>' + row.daysTracked + 'd</span>' +
         '<span class=&quot;hist-chg ' + chgCls + '&quot;>' + chgTxt + '</span>' +
         '</div>';
     }).join('');
 
     box.innerHTML =
-      '<div class=&quot;hist-sum&quot;>' + data.uniqueTickers + ' names across ' + data.snapshots +
-      ' snapshots. The ones appearing most often have stayed cheap the longest.</div>' +
-      '<div class=&quot;hist-head&quot;><span>Ticker</span><span>Seen</span><span>Span</span><span>Price</span></div>' +
+      '<div class=&quot;hist-sum&quot;>' + T('hist_summary')
+        .replace('{a}', data.uniqueTickers).replace('{b}', data.snapshots) + '</div>' +
+      '<div class=&quot;hist-head&quot;><span>' + T('hist_col_ticker') + '</span><span>' + T('hist_col_seen') +
+        '</span><span>' + T('hist_col_span') + '</span><span>' + T('hist_col_price') + '</span></div>' +
       rows;
   } catch (e) {
-    box.innerHTML = '<div class=&quot;term-empty&quot;>Could not load history.</div>';
+    box.innerHTML = '<div class=&quot;term-empty&quot;>' + T('hist_load_fail') + '</div>';
   }
 }
+
+/* ═══════════════════════════════════════════════════════
+   I18N — TERMINAL (EN / ES / PT)
+═══════════════════════════════════════════════════════ */
+const I18N_TERM = {
+en: {
+  logo_sub:'EQUITY INTELLIGENCE',
+  search_ph:'Analyze any ticker — try AAPL, MRVL, NVDA',
+  live:'Live',
+
+  tab_punished:'Punished', tab_radar:'Radar', tab_terminal:'Terminal',
+  disc_p_title:'Stocks the market is punishing',
+  disc_p_desc:'Velu scans 176 major US stocks and ranks the ones that have sold off hardest relative to their own highs and moving averages. Click any stock for a full 3-agent analysis.',
+  disc_r_title:'Before the crowd notices',
+  disc_r_desc:'Velu tracks 250 companies across 15 structural themes and surfaces the ones whose fundamentals are inflecting before the price has run. The score deliberately penalizes names that already moved.',
+  disc_t_title:'Terminal tools',
+  disc_t_desc:'API access and screener history — the layer for people who want the data itself, not just the read.',
+
+  scr_title:'Punishment Screener', scr_refresh:'Refresh',
+  scr_scanning:'SCANNING...', scr_loading_txt:'Loading the screener...', scr_rescan_txt:'Rescanning 176 stocks right now...',
+  radar_title:'Radar', radar_ready:'READY',
+  radar_loading:'Loading the radar...', radar_rescan:'Rescanning 250 companies right now...',
+  radar_sub_normal:'Velu recalculates this every 20 minutes, so results stay stable between visits.',
+  radar_sub_scan:'This one takes a few seconds — it reads fundamentals, not just prices.',
+
+  wl_title:'My Watchlist', wl_empty:'Tap the ★ on any stock to follow it. Your watchlist stays with you across devices.',
+  mc_title:'My Calls', mc_empty:'Run an analysis and tap <strong>Track this call</strong> to follow it here. Only the ones you pick — you stay in control.', mc_remove:'Remove',
+
+  welcome_title_ready:'Ready when you are',
+  welcome_sub_ready:'Pick a stock below, or jump straight into one Velu thinks is worth your time.',
+  welcome_open_analysis:'Open analysis',
+  welcome_title_dual:'Two ways to find an edge',
+  welcome_sub_dual:'Punished finds quality companies that sold off too hard. Radar finds emerging names before the move. Or search any ticker up top.',
+  welcome_see_radar:'See the Radar',
+
+  upgrade_title:'Upgrade to unlock more',
+  track_title:'Track Record',
+
+  pdf_export:'Export PDF', pdf_locked:'Export PDF',
+  share_lbl:'Share', track_this_call:'Track this call', tracking:'Tracking',
+
+  sec_theme:'Theme context', sec_sector:'Sector context', theme_avg:'Theme avg', sector_avg:'Sector avg',
+
+  api_key_title:'API Access', api_terminal_tag:'TERMINAL',
+  hist_title:'Screener History', hist_30d:'30 DAYS',
+
+  err_generic:'Something went wrong. Please try again.',
+  err_no_matches:'No punished stocks match the criteria right now. Markets may be broadly strong today.',
+  err_radar_strict:'No early-stage setups clear the bar right now. The radar is strict on purpose.',
+  err_rate_limited:'The market data feed hit its rate limit — this usually happens right after a full screener scan. Wait about a minute and try again.', err_screener_fail:'Could not load the screener. The market data service may be busy. Try again in a moment.', radar_diag_nodata:'Market data is not responding right now.', radar_diag_nofund:'Price data came through for {n} companies, but the fundamentals feed did not respond. That is a data issue on our side, not a market signal.', radar_diag_none:'Scanned {n} companies. None are showing an early inflection today — the radar is strict on purpose.', radar_abort:'The scan took longer than expected. Tap refresh to try again.', radar_fail:'Could not load the radar right now. Tap refresh to try again.', radar_no_theme:'No early-stage setups in this theme right now.', ap_today:'today', ap_conviction:'Conviction', ap_target:'12-month target', ap_price:'Price', ap_from_high:'From high', ap_mkt_cap:'Mkt cap', ap_net_margin:'Net margin', ap_52w_range:'52w range', ap_sec_scenarios:'What could happen', ap_sec_why:'Why it moved', ap_sec_business:'Is the business holding up?', ap_sec_wallstreet:'Where Velu differs', ap_sec_agents:'How the agents argued', ap_sec_watch:'What to watch next', key_signin:'Sign in to view your key.', key_load_fail:'Could not load your key. Try again.', key_secret:'Your secret key', key_reveal:'Reveal', key_hide:'Hide', key_copy:'Copy', key_copied:'Copied', key_requests:'requests', key_created:'created', key_quickstart:'Quick start', key_note:&quot;The public API is rolling out to Terminal users. Your key is reserved and ready — we'll email you the moment endpoints go live.&quot;, hist_unavailable:'History unavailable.', hist_empty:'History builds as the screener runs. Check back in a few days to see which names keep showing up.', hist_summary:'{a} names across {b} snapshots. The ones appearing most often have stayed cheap the longest.', hist_col_ticker:'Ticker', hist_col_seen:'Seen', hist_col_span:'Span', hist_col_price:'Price', hist_load_fail:'Could not load history.', key_loading:'Loading your key…', ap_running:'Running 3-agent analysis on {t}...', ap_no_data:'Market data did not come through for {t} on this attempt. This is usually momentary — try again.', sc_theme_word:'theme', sc_sector_word:'sector', sc_the_theme:'the {s} theme', sc_the_sector:'the {s} sector',
+sc_h_specific:'Stock-specific selloff', sc_d_specific:'{sym} is down far more than its peers in {grp}. Whatever is driving this is about the company, not the {word} — which means the thesis lives or dies on company fundamentals.',
+sc_h_theme_wide:'Theme-wide selloff', sc_h_sector_wide:'Sector-wide selloff', sc_d_wide:'All of {grp} is under pressure, with {hard} of {n} peers also down 15%+. This looks like rotation, not a company-specific problem.',
+sc_h_outperform:'Holding up better than peers', sc_d_outperform:'{sym} has fallen less than the average name in {grp}. Relative strength inside a weak group is often a quality signal.',
+sc_h_worse:'Down more than its peers', sc_d_worse:'{Grp} is under pressure too (down {avg}% on average), but {sym} has fallen harder. Part of this is group-wide, part is specific to the company — the agents weigh both below.',
+sc_hardest_hit:'Hardest hit peers',
+  retry:'Retry', try_again:'Try again',
+
+  plan_free:'FREE', plan_pro:'PRO', plan_terminal:'TERMINAL',
+},
+es: {
+  logo_sub:'INTELIGENCIA DE ACCIONES',
+  search_ph:'Analiza cualquier ticker — prueba AAPL, MRVL, NVDA',
+  live:'En vivo',
+
+  tab_punished:'Castigadas', tab_radar:'Radar', tab_terminal:'Terminal',
+  disc_p_title:'Acciones que el mercado está castigando',
+  disc_p_desc:'Velu escanea 176 acciones importantes de EE.UU. y clasifica las que cayeron más fuerte respecto a sus máximos y medias móviles. Haz clic en cualquiera para el análisis completo de 3 agentes.',
+  disc_r_title:'Antes de que la mayoría lo note',
+  disc_r_desc:'Velu rastrea 250 empresas en 15 temas estructurales y muestra las que aceleran sus fundamentales antes de que se mueva el precio. El puntaje penaliza deliberadamente a las que ya subieron.',
+  disc_t_title:'Herramientas del Terminal',
+  disc_t_desc:'Acceso a API e historial del screener — la capa para quienes quieren los datos en bruto, no solo la lectura.',
+
+  scr_title:'Screener de Castigadas', scr_refresh:'Actualizar',
+  scr_scanning:'ESCANEANDO...', scr_loading_txt:'Cargando el screener...', scr_rescan_txt:'Reescaneando 176 acciones ahora...',
+  radar_title:'Radar', radar_ready:'LISTO',
+  radar_loading:'Cargando el radar...', radar_rescan:'Reescaneando 250 empresas ahora...',
+  radar_sub_normal:'Velu recalcula esto cada 20 minutos, así los resultados se mantienen estables entre visitas.',
+  radar_sub_scan:'Esto toma unos segundos — lee fundamentales, no solo precios.',
+
+  wl_title:'Mi Watchlist', wl_empty:'Toca el ★ en cualquier acción para seguirla. Tu watchlist te acompaña en todos tus dispositivos.',
+  mc_title:'Mis Llamadas', mc_empty:'Corre un análisis y toca &quot;Seguir esta llamada&quot; para verla aquí. Solo las que tú elijas — tú tienes el control.',
+
+  welcome_title_ready:'Listo cuando tú lo estés',
+  welcome_sub_ready:'Elige una acción abajo, o entra directo a una que Velu cree que vale tu tiempo.',
+  welcome_open_analysis:'Abrir análisis',
+  welcome_title_dual:'Dos formas de encontrar una ventaja',
+  welcome_sub_dual:'Castigadas encuentra buenas empresas que cayeron de más. Radar encuentra nombres emergentes antes del movimiento. O busca cualquier ticker arriba.',
+  welcome_see_radar:'Ver el Radar',
+
+  upgrade_title:'Mejora tu plan para desbloquear más',
+  track_title:'Track Record',
+
+  pdf_export:'Exportar PDF', pdf_locked:'Exportar PDF',
+  share_lbl:'Compartir', track_this_call:'Seguir esta llamada', tracking:'Siguiendo',
+
+  sec_theme:'Contexto de tema', sec_sector:'Contexto de sector', theme_avg:'Prom. del tema', sector_avg:'Prom. del sector',
+
+  api_key_title:'Acceso API', api_terminal_tag:'TERMINAL',
+  hist_title:'Historial del Screener', hist_30d:'30 DÍAS',
+
+  err_generic:'Algo salió mal. Intenta de nuevo.',
+  err_no_matches:'Ninguna acción castigada cumple los criterios ahora mismo. El mercado puede estar fuerte hoy.',
+  err_radar_strict:'No hay señales tempranas que superen el umbral ahora mismo. El radar es estricto a propósito.',
+  err_rate_limited:'El feed de datos alcanzó su límite — suele pasar justo después de un escaneo completo. Espera un minuto e intenta de nuevo.', err_screener_fail:'No se pudo cargar el screener. El servicio de datos puede estar ocupado. Intenta de nuevo en un momento.', radar_diag_nodata:'Los datos de mercado no responden en este momento.', radar_diag_nofund:'Los precios llegaron bien para {n} empresas, pero el feed de fundamentales no respondió. Es un problema de datos de nuestro lado, no una señal del mercado.', radar_diag_none:'Se escanearon {n} empresas. Ninguna muestra una inflexión temprana hoy — el radar es estricto a propósito.', radar_abort:'El escaneo tardó más de lo esperado. Toca actualizar para intentar de nuevo.', radar_fail:'No se pudo cargar el radar en este momento. Toca actualizar para intentar de nuevo.', radar_no_theme:'No hay configuraciones tempranas en este tema ahora mismo.', ap_today:'hoy', ap_conviction:'Convicción', ap_target:'Objetivo a 12 meses', ap_price:'Precio', ap_from_high:'Desde el máximo', ap_mkt_cap:'Cap. de mercado', ap_net_margin:'Margen neto', ap_52w_range:'Rango 52 sem', ap_sec_scenarios:'Qué podría pasar', ap_sec_why:'Por qué se movió', ap_sec_business:'¿El negocio se mantiene fuerte?', ap_sec_wallstreet:'Dónde difiere Velu', ap_sec_agents:'Cómo argumentaron los agentes', ap_sec_watch:'Qué vigilar después', key_signin:'Inicia sesión para ver tu llave.', key_load_fail:'No se pudo cargar tu llave. Intenta de nuevo.', key_secret:'Tu llave secreta', key_reveal:'Revelar', key_hide:'Ocultar', key_copy:'Copiar', key_copied:'Copiado', key_requests:'peticiones', key_created:'creada el', key_quickstart:'Inicio rápido', key_note:'El API público se está lanzando para usuarios Terminal. Tu llave está reservada y lista — te avisaremos por correo en cuanto los endpoints estén activos.', hist_unavailable:'Historial no disponible.', hist_empty:'El historial se construye a medida que corre el screener. Vuelve en unos días para ver qué nombres se repiten.', hist_summary:'{a} nombres en {b} instantáneas. Las que más aparecen se han mantenido baratas por más tiempo.', hist_col_ticker:'Ticker', hist_col_seen:'Visto', hist_col_span:'Duración', hist_col_price:'Precio', hist_load_fail:'No se pudo cargar el historial.', key_loading:'Cargando tu llave…', ap_running:'Corriendo análisis de 3 agentes sobre {t}...', ap_no_data:'Los datos de mercado no llegaron para {t} en este intento. Suele ser momentáneo — intenta de nuevo.', sc_theme_word:'tema', sc_sector_word:'sector', sc_the_theme:'el tema de {s}', sc_the_sector:'el sector de {s}',
+sc_h_specific:'Caída específica de la acción', sc_d_specific:'{sym} cayó mucho más que sus pares en {grp}. Lo que está pasando es sobre la empresa, no sobre {word} — así que la tesis depende de los fundamentales de la empresa.',
+sc_h_theme_wide:'Caída de todo el tema', sc_h_sector_wide:'Caída de todo el sector', sc_d_wide:'Todo {grp} está bajo presión, con {hard} de {n} pares también cayendo 15%+. Esto parece rotación, no un problema específico de la empresa.',
+sc_h_outperform:'Se mantiene mejor que sus pares', sc_d_outperform:'{sym} cayó menos que el promedio en {grp}. La fortaleza relativa dentro de un grupo débil suele ser señal de calidad.',
+sc_h_worse:'Cayó más que sus pares', sc_d_worse:'{Grp} también está bajo presión (cayendo {avg}% en promedio), pero {sym} cayó más fuerte. Parte es del grupo entero, parte es específico de la empresa — los agentes evalúan ambos abajo.',
+sc_hardest_hit:'Pares más golpeados',
+  retry:'Reintentar', try_again:'Intentar de nuevo',
+
+  plan_free:'FREE', plan_pro:'PRO', plan_terminal:'TERMINAL',
+},
+pt: {
+  logo_sub:'INTELIGÊNCIA DE AÇÕES',
+  search_ph:'Analise qualquer ticker — tente AAPL, MRVL, NVDA',
+  live:'Ao vivo',
+
+  tab_punished:'Castigadas', tab_radar:'Radar', tab_terminal:'Terminal',
+  disc_p_title:'Ações que o mercado está castigando',
+  disc_p_desc:'A Velu escaneia 176 ações importantes dos EUA e classifica as que caíram mais forte em relação às suas máximas e médias móveis. Clique em qualquer uma para a análise completa de 3 agentes.',
+  disc_r_title:'Antes que a maioria perceba',
+  disc_r_desc:'A Velu rastreia 250 empresas em 15 temas estruturais e destaca as que aceleram seus fundamentos antes do preço se mover. A pontuação penaliza deliberadamente as que já subiram.',
+  disc_t_title:'Ferramentas do Terminal',
+  disc_t_desc:'Acesso à API e histórico do screener — a camada para quem quer os dados brutos, não só a leitura.',
+
+  scr_title:'Screener de Castigadas', scr_refresh:'Atualizar',
+  scr_scanning:'ESCANEANDO...', scr_loading_txt:'Carregando o screener...', scr_rescan_txt:'Reescaneando 176 ações agora...',
+  radar_title:'Radar', radar_ready:'PRONTO',
+  radar_loading:'Carregando o radar...', radar_rescan:'Reescaneando 250 empresas agora...',
+  radar_sub_normal:'A Velu recalcula isso a cada 20 minutos, então os resultados ficam estáveis entre visitas.',
+  radar_sub_scan:'Isso leva alguns segundos — lê fundamentos, não só preços.',
+
+  wl_title:'Minha Watchlist', wl_empty:'Toque na ★ em qualquer ação para segui-la. Sua watchlist te acompanha em todos os dispositivos.',
+  mc_title:'Minhas Chamadas', mc_empty:'Rode uma análise e toque em &quot;Acompanhar esta chamada&quot; para vê-la aqui. Só as que você escolher — você tem o controle.',
+
+  welcome_title_ready:'Pronto quando você estiver',
+  welcome_sub_ready:'Escolha uma ação abaixo, ou entre direto em uma que a Velu acha que vale seu tempo.',
+  welcome_open_analysis:'Abrir análise',
+  welcome_title_dual:'Duas formas de encontrar uma vantagem',
+  welcome_sub_dual:'Castigadas encontra boas empresas que caíram demais. Radar encontra nomes emergentes antes do movimento. Ou busque qualquer ticker acima.',
+  welcome_see_radar:'Ver o Radar',
+
+  upgrade_title:'Faça upgrade para desbloquear mais',
+  track_title:'Histórico',
+
+  pdf_export:'Exportar PDF', pdf_locked:'Exportar PDF',
+  share_lbl:'Compartilhar', track_this_call:'Acompanhar esta chamada', tracking:'Acompanhando',
+
+  sec_theme:'Contexto do tema', sec_sector:'Contexto do setor', theme_avg:'Média do tema', sector_avg:'Média do setor',
+
+  api_key_title:'Acesso à API', api_terminal_tag:'TERMINAL',
+  hist_title:'Histórico do Screener', hist_30d:'30 DIAS',
+
+  err_generic:'Algo deu errado. Tente novamente.',
+  err_no_matches:'Nenhuma ação castigada atende aos critérios agora. O mercado pode estar forte hoje.',
+  err_radar_strict:'Nenhum sinal antecipado supera o limite agora. O radar é rigoroso de propósito.',
+  err_rate_limited:'O feed de dados atingiu seu limite — geralmente acontece logo após um escaneamento completo. Espere um minuto e tente novamente.', err_screener_fail:'Não foi possível carregar o screener. O serviço de dados pode estar ocupado. Tente novamente em um momento.', radar_diag_nodata:'Os dados de mercado não estão respondendo agora.', radar_diag_nofund:'Os preços chegaram bem para {n} empresas, mas o feed de fundamentos não respondeu. É um problema de dados do nosso lado, não um sinal de mercado.', radar_diag_none:'Foram escaneadas {n} empresas. Nenhuma mostra uma inflexão antecipada hoje — o radar é rigoroso de propósito.', radar_abort:'O escaneamento demorou mais que o esperado. Toque em atualizar para tentar novamente.', radar_fail:'Não foi possível carregar o radar agora. Toque em atualizar para tentar novamente.', radar_no_theme:'Nenhuma configuração antecipada neste tema agora.', ap_today:'hoje', ap_conviction:'Convicção', ap_target:'Alvo de 12 meses', ap_price:'Preço', ap_from_high:'Da máxima', ap_mkt_cap:'Cap. de mercado', ap_net_margin:'Margem líquida', ap_52w_range:'Faixa 52 sem', ap_sec_scenarios:'O que poderia acontecer', ap_sec_why:'Por que se moveu', ap_sec_business:'O negócio está se mantendo forte?', ap_sec_wallstreet:'Onde a Velu diverge', ap_sec_agents:'Como os agentes argumentaram', ap_sec_watch:'O que observar a seguir', key_signin:'Entre para ver sua chave.', key_load_fail:'Não foi possível carregar sua chave. Tente novamente.', key_secret:'Sua chave secreta', key_reveal:'Revelar', key_hide:'Ocultar', key_copy:'Copiar', key_copied:'Copiado', key_requests:'requisições', key_created:'criada em', key_quickstart:'Início rápido', key_note:'A API pública está sendo lançada para usuários Terminal. Sua chave está reservada e pronta — vamos te avisar por e-mail assim que os endpoints estiverem ativos.', hist_unavailable:'Histórico indisponível.', hist_empty:'O histórico se constrói conforme o screener roda. Volte em alguns dias para ver quais nomes continuam aparecendo.', hist_summary:'{a} nomes em {b} capturas. As que mais aparecem se mantiveram baratas por mais tempo.', hist_col_ticker:'Ticker', hist_col_seen:'Visto', hist_col_span:'Duração', hist_col_price:'Preço', hist_load_fail:'Não foi possível carregar o histórico.', key_loading:'Carregando sua chave…', ap_running:'Rodando análise de 3 agentes em {t}...', ap_no_data:'Os dados de mercado não chegaram para {t} nesta tentativa. Geralmente é momentâneo — tente novamente.', sc_theme_word:'tema', sc_sector_word:'setor', sc_the_theme:'o tema de {s}', sc_the_sector:'o setor de {s}',
+sc_h_specific:'Queda específica da ação', sc_d_specific:'{sym} caiu muito mais que seus pares em {grp}. O que está acontecendo é sobre a empresa, não sobre {word} — então a tese depende dos fundamentos da empresa.',
+sc_h_theme_wide:'Queda de todo o tema', sc_h_sector_wide:'Queda de todo o setor', sc_d_wide:'Todo {grp} está sob pressão, com {hard} de {n} pares também caindo 15%+. Isso parece rotação, não um problema específico da empresa.',
+sc_h_outperform:'Se mantém melhor que os pares', sc_d_outperform:'{sym} caiu menos que a média em {grp}. Força relativa dentro de um grupo fraco costuma ser sinal de qualidade.',
+sc_h_worse:'Caiu mais que seus pares', sc_d_worse:'{Grp} também está sob pressão (caindo {avg}% em média), mas {sym} caiu mais forte. Parte é do grupo inteiro, parte é específico da empresa — os agentes avaliam ambos abaixo.',
+sc_hardest_hit:'Pares mais afetados',
+  retry:'Tentar novamente', try_again:'Tentar novamente',
+
+  plan_free:'FREE', plan_pro:'PRO', plan_terminal:'TERMINAL',
+}
+};
+
+window.__veluTermLang = 'en';
+
+function T(key) {
+  var dict = I18N_TERM[window.__veluTermLang] || I18N_TERM.en;
+  var v = dict[key];
+  if (v == null) v = I18N_TERM.en[key];
+  return v == null ? key : v;
+}
+
+function applyTermTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(function (el) {
+    var key = el.getAttribute('data-i18n');
+    el.textContent = T(key);
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(function (el) {
+    el.setAttribute('placeholder', T(el.getAttribute('data-i18n-ph')));
+  });
+}
+
+function setTermLang(lang) {
+  if (lang !== 'en' && lang !== 'es' && lang !== 'pt') return;
+  window.__veluTermLang = lang;
+  applyTermTranslations();
+
+  // Refrescar el titulo/descripcion de la seccion activa
+  var mB = document.getElementById('tabBtnTerminal');
+  var rB = document.getElementById('tabBtnRadar');
+  var tt = document.getElementById('discTitle');
+  var td = document.getElementById('discDesc');
+  if (tt && td) {
+    if (mB && mB.classList.contains('active')) {
+      tt.textContent = T('disc_t_title'); td.textContent = T('disc_t_desc');
+    } else if (rB && rB.classList.contains('active')) {
+      tt.textContent = T('disc_r_title'); td.textContent = T('disc_r_desc');
+    } else {
+      tt.textContent = T('disc_p_title'); td.textContent = T('disc_p_desc');
+    }
+  }
+
+  // Re-renderizar los paneles dinamicos para que tomen las nuevas etiquetas
+  if (typeof renderWatchlistPanel === 'function') renderWatchlistPanel();
+  if (typeof renderMyCalls === 'function') renderMyCalls();
+  if (typeof __allStocks !== 'undefined' && __allStocks && __allStocks.length && typeof renderScreener === 'function') renderScreener();
+  if (typeof __radarStocks !== 'undefined' && __radarStocks && __radarStocks.length && typeof renderRadar === 'function') renderRadar();
+}
+
+// Escuchar el idioma que manda la landing (scope de JS distinto)
+window.addEventListener('message', function (ev) {
+  if (ev.data && ev.data.type === 'velu-lang') setTermLang(ev.data.lang);
+});
+
 
 /* ── DISCOVERY TABS + RADAR ────────────────────── */
 var __radarLoaded = false;
@@ -5076,8 +5607,8 @@ function switchTab(tab) {
     pB.classList.remove('active'); rB.classList.remove('active');
     pP.style.display = 'none'; rP.style.display = 'none';
     if (mP) mP.style.display = '';
-    if (tt) tt.textContent = 'Terminal tools';
-    if (td) td.textContent = 'API access and screener history — the layer for people who want the data itself, not just the read.';
+    if (tt) tt.textContent = T('disc_t_title');
+    if (td) td.textContent = T('disc_t_desc');
     loadTerminalPanel();
     return;
   }
@@ -5085,14 +5616,14 @@ function switchTab(tab) {
   if (tab === 'radar') {
     rB.classList.add('active'); pB.classList.remove('active');
     rP.style.display = ''; pP.style.display = 'none';
-    if (tt) tt.textContent = 'Before the crowd notices';
-    if (td) td.textContent = 'Velu tracks 250 companies across 15 structural themes and surfaces the ones whose fundamentals are inflecting before the price has run. The score deliberately penalizes names that already moved.';
+    if (tt) tt.textContent = T('disc_r_title');
+    if (td) td.textContent = T('disc_r_desc');
     if (!__radarLoaded) loadRadar();
   } else {
     pB.classList.add('active'); rB.classList.remove('active');
     pP.style.display = ''; rP.style.display = 'none';
-    if (tt) tt.textContent = 'Stocks the market is punishing';
-    if (td) td.textContent = 'Velu scans 176 major US stocks and ranks the ones that have sold off hardest relative to their own highs and moving averages. Click any stock for a full 3-agent analysis.';
+    if (tt) tt.textContent = T('disc_p_title');
+    if (td) td.textContent = T('disc_p_desc');
   }
 }
 
@@ -5105,13 +5636,9 @@ async function loadRadar(force, hardRefresh) {
   if (__radarLoaded && !force) { renderRadar(); return; }
 
   body.innerHTML = '<div class=&quot;loading&quot;><div class=&quot;spinner&quot;></div>' +
-    '<div class=&quot;loading-txt&quot;>' + (hardRefresh
-      ? 'Rescanning 250 companies right now...'
-      : 'Loading the radar...') + '</div>' +
-    '<div class=&quot;loading-sub&quot;>' + (hardRefresh
-      ? 'This one takes a few seconds — it reads fundamentals, not just prices.'
-      : 'Velu recalculates this every 20 minutes, so results stay stable between visits.') + '</div></div>';
-  badge.textContent = 'SCANNING...';
+    '<div class=&quot;loading-txt&quot;>' + (hardRefresh ? T('radar_rescan') : T('radar_loading')) + '</div>' +
+    '<div class=&quot;loading-sub&quot;>' + (hardRefresh ? T('radar_sub_scan') : T('radar_sub_normal')) + '</div></div>';
+  badge.textContent = T('scr_scanning');
 
   // El radar hace muchas mas llamadas que el screener, asi que le damos
   // margen amplio antes de rendirnos.
@@ -5143,14 +5670,14 @@ async function loadRadar(force, hardRefresh) {
       var d = data.diagnostics || {};
       var detail = '';
       if (d.quotesOk === 0) {
-        detail = 'Market data is not responding right now.';
+        detail = T('radar_diag_nodata');
       } else if (d.withFundamentals === 0) {
-        detail = 'Price data came through for ' + d.quotesOk + ' companies, but the fundamentals feed did not respond. That is a data issue on our side, not a market signal.';
+        detail = T('radar_diag_nofund').replace('{n}', d.quotesOk);
       } else {
-        detail = 'Scanned ' + d.quotesOk + ' companies. None are showing an early inflection today — the radar is strict on purpose.';
+        detail = T('radar_diag_none').replace('{n}', d.quotesOk);
       }
       body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>◎</div>' + detail +
-        '<div style=&quot;margin-top:14px&quot;><button class=&quot;scr-more-btn&quot; onclick=&quot;loadRadar(true, true)&quot;>↻ Try again</button></div></div>';
+        '<div style=&quot;margin-top:14px&quot;><button class=&quot;scr-more-btn&quot; onclick=&quot;loadRadar(true, true)&quot;>↻ ' + T('try_again') + '</button></div></div>';
       badge.textContent = '0 FOUND';
       return;
     }
@@ -5160,11 +5687,9 @@ async function loadRadar(force, hardRefresh) {
   } catch (e) {
     clearTimeout(timer);
     console.error('Radar error:', e);
-    var human = (e && e.name === 'AbortError')
-      ? 'The scan took longer than expected. Tap refresh to try again.'
-      : 'Could not load the radar right now. Tap refresh to try again.';
+    var human = (e && e.name === 'AbortError') ? T('radar_abort') : T('radar_fail');
     body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>⚠</div>' + human +
-      '<div style=&quot;margin-top:14px&quot;><button class=&quot;scr-more-btn&quot; onclick=&quot;loadRadar(true, true)&quot;>↻ Retry</button></div></div>';
+      '<div style=&quot;margin-top:14px&quot;><button class=&quot;scr-more-btn&quot; onclick=&quot;loadRadar(true, true)&quot;>↻ ' + T('retry') + '</button></div></div>';
     badge.textContent = 'ERROR';
   }
 }
@@ -5206,7 +5731,7 @@ function renderRadar() {
   }
 
   if (list.length === 0) {
-    body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>◎</div>No early-stage setups in this theme right now.</div>';
+    body.innerHTML = '<div class=&quot;error-box&quot;><div class=&quot;err-ico&quot;>◎</div>' + T('radar_no_theme') + '</div>';
     return;
   }
 
@@ -5311,7 +5836,7 @@ async function analyzeTicker(symbol, fromScreener) {
     </div>
     <div class=&quot;loading&quot;>
       <div class=&quot;spinner&quot;></div>
-      <div class=&quot;loading-txt&quot;>Running 3-agent analysis on ${ticker}...</div>
+      <div class=&quot;loading-txt&quot;>${T('ap_running').replace('{t}', ticker)}</div>
     </div>
   `;
 
@@ -5319,7 +5844,7 @@ async function analyzeTicker(symbol, fromScreener) {
     const res = await fetch('/api/analyze-stock', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ symbol: ticker })
+      body: JSON.stringify({ symbol: ticker, lang: window.__veluTermLang || 'en' })
     });
 
     if (!res.ok) {
@@ -5340,9 +5865,7 @@ async function analyzeTicker(symbol, fromScreener) {
   } catch (err) {
     console.error('Analysis error:', err);
     var rateLimited = err && (err.rateLimited || err.status === 429);
-    var msg = rateLimited
-      ? 'The market data feed hit its rate limit — this usually happens right after a full screener scan. Wait about a minute and try again.'
-      : 'Market data did not come through for ' + ticker + ' on this attempt. This is usually momentary — try again.';
+    var msg = rateLimited ? T('err_rate_limited') : T('ap_no_data').replace('{t}', ticker);
     panel.innerHTML = `
       <div class=&quot;ap-head&quot;>
         <button class=&quot;ap-close&quot; onclick=&quot;closeAnalysis()&quot;>×</button>
@@ -5351,7 +5874,7 @@ async function analyzeTicker(symbol, fromScreener) {
       <div class=&quot;error-box&quot;>
         <div class=&quot;err-ico&quot;>⚠</div>
         ${msg}
-        <div style=&quot;margin-top:14px&quot;><button class=&quot;scr-more-btn&quot; onclick=&quot;analyzeTicker('${ticker}', true)&quot;>↻ Retry</button></div>
+        <div style=&quot;margin-top:14px&quot;><button class=&quot;scr-more-btn&quot; onclick=&quot;analyzeTicker('${ticker}', true)&quot;>↻ ${T('retry')}</button></div>
       </div>
     `;
   }
@@ -5372,27 +5895,27 @@ function renderSectorContext(s, sc) {
   var avgW = (avg / maxVal) * 100;
 
   var isTheme = sc.groupKind === 'theme';
-  var groupWord = isTheme ? 'theme' : 'sector';
-  var groupLabel = isTheme ? ('the ' + sc.sector + ' theme') : ('the ' + sc.sector + ' sector');
+  var groupWord = isTheme ? T('sc_theme_word') : T('sc_sector_word');
+  var groupLabel = (isTheme ? T('sc_the_theme') : T('sc_the_sector')).replace('{s}', sc.sector);
 
   var headline, hlColor, detail;
   if (sc.verdict === 'stock-specific') {
-    headline = 'Stock-specific selloff';
+    headline = T('sc_h_specific');
     hlColor = 'var(--amber)';
-    detail = s.symbol + ' is down far more than its peers in ' + groupLabel + '. Whatever is driving this is about the company, not the ' + groupWord + ' — which means the thesis lives or dies on company fundamentals.';
+    detail = T('sc_d_specific').replace('{sym}', s.symbol).replace('{grp}', groupLabel).replace('{word}', groupWord);
   } else if (sc.verdict === 'sector-wide') {
-    headline = isTheme ? 'Theme-wide selloff' : 'Sector-wide selloff';
+    headline = isTheme ? T('sc_h_theme_wide') : T('sc_h_sector_wide');
     hlColor = 'var(--blue)';
-    detail = 'All of ' + groupLabel + ' is under pressure, with ' + sc.peersDownHard + ' of ' + sc.peerCount + ' peers also down 15%+. This looks like rotation, not a company-specific problem.';
+    detail = T('sc_d_wide').replace('{grp}', groupLabel).replace('{hard}', sc.peersDownHard).replace('{n}', sc.peerCount);
   } else if (sc.verdict === 'outperforming') {
-    headline = 'Holding up better than peers';
+    headline = T('sc_h_outperform');
     hlColor = 'var(--g)';
-    detail = s.symbol + ' has fallen less than the average name in ' + groupLabel + '. Relative strength inside a weak group is often a quality signal.';
+    detail = T('sc_d_outperform').replace('{sym}', s.symbol).replace('{grp}', groupLabel);
   } else {
-    headline = 'Down more than its peers';
+    headline = T('sc_h_worse');
     hlColor = 'var(--mu)';
-    detail = groupLabel.charAt(0).toUpperCase() + groupLabel.slice(1) + ' is under pressure too (down ' + avg + '% on average), but ' + s.symbol +
-             ' has fallen harder. Part of this is group-wide, part is specific to the company — the agents weigh both below.';
+    var grpCap = groupLabel.charAt(0).toUpperCase() + groupLabel.slice(1);
+    detail = T('sc_d_worse').replace('{Grp}', grpCap).replace('{avg}', avg).replace('{sym}', s.symbol);
   }
 
   var worst = (sc.worstPeers || []).map(function(p) {
@@ -5401,7 +5924,7 @@ function renderSectorContext(s, sc) {
 
   return `
     <div class=&quot;sector-box&quot;>
-      <div class=&quot;sector-label&quot;>${sc.groupKind === 'theme' ? 'THEME CONTEXT' : 'SECTOR CONTEXT'} · ${sc.sector.toUpperCase()}</div>
+      <div class=&quot;sector-label&quot;>${sc.groupKind === 'theme' ? T('sec_theme').toUpperCase() : T('sec_sector').toUpperCase()} · ${sc.sector.toUpperCase()}</div>
       <div class=&quot;sc-headline&quot; style=&quot;color:${hlColor}&quot;>${headline}</div>
 
       <div class=&quot;sc-bars&quot;>
@@ -5411,14 +5934,14 @@ function renderSectorContext(s, sc) {
           <span class=&quot;sc-bar-val&quot;>−${own}%</span>
         </div>
         <div class=&quot;sc-bar-row&quot;>
-          <span class=&quot;sc-bar-lbl&quot;>${isTheme ? 'Theme avg' : 'Sector avg'}</span>
+          <span class=&quot;sc-bar-lbl&quot;>${isTheme ? T('theme_avg') : T('sector_avg')}</span>
           <div class=&quot;sc-bar-track&quot;><div class=&quot;sc-bar sc-bar-peer&quot; style=&quot;width:${avgW.toFixed(1)}%&quot;></div></div>
           <span class=&quot;sc-bar-val sc-muted&quot;>−${avg}%</span>
         </div>
       </div>
 
       <div class=&quot;sc-detail&quot;>${detail}</div>
-      ${worst ? '<div class=&quot;sc-peers&quot;><span class=&quot;sc-peers-lbl&quot;>Hardest hit peers</span>' + worst + '</div>' : ''}
+      ${worst ? '<div class=&quot;sc-peers&quot;><span class=&quot;sc-peers-lbl&quot;>' + T('sc_hardest_hit') + '</span>' + worst + '</div>' : ''}
     </div>
   `;
 }
@@ -5708,7 +6231,7 @@ function renderAnalysis(s, a, news, history, fundamentals, sectorContext) {
         <button onclick=&quot;toggleWatchlist('${s.symbol}', '${(s.name||'').replace(/'/g,'')}', event); this.innerHTML = isWatched('${s.symbol}') ? '★ Following' : '☆ Follow';&quot; style=&quot;margin-left:auto;font-family:var(--mono);font-size:12px;padding:6px 14px;border-radius:8px;background:var(--panel2);border:1px solid var(--b2);color:${isWatched(s.symbol)?'var(--g)':'var(--mu)'};cursor:pointer&quot;>${isWatched(s.symbol) ? '★ Following' : '☆ Follow'}</button>
       <div class=&quot;ap-price-row&quot;>
         <span class=&quot;ap-price&quot;>$${s.price?.toFixed(2)}</span>
-        <span class=&quot;ap-change ${changeClass}&quot;>${changeSign}${s.changePct?.toFixed(2)}% today</span>
+        <span class=&quot;ap-change ${changeClass}&quot;>${changeSign}${s.changePct?.toFixed(2)}% ${T('ap_today')}</span>
       </div>
     </div>
 
@@ -5720,11 +6243,11 @@ function renderAnalysis(s, a, news, history, fundamentals, sectorContext) {
         <div class=&quot;vc-top&quot;>
           <div class=&quot;vc-badge&quot;>${a.verdict}</div>
           <div class=&quot;vc-conv&quot;>
-            <span class=&quot;vc-conv-l&quot;>Conviction</span>
+            <span class=&quot;vc-conv-l&quot;>${T('ap_conviction')}</span>
             <span class=&quot;vc-conv-v&quot;>${a.conviction}</span>
           </div>
           <div class=&quot;vc-target&quot;>
-            <span class=&quot;vc-target-l&quot;>12-month target</span>
+            <span class=&quot;vc-target-l&quot;>${T('ap_target')}</span>
             <span class=&quot;vc-target-v&quot;>$${a.targetPrice}</span>
             <span class=&quot;vc-target-u ${upsideClass}&quot;>${upsideSign}${a.upside}%</span>
           </div>
@@ -5735,12 +6258,12 @@ function renderAnalysis(s, a, news, history, fundamentals, sectorContext) {
 
       <!-- 2. Los numeros que importan, de un vistazo -->
       <div class=&quot;quick-metrics&quot;>
-        <div class=&quot;qm&quot;><span class=&quot;qm-l&quot;>Price</span><span class=&quot;qm-v&quot;>$${s.price?.toFixed(2)}</span></div>
-        <div class=&quot;qm&quot;><span class=&quot;qm-l&quot;>From high</span><span class=&quot;qm-v down&quot;>−${s.from52High}%</span></div>
+        <div class=&quot;qm&quot;><span class=&quot;qm-l&quot;>${T('ap_price')}</span><span class=&quot;qm-v&quot;>$${s.price?.toFixed(2)}</span></div>
+        <div class=&quot;qm&quot;><span class=&quot;qm-l&quot;>${T('ap_from_high')}</span><span class=&quot;qm-v down&quot;>−${s.from52High}%</span></div>
         <div class=&quot;qm&quot;><span class=&quot;qm-l&quot;>P/E</span><span class=&quot;qm-v&quot;>${s.pe != null ? s.pe.toFixed(1) : '—'}</span></div>
-        <div class=&quot;qm&quot;><span class=&quot;qm-l&quot;>Mkt cap</span><span class=&quot;qm-v&quot;>$${(s.marketCap/1e9)?.toFixed(1)}B</span></div>
-        <div class=&quot;qm&quot;><span class=&quot;qm-l&quot;>Net margin</span><span class=&quot;qm-v&quot;>${s.netMargin != null ? (s.netMargin*100).toFixed(1)+'%' : '—'}</span></div>
-        <div class=&quot;qm&quot;><span class=&quot;qm-l&quot;>52w range</span><span class=&quot;qm-v sm&quot;>$${s.yearLow?.toFixed(0)}–$${s.yearHigh?.toFixed(0)}</span></div>
+        <div class=&quot;qm&quot;><span class=&quot;qm-l&quot;>${T('ap_mkt_cap')}</span><span class=&quot;qm-v&quot;>$${(s.marketCap/1e9)?.toFixed(1)}B</span></div>
+        <div class=&quot;qm&quot;><span class=&quot;qm-l&quot;>${T('ap_net_margin')}</span><span class=&quot;qm-v&quot;>${s.netMargin != null ? (s.netMargin*100).toFixed(1)+'%' : '—'}</span></div>
+        <div class=&quot;qm&quot;><span class=&quot;qm-l&quot;>${T('ap_52w_range')}</span><span class=&quot;qm-v sm&quot;>$${s.yearLow?.toFixed(0)}–$${s.yearHigh?.toFixed(0)}</span></div>
       </div>
 
       <!-- 3. La grafica: la historia visual -->
@@ -5748,7 +6271,7 @@ function renderAnalysis(s, a, news, history, fundamentals, sectorContext) {
 
       <!-- 4. Escenarios: el rango de resultados -->
       <div class=&quot;sec-block&quot;>
-        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>01</span><span class=&quot;sec-t&quot;>What could happen</span></div>
+        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>01</span><span class=&quot;sec-t&quot;>${T('ap_sec_scenarios')}</span></div>
         <div class=&quot;scenarios&quot;>
           <div class=&quot;scenario sc-bull&quot;>
             <div class=&quot;scenario-head&quot;><span class=&quot;scenario-label&quot;>BULL</span><span class=&quot;scenario-prob&quot;>${a.bull.prob}%</span></div>
@@ -5768,7 +6291,7 @@ function renderAnalysis(s, a, news, history, fundamentals, sectorContext) {
       <!-- 5. Por que cayo + contexto -->
       ${(a.whyPunished || a.whyPunishedShort || sectorContext) ? `
       <div class=&quot;sec-block&quot;>
-        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>02</span><span class=&quot;sec-t&quot;>Why it moved</span></div>
+        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>02</span><span class=&quot;sec-t&quot;>${T('ap_sec_why')}</span></div>
         ${renderWhyPunished(s, a, news)}
         ${renderSectorContext(s, sectorContext)}
       </div>` : ''}
@@ -5776,20 +6299,20 @@ function renderAnalysis(s, a, news, history, fundamentals, sectorContext) {
       <!-- 6. El negocio detras -->
       ${fundamentals ? `
       <div class=&quot;sec-block&quot;>
-        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>03</span><span class=&quot;sec-t&quot;>Is the business holding up?</span></div>
+        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>03</span><span class=&quot;sec-t&quot;>${T('ap_sec_business')}</span></div>
         ${renderFundamentals(s, fundamentals)}
       </div>` : ''}
 
       <!-- 7. Velu vs el consenso -->
       ${s.wallStreetTarget ? `
       <div class=&quot;sec-block&quot;>
-        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>04</span><span class=&quot;sec-t&quot;>Where Velu differs</span></div>
+        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>04</span><span class=&quot;sec-t&quot;>${T('ap_sec_wallstreet')}</span></div>
         ${renderConsensusCompare(s, a)}
       </div>` : ''}
 
       <!-- 8. Los tres agentes -->
       <div class=&quot;sec-block&quot;>
-        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>05</span><span class=&quot;sec-t&quot;>How the agents argued</span></div>
+        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>05</span><span class=&quot;sec-t&quot;>${T('ap_sec_agents')}</span></div>
         <div class=&quot;agents-grid&quot;>
           ${a.agents.map((ag, i) => `
             <div class=&quot;agent-card&quot;>
@@ -5806,7 +6329,7 @@ function renderAnalysis(s, a, news, history, fundamentals, sectorContext) {
 
       <!-- 9. Que vigilar -->
       <div class=&quot;sec-block&quot;>
-        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>06</span><span class=&quot;sec-t&quot;>What to watch next</span></div>
+        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>06</span><span class=&quot;sec-t&quot;>${T('ap_sec_watch')}</span></div>
         <div class=&quot;watch-list&quot;>
           ${a.watchItems.map(w => `<div class=&quot;watch-item&quot;><span class=&quot;watch-bullet&quot;>▸</span><span>${w}</span></div>`).join('')}
         </div>
@@ -5814,13 +6337,13 @@ function renderAnalysis(s, a, news, history, fundamentals, sectorContext) {
 
       <div class=&quot;action-row&quot;>
         <button class=&quot;track-btn&quot; id=&quot;veluTrackBtn&quot; onclick=&quot;trackThisCall()&quot;>
-          ${isTracked(s.symbol) ? '✓ Tracking' : '◎ Track this call'}
+          ${isTracked(s.symbol) ? '✓ ' + T('tracking') : '◎ ' + T('track_this_call')}
         </button>
         <button class=&quot;pdf-btn ${getUserPlan() === 'terminal' ? '' : 'locked'}&quot; onclick=&quot;exportPDF()&quot;>
-          ${getUserPlan() === 'terminal' ? '⎙ Export PDF' : '🔒 Export PDF'}
+          ${getUserPlan() === 'terminal' ? '⎙ ' + T('pdf_export') : '🔒 ' + T('pdf_export')}
         </button>
         <div class=&quot;share-group&quot;>
-          <span class=&quot;share-lbl&quot;>Share</span>
+          <span class=&quot;share-lbl&quot;>${T('share_lbl')}</span>
           <button class=&quot;share-ico-btn wa&quot; title=&quot;Share on WhatsApp&quot; onclick=&quot;shareWhatsApp()&quot;>WhatsApp</button>
           <button class=&quot;share-ico-btn x&quot; title=&quot;Share on X&quot; onclick=&quot;shareX()&quot;>𝕏</button>
           <button class=&quot;share-ico-btn cp&quot; title=&quot;Copy to clipboard&quot; onclick=&quot;copyCall(this)&quot;>Copy</button>
@@ -6167,6 +6690,10 @@ window.addEventListener('message', function(ev) {
 
 /* ── INIT ──────────────────────────────────────── */
 (async function initTerminal() {
+  // Aplicar traducciones con el idioma default mientras llega el
+  // idioma real del padre via postMessage (el listener ya esta activo)
+  applyTermTranslations();
+
   var tb1 = document.getElementById('tabBtnPunished');
   var tb2 = document.getElementById('tabBtnRadar');
   if (tb1) tb1.addEventListener('click', function(){ switchTab('punished'); });
@@ -6329,6 +6856,7 @@ window.addEventListener('message', function(ev) {
           const em = (s && s.user && s.user.email) ? s.user.email : null;
           if (frame && frame.contentWindow) {
             frame.contentWindow.postMessage({ type: 'velu-session', email: em }, '*');
+            frame.contentWindow.postMessage({ type: 'velu-lang', lang: window.__veluLang }, '*');
             frame.contentWindow.postMessage({ type: 'velu-refresh' }, '*');
           }
         } catch (_) {}
@@ -6413,6 +6941,7 @@ window.addEventListener('message', function(e) {
     var fr = document.getElementById('terminalFrame');
     if (fr && fr.contentWindow) {
       fr.contentWindow.postMessage({ type: 'velu-session', email: em }, '*');
+      fr.contentWindow.postMessage({ type: 'velu-lang', lang: window.__veluLang }, '*');
     }
     return;
   }
