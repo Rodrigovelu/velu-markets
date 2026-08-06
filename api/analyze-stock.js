@@ -267,10 +267,12 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'API keys not configured' });
   }
 
-  const { symbol } = req.body;
+  const { symbol, lang } = req.body;
   if (!symbol) return res.status(400).json({ error: 'Symbol required' });
 
   const ticker = symbol.toUpperCase().trim();
+  const LANG = (lang === 'es' || lang === 'pt') ? lang : 'en';
+  const LANG_NAME = LANG === 'es' ? 'Spanish' : LANG === 'pt' ? 'Portuguese (Brazilian)' : 'English';
 
   try {
     // Rango de 1 año para el historial de precios
@@ -408,6 +410,8 @@ export default async function handler(req, res) {
 
     const prompt = `You are Velu, an equity analysis engine with 3 specialized agents analyzing ${ticker} (${stockData.name}).
 
+LANGUAGE: Write all narrative/prose text (thesis, edge, whyPunished, whyPunishedShort, every agent's reasoning, the bull/base/bear scenario descriptions, and watchItems) in ${LANG_NAME}. Keep "verdict", "conviction", each agent's "stance", and each agent's "name" exactly as the enum values specified below (BUY/HOLD/SELL, HIGH/MODERATE/LOW, BULLISH/BEARISH/NEUTRAL, and the three agent names) regardless of language — the interface relies on these exact English strings.
+
 LIVE DATA:
 - Price: $${stockData.price} (${stockData.changePct > 0 ? '+' : ''}${fmt(stockData.changePct, 2)}% today)
 - 52-week range: $${stockData.yearLow} - $${stockData.yearHigh}
@@ -444,6 +448,8 @@ CRITICAL QUESTION: Compare the fundamental trajectory above against the ${stockD
 
 RECENT NEWS HEADLINES (most recent first):
 ${news.length > 0 ? news.map((n, i) => `${i+1}. [${n.publishedDate?.slice(0,10)}] ${n.title} — ${n.text?.slice(0, 150)}`).join('\n') : 'No recent news available.'}
+
+Reminder: all prose fields below must be written in ${LANG_NAME}. Enum fields (verdict, conviction, stance, agent name) stay in English exactly as specified.
 
 Respond with ONLY a raw JSON object. No markdown, no code fences, no text before or after. Start your response with { and end with }.
 
