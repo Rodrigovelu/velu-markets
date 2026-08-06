@@ -5062,7 +5062,7 @@ async function toggleWatchlist(ticker, company, ev) {
   } else {
     // Verificar límite Free
     if (getUserPlan() === 'free' && __watchlist.length >= FREE_WATCHLIST_LIMIT) {
-      showUpgradeGate('Your watchlist is full (' + FREE_WATCHLIST_LIMIT + ' stocks)', 'Upgrade to Pro to follow unlimited stocks.');
+      showUpgradeGate(T('gate_wl_full').replace('{n}', FREE_WATCHLIST_LIMIT), T('gate_wl_sub'));
       return;
     }
     // Agregar
@@ -5642,6 +5642,11 @@ sc_h_theme_wide:'Theme-wide selloff', sc_h_sector_wide:'Sector-wide selloff', sc
 sc_h_outperform:'Holding up better than peers', sc_d_outperform:'{sym} has fallen less than the average name in {grp}. Relative strength inside a weak group is often a quality signal.',
 sc_h_worse:'Down more than its peers', sc_d_worse:'{Grp} is under pressure too (down {avg}% on average), but {sym} has fallen harder. Part of this is group-wide, part is specific to the company — the agents weigh both below.',
 sc_hardest_hit:'Hardest hit peers', gate_title:'Upgrade to Pro', gate_month:'month', gate_cta:'Upgrade to Pro — $29/mo',
+  pf_pro1:'Full Punished screener + Radar', pf_pro2:'Unlimited AI analyses', pf_pro3:'Unlimited ticker search', pf_pro4:'Bull / base / bear scenarios', pf_pro5:'Unlimited tracked calls & watchlist', pf_pro6:'New-opportunity alerts', pf_pro7:'Real-time market data',
+gate_wl_full:'Your watchlist is full ({n} stocks)', gate_wl_sub:'Upgrade to Pro to follow unlimited stocks.',
+gate_search_limit:&quot;You've used all {n} free searches today&quot;, gate_search_sub:'Upgrade to Pro for unlimited ticker search.',
+gate_analyses_limit:&quot;You've used all {n} free analyses this month&quot;, gate_analyses_sub:'Upgrade to Pro for unlimited AI analysis.',
+gate_pdf_title:'PDF export is a Terminal feature', gate_pdf_sub:'Terminal includes PDF export, screener history, and API access.',
   retry:'Retry', try_again:'Try again',
 
   plan_free:'FREE', plan_pro:'PRO', plan_terminal:'TERMINAL',
@@ -5696,6 +5701,11 @@ sc_h_theme_wide:'Caída de todo el tema', sc_h_sector_wide:'Caída de todo el se
 sc_h_outperform:'Se mantiene mejor que sus pares', sc_d_outperform:'{sym} cayó menos que el promedio en {grp}. La fortaleza relativa dentro de un grupo débil suele ser señal de calidad.',
 sc_h_worse:'Cayó más que sus pares', sc_d_worse:'{Grp} también está bajo presión (cayendo {avg}% en promedio), pero {sym} cayó más fuerte. Parte es del grupo entero, parte es específico de la empresa — los agentes evalúan ambos abajo.',
 sc_hardest_hit:'Pares más golpeados', gate_title:'Mejora a Pro', gate_month:'mes', gate_cta:'Mejorar a Pro — $29/mes',
+  pf_pro1:'Screener completo de Castigadas + Radar', pf_pro2:'Análisis de IA ilimitados', pf_pro3:'Búsqueda de tickers ilimitada', pf_pro4:'Escenarios alcista/base/bajista', pf_pro5:'Llamadas y watchlist ilimitadas', pf_pro6:'Alertas de nuevas oportunidades', pf_pro7:'Datos de mercado en tiempo real',
+gate_wl_full:'Tu watchlist está llena ({n} acciones)', gate_wl_sub:'Mejora a Pro para seguir acciones ilimitadas.',
+gate_search_limit:'Usaste tus {n} búsquedas gratis de hoy', gate_search_sub:'Mejora a Pro para búsquedas ilimitadas de tickers.',
+gate_analyses_limit:'Usaste tus {n} análisis gratis de este mes', gate_analyses_sub:'Mejora a Pro para análisis de IA ilimitados.',
+gate_pdf_title:'Exportar a PDF es una función de Terminal', gate_pdf_sub:'Terminal incluye exportación a PDF, historial del screener, y acceso a API.',
   retry:'Reintentar', try_again:'Intentar de nuevo',
 
   plan_free:'FREE', plan_pro:'PRO', plan_terminal:'TERMINAL',
@@ -5750,6 +5760,11 @@ sc_h_theme_wide:'Queda de todo o tema', sc_h_sector_wide:'Queda de todo o setor'
 sc_h_outperform:'Se mantém melhor que os pares', sc_d_outperform:'{sym} caiu menos que a média em {grp}. Força relativa dentro de um grupo fraco costuma ser sinal de qualidade.',
 sc_h_worse:'Caiu mais que seus pares', sc_d_worse:'{Grp} também está sob pressão (caindo {avg}% em média), mas {sym} caiu mais forte. Parte é do grupo inteiro, parte é específico da empresa — os agentes avaliam ambos abaixo.',
 sc_hardest_hit:'Pares mais afetados', gate_title:'Faça upgrade para Pro', gate_month:'mês', gate_cta:'Fazer upgrade para Pro — $29/mês',
+  pf_pro1:'Screener completo de Castigadas + Radar', pf_pro2:'Análises de IA ilimitadas', pf_pro3:'Busca de tickers ilimitada', pf_pro4:'Cenários bull/base/bear', pf_pro5:'Chamadas e watchlist ilimitadas', pf_pro6:'Alertas de novas oportunidades', pf_pro7:'Dados de mercado em tempo real',
+gate_wl_full:'Sua watchlist está cheia ({n} ações)', gate_wl_sub:'Faça upgrade para Pro para seguir ações ilimitadas.',
+gate_search_limit:'Você usou suas {n} buscas grátis de hoje', gate_search_sub:'Faça upgrade para Pro para busca ilimitada de tickers.',
+gate_analyses_limit:'Você usou suas {n} análises grátis deste mês', gate_analyses_sub:'Faça upgrade para Pro para análises de IA ilimitadas.',
+gate_pdf_title:'Exportar em PDF é um recurso do Terminal', gate_pdf_sub:'Terminal inclui exportação em PDF, histórico do screener, e acesso à API.',
   retry:'Tentar novamente', try_again:'Tentar novamente',
 
   plan_free:'FREE', plan_pro:'PRO', plan_terminal:'TERMINAL',
@@ -6041,12 +6056,12 @@ async function analyzeTicker(symbol, fromScreener) {
     const u = getUsage();
     // Search limit (only counts manual searches, not screener clicks)
     if (!fromScreener && (u.searches||0) >= FREE_SEARCHES_PER_DAY) {
-      showUpgradeGate('You\'ve used all ' + FREE_SEARCHES_PER_DAY + ' free searches today', 'Upgrade to Pro for unlimited ticker search.');
+      showUpgradeGate(T('gate_search_limit').replace('{n}', FREE_SEARCHES_PER_DAY), T('gate_search_sub'));
       return;
     }
     // Analysis limit
     if ((u.analyses||0) >= FREE_ANALYSES_PER_MONTH) {
-      showUpgradeGate('You\'ve used all ' + FREE_ANALYSES_PER_MONTH + ' free analyses this month', 'Upgrade to Pro for unlimited AI analysis.');
+      showUpgradeGate(T('gate_analyses_limit').replace('{n}', FREE_ANALYSES_PER_MONTH), T('gate_analyses_sub'));
       return;
     }
   }
@@ -6584,8 +6599,7 @@ function renderAnalysis(s, a, news, history, fundamentals, sectorContext) {
 /* ── EXPORT PDF (plan Terminal) ─────────────────────── */
 function exportPDF() {
   if (getUserPlan() !== 'terminal') {
-    showUpgradeGate('PDF export is a Terminal feature',
-      'Terminal includes PDF export, screener history, and API access.');
+    showUpgradeGate(T('gate_pdf_title'), T('gate_pdf_sub'));
     return;
   }
   if (!__currentCall) return;
