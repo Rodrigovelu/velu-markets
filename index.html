@@ -2372,8 +2372,28 @@ function onboardingBack() {
 
 async function completeOnboarding() {
   const state = window.__veluOnboarding;
-  const existing = getUserByEmail(state.pendingUserEmail);
-  if (!existing) return;
+
+  // Resolver el usuario de forma robusta: primero la sesion activa (fuente de
+  // verdad con Supabase Auth), luego la busqueda por email, y como ultimo
+  // recurso reconstruirlo. Antes un fallo aqui hacia 'return' en silencio y
+  // dejaba al usuario atrapado en el modal sin llegar nunca al terminal.
+  let existing = null;
+  const sess = getSession();
+  if (sess && sess.user && sess.user.email) {
+    existing = sess.user;
+  }
+  if (!existing) existing = getUserByEmail(state.pendingUserEmail);
+  if (!existing && state.pendingUserEmail) {
+    existing = normalizeUser({ email: state.pendingUserEmail });
+  }
+  if (!existing) {
+    // Sin identidad no podemos guardar el perfil, pero tampoco dejamos al
+    // usuario varado: cerramos el modal y lo mandamos al terminal.
+    console.error('Velu: could not resolve user at onboarding completion');
+    closeOnboarding();
+    goToTerminal(true);
+    return;
+  }
 
   const updated = {
     ...existing,
@@ -2382,12 +2402,17 @@ async function completeOnboarding() {
   };
   setSession(updated);
 
-  // Persistir el perfil en la cuenta del usuario (app_users)
-  await authSaveProfile({
-    name: updated.name,
-    onboardingCompleted: true,
-    profile: updated.profile
-  });
+  // Persistir el perfil en la cuenta del usuario (app_users).
+  // Envuelto en try/catch: si Supabase falla, el usuario igual debe entrar.
+  try {
+    await authSaveProfile({
+      name: updated.name,
+      onboardingCompleted: true,
+      profile: updated.profile
+    });
+  } catch (err) {
+    console.error('Velu: authSaveProfile failed, continuing anyway:', err);
+  }
 
   const SUPABASE_URL = SB_AUTH_URL;
   const SUPABASE_KEY = SB_AUTH_KEY;
@@ -2440,7 +2465,12 @@ async function completeOnboarding() {
     var planLabel = pendingPlan === 'terminal' ? 'Terminal' : 'Pro';
     // No borramos la intencion todavia: si el checkout falla, el usuario
     // debe poder reintentarlo desde el terminal en vez de perderla.
-    var ok = await startCheckoutFromParent(state.pendingUserEmail, pendingPlan);
+    var ok = false;
+    try {
+      ok = await startCheckoutFromParent(updated.email || state.pendingUserEmail, pendingPlan);
+    } catch (err) {
+      console.error('Velu: checkout failed at onboarding completion:', err);
+    }
     if (ok) return;   // el navegador ya va camino a Stripe
 
     alert('We could not open the ' + planLabel + ' checkout. You are in on the free plan for now — ' +
