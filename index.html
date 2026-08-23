@@ -2000,6 +2000,20 @@ function sb() {
   return __sb;
 }
 
+// El SDK de Supabase intenta refrescar el token durante su propia
+// inicializacion. Si el token guardado esta expirado, lanza
+// "Invalid Refresh Token" fuera de nuestro try/catch. Lo atrapamos aqui
+// y limpiamos el token para que la proxima carga arranque limpia.
+window.addEventListener('unhandledrejection', function (ev) {
+  var msg = ev && ev.reason && (ev.reason.message || ev.reason.msg || '');
+  if (typeof msg === 'string' &&
+      (msg.indexOf('Refresh Token') !== -1 || msg.indexOf('refresh_token') !== -1)) {
+    console.warn('Velu: clearing expired auth token.');
+    try { clearStaleSupabaseTokens(); } catch (e) {}
+    ev.preventDefault();   // evita que rompa el resto del arranque
+  }
+});
+
 function normalizeUser(user) {
   return {
     id: user?.id || null,
@@ -2113,21 +2127,53 @@ async function authSignOut() {
 }
 
 /* ── Recuperar la sesion al cargar la pagina ──────────── */
+// Limpia tokens de Supabase corruptos o expirados del navegador.
+// Sin esto, el SDK intenta refrescarlos solo, falla con
+// "Invalid Refresh Token" y puede dejar el arranque a medias.
+function clearStaleSupabaseTokens() {
+  try {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && (k.startsWith('sb-') || k.indexOf('supabase.auth') !== -1)) keys.push(k);
+    }
+    keys.forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
+  } catch (e) {}
+}
+
 async function authRestoreSession() {
   const client = sb();
   if (!client) return null;
   try {
-    const { data } = await client.auth.getSession();
+    const { data, error } = await client.auth.getSession();
+
+    // Token invalido/expirado: limpiarlo para que el SDK no siga
+    // reintentando y fallando en cada carga de pagina.
+    if (error) {
+      console.warn('Velu: stale session token, clearing it.', error.message || error);
+      try { await client.auth.signOut(); } catch (e) {}
+      clearStaleSupabaseTokens();
+      return null;
+    }
+
     if (!data || !data.session || !data.session.user) return null;
 
     const u = data.session.user;
-    const { data: rows } = await client.from('app_users')
-      .select('*').eq('id', u.id).limit(1);
-    const row = Array.isArray(rows) && rows[0] ? rows[0] : null;
+    let row = null;
+    try {
+      const { data: rows } = await client.from('app_users')
+        .select('*').eq('id', u.id).limit(1);
+      row = Array.isArray(rows) && rows[0] ? rows[0] : null;
+    } catch (e) {
+      console.warn('Velu: could not load profile, using session identity.', e);
+    }
+
     const user = rowToUser(row, u.email) || normalizeUser({ id: u.id, email: u.email });
     setSession(user);
     return user;
   } catch (e) {
+    console.warn('Velu: session restore failed, continuing as logged out.', e);
+    clearStaleSupabaseTokens();
     return null;
   }
 }
@@ -3718,6 +3764,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Arranque de sesion: aqui window.__veluApp ya existe, asi que
     // goToTerminal() puede resolverse correctamente.
+    //
+    // Mostramos el home de inmediato para que la pagina NUNCA quede en
+    // blanco, y despues corregimos la vista si hay sesion valida. Si
+    // Supabase tarda o falla (token expirado, red caida), el usuario ya
+    // tiene una pagina usable en vez de una pantalla muerta.
+    veluApp.showHome(false);
+
     (async function bootSession() {
       try {
         const params = new URLSearchParams(window.location.search);
@@ -3728,10 +3781,15 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
 
-        const user = await authRestoreSession();
-        updateAuthCtas();
+        // Limite de tiempo: si Supabase no responde en 6s, seguimos
+        // como usuario no autenticado en vez de colgarnos.
+        const user = await Promise.race([
+          authRestoreSession(),
+          new Promise(resolve => setTimeout(() => resolve(null), 6000))
+        ]);
 
-        if (!user) { veluApp.showHome(false); return; }
+        updateAuthCtas();
+        if (!user) return;   // ya estamos en el home
 
         if (user.onboardingCompleted) {
           veluApp.showTerminal(false);
@@ -3739,8 +3797,8 @@ document.addEventListener('DOMContentLoaded', () => {
           openOnboarding(user);
         }
       } catch (e) {
-        console.error('Boot session failed:', e);
-        veluApp.showHome(false);
+        console.error('Velu: boot session failed, staying on home.', e);
+        updateAuthCtas();
       }
     })();
   });
@@ -6343,672 +6401,3 @@ function renderFundamentals(s, f) {
           <div class=&quot;fd-stat-l&quot;>EPS CAGR</div>
           <div class=&quot;fd-stat-v&quot; style=&quot;color:${epsColor}&quot;>${fmtPct(f.epsCagr)}</div>
         </div>
-        <div class=&quot;fd-stat&quot;>
-          <div class=&quot;fd-stat-l&quot;>Net margins</div>
-          <div class=&quot;fd-stat-v&quot; style=&quot;color:${mtColor};font-size:16px&quot;>${mtLabel}</div>
-        </div>
-      </div>
-      <div class=&quot;fd-table&quot;>
-        <div class=&quot;fd-row fd-head&quot;>
-          <span class=&quot;fd-year&quot;>Year</span>
-          <span class=&quot;fd-bar-track&quot;></span>
-          <span class=&quot;fd-rev&quot;>Revenue</span>
-          <span class=&quot;fd-margin&quot;>Margin</span>
-        </div>
-        ${bars}
-      </div>
-      ${insight ? '<div class=&quot;fd-insight&quot;>' + insight + '</div>' : ''}
-    </div>
-  `;
-}
-
-function renderPriceChart(s, history) {
-  if (!history || history.length < 8) return '';
-
-  // El historial viene del mas reciente al mas antiguo -> invertir
-  var pts = history.slice().reverse();
-  var prices = pts.map(function(p) { return p.p; }).filter(function(v) { return typeof v === 'number'; });
-  if (prices.length < 8) return '';
-
-  var W = 800, H = 190, PAD_L = 8, PAD_R = 8, PAD_T = 18, PAD_B = 26;
-  var high52 = s.yearHigh || Math.max.apply(null, prices);
-  var low52  = s.yearLow  || Math.min.apply(null, prices);
-
-  // Escala vertical: incluir el rango de 52 semanas para dar contexto
-  var yMax = Math.max(high52, Math.max.apply(null, prices));
-  var yMin = Math.min(low52, Math.min.apply(null, prices));
-  var span = (yMax - yMin) || 1;
-  var pad = span * 0.08;
-  yMax += pad; yMin -= pad; span = yMax - yMin;
-
-  var innerW = W - PAD_L - PAD_R;
-  var innerH = H - PAD_T - PAD_B;
-
-  function xAt(i) { return PAD_L + (i / (prices.length - 1)) * innerW; }
-  function yAt(v) { return PAD_T + (1 - (v - yMin) / span) * innerH; }
-
-  // Linea del precio
-  var d = '';
-  for (var i = 0; i < prices.length; i++) {
-    d += (i === 0 ? 'M' : 'L') + xAt(i).toFixed(1) + ' ' + yAt(prices[i]).toFixed(1) + ' ';
-  }
-  // Area bajo la linea
-  var area = d + 'L' + xAt(prices.length - 1).toFixed(1) + ' ' + (PAD_T + innerH) + ' L' + PAD_L + ' ' + (PAD_T + innerH) + ' Z';
-
-  var first = prices[0], last = prices[prices.length - 1];
-  var up = last >= first;
-  var lineColor = up ? '#00E5A0' : '#FF4D4D';
-  var fillId = 'grad' + s.symbol;
-
-  var yHigh = yAt(high52);
-  var dropPct = high52 ? (((high52 - last) / high52) * 100) : 0;
-
-  var firstDate = pts[0] && pts[0].d ? pts[0].d : '';
-  var lastDate = pts[pts.length - 1] && pts[pts.length - 1].d ? pts[pts.length - 1].d : '';
-
-  return `
-    <div class=&quot;chart-box&quot;>
-      <div class=&quot;chart-head&quot;>
-        <span class=&quot;chart-label&quot;>12-MONTH PRICE</span>
-        <span class=&quot;chart-legend&quot;><span class=&quot;cl-dash&quot;></span> 52-week high $${high52.toFixed(2)}</span>
-      </div>
-      <svg viewBox=&quot;0 0 ${W} ${H}&quot; preserveAspectRatio=&quot;none&quot; class=&quot;chart-svg&quot;>
-        <defs>
-          <linearGradient id=&quot;${fillId}&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;0&quot; y2=&quot;1&quot;>
-            <stop offset=&quot;0%&quot; stop-color=&quot;${lineColor}&quot; stop-opacity=&quot;0.22&quot;/>
-            <stop offset=&quot;100%&quot; stop-color=&quot;${lineColor}&quot; stop-opacity=&quot;0&quot;/>
-          </linearGradient>
-        </defs>
-        <line x1=&quot;${PAD_L}&quot; y1=&quot;${yHigh.toFixed(1)}&quot; x2=&quot;${W - PAD_R}&quot; y2=&quot;${yHigh.toFixed(1)}&quot;
-              stroke=&quot;#5E6472&quot; stroke-width=&quot;1&quot; stroke-dasharray=&quot;5 5&quot; opacity=&quot;0.8&quot;/>
-        <path d=&quot;${area}&quot; fill=&quot;url(#${fillId})&quot;/>
-        <path d=&quot;${d}&quot; fill=&quot;none&quot; stroke=&quot;${lineColor}&quot; stroke-width=&quot;2&quot;
-              stroke-linejoin=&quot;round&quot; stroke-linecap=&quot;round&quot;/>
-        <circle cx=&quot;${xAt(prices.length - 1).toFixed(1)}&quot; cy=&quot;${yAt(last).toFixed(1)}&quot; r=&quot;4&quot;
-                fill=&quot;${lineColor}&quot;/>
-      </svg>
-      <div class=&quot;chart-foot&quot;>
-        <span class=&quot;chart-date&quot;>${firstDate}</span>
-        <span class=&quot;chart-drop&quot;>${dropPct > 0 ? '−' + dropPct.toFixed(1) + '% from high' : 'At 52-week high'}</span>
-        <span class=&quot;chart-date&quot;>${lastDate}</span>
-      </div>
-    </div>
-  `;
-}
-
-function renderWhyPunished(s, a, news) {
-  if (!a.whyPunished && !a.whyPunishedShort) return '';
-  var plan = getUserPlan();
-  var isFree = plan === 'free';
-
-  if (isFree) {
-    // Free: solo la versión corta (1 línea) + teaser
-    return `
-      <div class=&quot;why-box&quot;>
-        <div class=&quot;why-short&quot;>${a.whyPunishedShort || 'A recent catalyst drove this selloff.'}</div>
-        <div class=&quot;why-lock&quot; onclick=&quot;joinProWaitlist()&quot;>🔒 See the full breakdown + news sources with Pro →</div>
-      </div>
-    `;
-  }
-
-  // Pro: explicación completa + fuentes de noticias
-  var newsHtml = '';
-  if (news && news.length > 0) {
-    newsHtml = '<div class=&quot;why-news-label&quot;>SOURCES</div>' + news.slice(0, 4).map(function(n) {
-      return '<a href=&quot;' + n.url + '&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; class=&quot;why-news-item&quot;>' +
-        '<span class=&quot;why-news-date&quot;>' + (n.publishedDate ? n.publishedDate.slice(0,10) : '') + '</span>' +
-        '<span class=&quot;why-news-title&quot;>' + n.title + '</span>' +
-        '<span class=&quot;why-news-pub&quot;>' + (n.publisher || n.site || '') + '</span>' +
-        '</a>';
-    }).join('');
-  }
-
-  return `
-    <div class=&quot;why-box&quot;>
-      <div class=&quot;why-full&quot;>${a.whyPunished || a.whyPunishedShort}</div>
-      ${newsHtml}
-    </div>
-  `;
-}
-
-function renderConsensusCompare(s, a) {
-  // Si no hay consenso de Wall Street, no mostrar nada
-  if (!s.wallStreetTarget) return '';
-
-  var plan = getUserPlan();
-  var isFree = plan === 'free';
-  var veluTarget = a.targetPrice;
-  var wsTarget = s.wallStreetTarget;
-
-  // Diferencia entre Velu y Wall Street
-  var diff = veluTarget - wsTarget;
-  var diffPct = ((diff / wsTarget) * 100);
-  var veluMoreBullish = diff > 0;
-
-  // Dirección (esto lo ve todo mundo, Free y Pro)
-  var direction = veluMoreBullish
-    ? 'Velu is <strong style=&quot;color:var(--g)&quot;>more bullish</strong> than Wall Street'
-    : (Math.abs(diffPct) < 2
-        ? 'Velu is <strong>aligned</strong> with Wall Street'
-        : 'Velu is <strong style=&quot;color:var(--amber)&quot;>more cautious</strong> than Wall Street');
-
-  if (isFree) {
-    // FREE: ve el consenso de Wall Street y la dirección, pero NO el número exacto de Velu
-    return `
-      <div class=&quot;consensus-box&quot;>
-        
-        <div class=&quot;cons-row&quot;>
-          <div class=&quot;cons-side&quot;>
-            <div class=&quot;cons-name&quot;>Velu Target</div>
-            <div class=&quot;cons-val&quot; style=&quot;filter:blur(7px);user-select:none&quot;>$${veluTarget}</div>
-          </div>
-          <div class=&quot;cons-vs&quot;>vs</div>
-          <div class=&quot;cons-side&quot;>
-            <div class=&quot;cons-name&quot;>Wall Street</div>
-            <div class=&quot;cons-val&quot;>$${wsTarget?.toFixed(0)}</div>
-          </div>
-        </div>
-        <div class=&quot;cons-direction&quot;>${direction}</div>
-        <div class=&quot;cons-lock&quot; onclick=&quot;joinProWaitlist()&quot;>🔒 Unlock Velu's exact target with Pro →</div>
-      </div>
-    `;
-  }
-
-  // PRO: ve todo
-  var diffSign = diff > 0 ? '+' : '';
-  var diffColor = veluMoreBullish ? 'var(--g)' : 'var(--amber)';
-  return `
-    <div class=&quot;consensus-box&quot;>
-      
-      <div class=&quot;cons-row&quot;>
-        <div class=&quot;cons-side&quot;>
-          <div class=&quot;cons-name&quot;>Velu Target</div>
-          <div class=&quot;cons-val&quot; style=&quot;color:var(--g)&quot;>$${veluTarget}</div>
-        </div>
-        <div class=&quot;cons-vs&quot;>vs</div>
-        <div class=&quot;cons-side&quot;>
-          <div class=&quot;cons-name&quot;>Wall Street (${s.wallStreetLow?.toFixed(0)}–${s.wallStreetHigh?.toFixed(0)})</div>
-          <div class=&quot;cons-val&quot;>$${wsTarget?.toFixed(0)}</div>
-        </div>
-      </div>
-      <div class=&quot;cons-direction&quot;>${direction} by <strong style=&quot;color:${diffColor}&quot;>${diffSign}$${Math.abs(diff).toFixed(0)} (${diffSign}${diffPct.toFixed(1)}%)</strong></div>
-    </div>
-  `;
-}
-
-var __currentCall = null;
-var __currentExtras = null;
-
-function renderAnalysis(s, a, news, history, fundamentals, sectorContext) {
-  // Guardar para que los botones de accion no dependan de atributos inline
-  __currentCall = { s: s, a: a };
-  __currentExtras = { fundamentals: fundamentals, sectorContext: sectorContext, news: news };
-
-  const panel = document.getElementById('analysisPanel');
-  const changeClass = s.changePct >= 0 ? 'up' : 'down';
-  const changeSign = s.changePct >= 0 ? '+' : '';
-
-  const verdictClass = a.verdict === 'BUY' ? 'v-buy' : a.verdict === 'SELL' ? 'v-sell' : 'v-hold';
-  const upsideClass = a.upside >= 0 ? 'up' : 'down';
-  const upsideSign = a.upside >= 0 ? '+' : '';
-
-  const stanceClass = (st) => st === 'BULLISH' ? 'st-bullish' : st === 'BEARISH' ? 'st-bearish' : 'st-neutral';
-  const agentIcons = ['◈', '◆', '◉'];
-
-  panel.innerHTML = `
-    <div class=&quot;ap-head&quot;>
-      <button class=&quot;ap-close&quot; onclick=&quot;closeAnalysis()&quot;>×</button>
-      <div class=&quot;ap-ticker-row&quot;>
-        <span class=&quot;ap-ticker&quot;>${s.symbol}</span>
-        <span class=&quot;ap-name&quot;>${s.name}</span>
-        <button onclick=&quot;toggleWatchlist('${s.symbol}', '${(s.name||'').replace(/'/g,'')}', event); this.innerHTML = isWatched('${s.symbol}') ? '★ Following' : '☆ Follow';&quot; style=&quot;margin-left:auto;font-family:var(--mono);font-size:12px;padding:6px 14px;border-radius:8px;background:var(--panel2);border:1px solid var(--b2);color:${isWatched(s.symbol)?'var(--g)':'var(--mu)'};cursor:pointer&quot;>${isWatched(s.symbol) ? '★ Following' : '☆ Follow'}</button>
-      <div class=&quot;ap-price-row&quot;>
-        <span class=&quot;ap-price&quot;>$${s.price?.toFixed(2)}</span>
-        <span class=&quot;ap-change ${changeClass}&quot;>${changeSign}${s.changePct?.toFixed(2)}% ${T('ap_today')}</span>
-      </div>
-    </div>
-
-
-    <div class=&quot;ap-body&quot;>
-
-      <!-- 1. LA CONCLUSION primero: que hacer y por que -->
-      <div class=&quot;verdict-card v-${a.verdict.toLowerCase()}&quot;>
-        <div class=&quot;vc-top&quot;>
-          <div class=&quot;vc-badge&quot;>${a.verdict}</div>
-          <div class=&quot;vc-conv&quot;>
-            <span class=&quot;vc-conv-l&quot;>${T('ap_conviction')}</span>
-            <span class=&quot;vc-conv-v&quot;>${a.conviction}</span>
-          </div>
-          <div class=&quot;vc-target&quot;>
-            <span class=&quot;vc-target-l&quot;>${T('ap_target')}</span>
-            <span class=&quot;vc-target-v&quot;>$${a.targetPrice}</span>
-            <span class=&quot;vc-target-u ${upsideClass}&quot;>${upsideSign}${a.upside}%</span>
-          </div>
-        </div>
-        <div class=&quot;vc-thesis&quot;>${a.thesis}</div>
-        ${a.isPunished && a.edge ? `<div class=&quot;vc-edge&quot;><span class=&quot;vc-edge-i&quot;>⚡</span> ${a.edge}</div>` : ''}
-      </div>
-
-      <!-- 2. Los numeros que importan, de un vistazo -->
-      <div class=&quot;quick-metrics&quot;>
-        <div class=&quot;qm&quot;><span class=&quot;qm-l&quot;>${T('ap_price')}</span><span class=&quot;qm-v&quot;>$${s.price?.toFixed(2)}</span></div>
-        <div class=&quot;qm&quot;><span class=&quot;qm-l&quot;>${T('ap_from_high')}</span><span class=&quot;qm-v down&quot;>−${s.from52High}%</span></div>
-        <div class=&quot;qm&quot;><span class=&quot;qm-l&quot;>P/E</span><span class=&quot;qm-v&quot;>${s.pe != null ? s.pe.toFixed(1) : '—'}</span></div>
-        <div class=&quot;qm&quot;><span class=&quot;qm-l&quot;>${T('ap_mkt_cap')}</span><span class=&quot;qm-v&quot;>$${(s.marketCap/1e9)?.toFixed(1)}B</span></div>
-        <div class=&quot;qm&quot;><span class=&quot;qm-l&quot;>${T('ap_net_margin')}</span><span class=&quot;qm-v&quot;>${s.netMargin != null ? (s.netMargin*100).toFixed(1)+'%' : '—'}</span></div>
-        <div class=&quot;qm&quot;><span class=&quot;qm-l&quot;>${T('ap_52w_range')}</span><span class=&quot;qm-v sm&quot;>$${s.yearLow?.toFixed(0)}–$${s.yearHigh?.toFixed(0)}</span></div>
-      </div>
-
-      <!-- 3. La grafica: la historia visual -->
-      ${renderPriceChart(s, history)}
-
-      <!-- 4. Escenarios: el rango de resultados -->
-      <div class=&quot;sec-block&quot;>
-        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>01</span><span class=&quot;sec-t&quot;>${T('ap_sec_scenarios')}</span></div>
-        <div class=&quot;scenarios&quot;>
-          <div class=&quot;scenario sc-bull&quot;>
-            <div class=&quot;scenario-head&quot;><span class=&quot;scenario-label&quot;>BULL</span><span class=&quot;scenario-prob&quot;>${a.bull.prob}%</span></div>
-            <div class=&quot;scenario-txt&quot;>${a.bull.scenario}</div>
-          </div>
-          <div class=&quot;scenario sc-base&quot;>
-            <div class=&quot;scenario-head&quot;><span class=&quot;scenario-label&quot;>BASE</span><span class=&quot;scenario-prob&quot;>${a.base.prob}%</span></div>
-            <div class=&quot;scenario-txt&quot;>${a.base.scenario}</div>
-          </div>
-          <div class=&quot;scenario sc-bear&quot;>
-            <div class=&quot;scenario-head&quot;><span class=&quot;scenario-label&quot;>BEAR</span><span class=&quot;scenario-prob&quot;>${a.bear.prob}%</span></div>
-            <div class=&quot;scenario-txt&quot;>${a.bear.scenario}</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 5. Por que cayo + contexto -->
-      ${(a.whyPunished || a.whyPunishedShort || sectorContext) ? `
-      <div class=&quot;sec-block&quot;>
-        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>02</span><span class=&quot;sec-t&quot;>${T('ap_sec_why')}</span></div>
-        ${renderWhyPunished(s, a, news)}
-        ${renderSectorContext(s, sectorContext)}
-      </div>` : ''}
-
-      <!-- 6. El negocio detras -->
-      ${fundamentals ? `
-      <div class=&quot;sec-block&quot;>
-        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>03</span><span class=&quot;sec-t&quot;>${T('ap_sec_business')}</span></div>
-        ${renderFundamentals(s, fundamentals)}
-      </div>` : ''}
-
-      <!-- 7. Velu vs el consenso -->
-      ${s.wallStreetTarget ? `
-      <div class=&quot;sec-block&quot;>
-        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>04</span><span class=&quot;sec-t&quot;>${T('ap_sec_wallstreet')}</span></div>
-        ${renderConsensusCompare(s, a)}
-      </div>` : ''}
-
-      <!-- 8. Los tres agentes -->
-      <div class=&quot;sec-block&quot;>
-        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>05</span><span class=&quot;sec-t&quot;>${T('ap_sec_agents')}</span></div>
-        <div class=&quot;agents-grid&quot;>
-          ${a.agents.map((ag, i) => `
-            <div class=&quot;agent-card&quot;>
-              <div class=&quot;agent-head&quot;>
-                <span class=&quot;agent-icon&quot;>${agentIcons[i]}</span>
-                <span class=&quot;agent-name&quot;>${ag.name}</span>
-                <span class=&quot;agent-stance ${stanceClass(ag.stance)}&quot;>${ag.stance}</span>
-              </div>
-              <div class=&quot;agent-reason&quot;>${ag.reasoning}</div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-
-      <!-- 9. Que vigilar -->
-      <div class=&quot;sec-block&quot;>
-        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>06</span><span class=&quot;sec-t&quot;>${T('ap_sec_watch')}</span></div>
-        <div class=&quot;watch-list&quot;>
-          ${a.watchItems.map(w => `<div class=&quot;watch-item&quot;><span class=&quot;watch-bullet&quot;>▸</span><span>${w}</span></div>`).join('')}
-        </div>
-      </div>
-
-      <div class=&quot;action-row&quot;>
-        <button class=&quot;track-btn&quot; id=&quot;veluTrackBtn&quot; onclick=&quot;trackThisCall()&quot;>
-          ${isTracked(s.symbol) ? '✓ ' + T('tracking') : '◎ ' + T('track_this_call')}
-        </button>
-        <button class=&quot;pdf-btn ${getUserPlan() === 'terminal' ? '' : 'locked'}&quot; onclick=&quot;exportPDF()&quot;>
-          ${getUserPlan() === 'terminal' ? '⎙ ' + T('pdf_export') : '🔒 ' + T('pdf_export')}
-        </button>
-        <div class=&quot;share-group&quot;>
-          <span class=&quot;share-lbl&quot;>${T('share_lbl')}</span>
-          <button class=&quot;share-ico-btn wa&quot; title=&quot;Share on WhatsApp&quot; onclick=&quot;shareWhatsApp()&quot;>WhatsApp</button>
-          <button class=&quot;share-ico-btn x&quot; title=&quot;Share on X&quot; onclick=&quot;shareX()&quot;>𝕏</button>
-          <button class=&quot;share-ico-btn cp&quot; title=&quot;Copy to clipboard&quot; onclick=&quot;copyCall(this)&quot;>Copy</button>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-
-/* ── EXPORT PDF (plan Terminal) ─────────────────────── */
-function exportPDF() {
-  if (getUserPlan() !== 'terminal') {
-    showUpgradeGate(T('gate_pdf_title'), T('gate_pdf_sub'));
-    return;
-  }
-  if (!__currentCall) return;
-
-  var s = __currentCall.s, a = __currentCall.a;
-  var extra = __currentExtras || {};
-  var html = buildPDFDocument(s, a, extra);
-
-  var w = window.open('', '_blank');
-  if (!w) {
-    alert('Please allow pop-ups to export the PDF.');
-    return;
-  }
-  w.document.open();
-  w.document.write(html);
-  w.document.close();
-  // Dar tiempo a que renderice antes de abrir el diálogo de impresión
-  setTimeout(function() { try { w.focus(); w.print(); } catch(e) {} }, 600);
-}
-
-function buildPDFDocument(s, a, extra) {
-  var esc = function(t) {
-    return String(t == null ? '' : t)
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  };
-  var num = function(v, d) { return (typeof v === 'number' && isFinite(v)) ? v.toFixed(d == null ? 2 : d) : '—'; };
-  var pct = function(v) { return (typeof v === 'number' && isFinite(v)) ? (v*100).toFixed(1) + '%' : '—'; };
-  var bn  = function(v) { return (typeof v === 'number' && isFinite(v)) ? '$' + (v/1e9).toFixed(1) + 'B' : '—'; };
-  var dash = function(v, pre, suf) {
-    if (v == null || (typeof v === 'number' && !isFinite(v))) return '—';
-    return (pre || '') + v + (suf || '');
-  };
-
-  var today = new Date().toLocaleDateString('en-US',
-    { year:'numeric', month:'long', day:'numeric' });
-  var vColor = a.verdict === 'BUY' ? '#00A86B' : a.verdict === 'SELL' ? '#D93025' : '#E8890C';
-  var upSign = a.upside >= 0 ? '+' : '';
-
-  var agents = (a.agents || []).map(function(ag) {
-    return '<div class=&quot;agent&quot;>' +
-      '<div class=&quot;agent-h&quot;><strong>' + esc(ag.name) + '</strong>' +
-      '<span class=&quot;stance&quot;>' + esc(ag.stance) + '</span></div>' +
-      '<p>' + esc(ag.reasoning) + '</p></div>';
-  }).join('');
-
-  var scen = ['bull','base','bear'].map(function(k) {
-    var sc = a[k]; if (!sc) return '';
-    var lbl = k.toUpperCase();
-    return '<tr><td><strong>' + lbl + '</strong></td><td>' + sc.prob + '%</td><td>' +
-      esc(sc.scenario) + '</td></tr>';
-  }).join('');
-
-  var watch = (a.watchItems || []).map(function(w) {
-    return '<li>' + esc(w) + '</li>';
-  }).join('');
-
-  var f = extra.fundamentals;
-  var fundRows = '';
-  if (f && f.years) {
-    fundRows = f.years.map(function(y) {
-      return '<tr><td>FY' + esc(y.year) + '</td>' +
-        '<td>' + bn(y.revenue) + '</td>' +
-        '<td>' + bn(y.netIncome) + '</td>' +
-        '<td>' + pct(y.netMargin) + '</td></tr>';
-    }).join('');
-  }
-
-  var sc2 = extra.sectorContext;
-  var sectorBlock = '';
-  if (sc2) {
-    sectorBlock = '<div class=&quot;block&quot;><h2>' +
-      (sc2.groupKind === 'theme' ? 'Theme context' : 'Sector context') + ' · ' + esc(sc2.sector) + '</h2>' +
-      '<p>' + esc(s.symbol) + ' is down ' + dash(s.from52High, '', '%') + ' while its ' + sc2.peerCount +
-      ' peers are down ' + dash(sc2.peerAvgFrom52High, '', '%') + ' on average.</p></div>';
-  }
-
-  var whyBlock = a.whyPunished
-    ? '<div class=&quot;block&quot;><h2>Why it moved</h2><p>' + esc(a.whyPunished) + '</p></div>' : '';
-
-  var consBlock = s.wallStreetTarget
-    ? '<div class=&quot;block&quot;><h2>Velu vs Wall Street</h2>' +
-      '<table class=&quot;kv&quot;><tr><td>Velu 12-month target</td><td><strong>$' + dash(a.targetPrice) + '</strong></td></tr>' +
-      '<tr><td>Wall Street consensus</td><td>$' + num(s.wallStreetTarget, 0) + '</td></tr>' +
-      '<tr><td>Analyst range</td><td>$' + num(s.wallStreetLow,0) + ' – $' + num(s.wallStreetHigh,0) + '</td></tr>' +
-      '</table></div>' : '';
-
-  return '<!DOCTYPE html><html><head><meta charset=&quot;utf-8&quot;>' +
-  '<title>Velu Markets · ' + esc(s.symbol) + ' Analysis</title>' +
-  '<style>' +
-  '@page { size: letter; margin: 18mm 16mm; }' +
-  'body { font-family: -apple-system, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif;' +
-  ' color:#14171F; line-height:1.5; font-size:11pt; margin:0; }' +
-  '.hdr { display:flex; justify-content:space-between; align-items:flex-start;' +
-  ' border-bottom:2px solid #14171F; padding-bottom:10px; margin-bottom:20px; }' +
-  '.brand { font-weight:800; font-size:15pt; letter-spacing:-.02em; }' +
-  '.brand span { color:#00A86B; }' +
-  '.meta { text-align:right; font-size:9pt; color:#5E6472; }' +
-  'h1 { font-size:22pt; margin:0 0 2px; letter-spacing:-.02em; }' +
-  '.sub { color:#5E6472; font-size:10pt; margin-bottom:16px; }' +
-  '.verdict { border:2px solid ' + vColor + '; border-radius:8px; padding:14px 16px; margin-bottom:18px; }' +
-  '.vrow { display:flex; align-items:center; gap:20px; margin-bottom:10px; }' +
-  '.vbadge { background:' + vColor + '; color:#fff; font-weight:800; font-size:15pt;' +
-  ' padding:5px 16px; border-radius:5px; letter-spacing:.02em; }' +
-  '.vlbl { font-size:8pt; color:#5E6472; text-transform:uppercase; letter-spacing:.08em; }' +
-  '.vval { font-size:12pt; font-weight:700; }' +
-  '.vtarget { margin-left:auto; text-align:right; }' +
-  '.thesis { font-size:11pt; }' +
-  '.block { margin-bottom:18px; page-break-inside:avoid; }' +
-  'h2 { font-size:12pt; margin:0 0 8px; padding-bottom:5px; border-bottom:1px solid #D8DCE3; }' +
-  'table { width:100%; border-collapse:collapse; font-size:10pt; }' +
-  'td, th { padding:5px 8px; border-bottom:1px solid #EDEFF3; text-align:left; vertical-align:top; }' +
-  'th { background:#F5F7FA; font-size:8.5pt; text-transform:uppercase; letter-spacing:.05em; color:#5E6472; }' +
-  '.kv td:first-child { color:#5E6472; width:45%; }' +
-  '.metrics { display:flex; flex-wrap:wrap; gap:0; border:1px solid #D8DCE3; border-radius:6px; overflow:hidden; }' +
-  '.metric { flex:1 1 16%; padding:9px 11px; border-right:1px solid #EDEFF3; }' +
-  '.metric:last-child { border-right:none; }' +
-  '.metric-l { font-size:7.5pt; color:#5E6472; text-transform:uppercase; letter-spacing:.05em; }' +
-  '.metric-v { font-size:12pt; font-weight:700; }' +
-  '.agent { margin-bottom:11px; padding:10px 12px; background:#F7F9FB; border-radius:6px; page-break-inside:avoid; }' +
-  '.agent-h { display:flex; justify-content:space-between; margin-bottom:4px; font-size:10.5pt; }' +
-  '.stance { font-size:8.5pt; font-weight:700; color:#5E6472; }' +
-  '.agent p { margin:0; font-size:10pt; color:#3A4150; }' +
-  'ul { margin:0; padding-left:18px; font-size:10pt; }' +
-  'li { margin-bottom:4px; }' +
-  '.foot { margin-top:26px; padding-top:10px; border-top:1px solid #D8DCE3;' +
-  ' font-size:8pt; color:#8A909C; line-height:1.45; }' +
-  '@media print { .noprint { display:none; } }' +
-  '</style></head><body>' +
-
-  '<div class=&quot;hdr&quot;><div class=&quot;brand&quot;>VELU <span>MARKETS</span></div>' +
-  '<div class=&quot;meta&quot;>Equity Intelligence Report<br>' + today + '</div></div>' +
-
-  '<h1>' + esc(s.symbol) + '</h1>' +
-  '<div class=&quot;sub&quot;>' + esc(s.name) + (extra.theme ? ' · ' + esc(extra.theme) : '') + '</div>' +
-
-  '<div class=&quot;verdict&quot;><div class=&quot;vrow&quot;>' +
-  '<div class=&quot;vbadge&quot;>' + esc(a.verdict) + '</div>' +
-  '<div><div class=&quot;vlbl&quot;>Conviction</div><div class=&quot;vval&quot;>' + esc(a.conviction) + '</div></div>' +
-  '<div class=&quot;vtarget&quot;><div class=&quot;vlbl&quot;>12-month target</div>' +
-  '<div class=&quot;vval&quot;>$' + dash(a.targetPrice) + ' <span style=&quot;color:' + vColor + '&quot;>' +
-  (a.upside != null ? upSign + a.upside + '%' : '') + '</span></div></div></div>' +
-  '<div class=&quot;thesis&quot;>' + esc(a.thesis) + '</div></div>' +
-
-  '<div class=&quot;block&quot;><div class=&quot;metrics&quot;>' +
-  '<div class=&quot;metric&quot;><div class=&quot;metric-l&quot;>Price</div><div class=&quot;metric-v&quot;>$' + num(s.price) + '</div></div>' +
-  '<div class=&quot;metric&quot;><div class=&quot;metric-l&quot;>From high</div><div class=&quot;metric-v&quot;>' + dash(s.from52High, '−', '%') + '</div></div>' +
-  '<div class=&quot;metric&quot;><div class=&quot;metric-l&quot;>P/E</div><div class=&quot;metric-v&quot;>' + num(s.pe, 1) + '</div></div>' +
-  '<div class=&quot;metric&quot;><div class=&quot;metric-l&quot;>Mkt cap</div><div class=&quot;metric-v&quot;>' + bn(s.marketCap) + '</div></div>' +
-  '<div class=&quot;metric&quot;><div class=&quot;metric-l&quot;>Net margin</div><div class=&quot;metric-v&quot;>' + pct(s.netMargin) + '</div></div>' +
-  '<div class=&quot;metric&quot;><div class=&quot;metric-l&quot;>52w range</div><div class=&quot;metric-v&quot; style=&quot;font-size:9.5pt&quot;>' +
-  ((typeof s.yearLow === 'number' && typeof s.yearHigh === 'number')
-    ? '$' + num(s.yearLow,0) + '–$' + num(s.yearHigh,0) : '—') + '</div></div>' +
-  '</div></div>' +
-
-  '<div class=&quot;block&quot;><h2>Scenarios</h2><table>' +
-  '<tr><th>Case</th><th>Probability</th><th>Outcome</th></tr>' + scen + '</table></div>' +
-
-  whyBlock + sectorBlock +
-
-  (fundRows ? '<div class=&quot;block&quot;><h2>Fundamental trajectory</h2><table>' +
-    '<tr><th>Year</th><th>Revenue</th><th>Net income</th><th>Net margin</th></tr>' +
-    fundRows + '</table>' +
-    (f.revenueCagr != null ? '<p style=&quot;font-size:9.5pt;color:#5E6472;margin-top:6px&quot;>Revenue CAGR: ' +
-      (f.revenueCagr > 0 ? '+' : '') + f.revenueCagr.toFixed(1) + '% · Margins ' + f.marginTrend + '</p>' : '') +
-    '</div>' : '') +
-
-  consBlock +
-
-  '<div class=&quot;block&quot;><h2>Agent analysis</h2>' + agents + '</div>' +
-
-  (watch ? '<div class=&quot;block&quot;><h2>What to watch</h2><ul>' + watch + '</ul></div>' : '') +
-
-  '<div class=&quot;foot&quot;><strong>Disclaimer.</strong> This report is generated by Velu Markets for ' +
-  'informational purposes only and does not constitute investment advice, a recommendation, or an ' +
-  'offer to buy or sell any security. Velu Markets is a software tool, not a registered investment ' +
-  'adviser or broker-dealer. Market data is provided by third parties and may contain errors or delays. ' +
-  'Past performance does not predict future results. You are solely responsible for your own investment ' +
-  'decisions and should consult a qualified financial professional before acting on any information here.' +
-  '<br><br>Generated ' + today + ' · velumarkets.com</div>' +
-
-  '</body></html>';
-}
-
-function buildCallMessage(ticker, name, verdict, target, upside, price, style) {
-  var up = (upside != null) ? (upside >= 0 ? '+' + Math.round(upside) : Math.round(upside)) + '%' : '';
-  var arrow = (upside != null && upside >= 0) ? '▲' : '▼';
-  var vEmoji = verdict === 'BUY' ? '🟢' : verdict === 'SELL' ? '🔴' : '🟡';
-
-  if (style === 'whatsapp') {
-    return vEmoji + ' *' + verdict + ' · $' + ticker + '*' + (name ? '\n' + name : '') +
-      '\n\n*Now:* $' + (price != null ? Number(price).toFixed(2) : '—') +
-      '\n*Velu 12-mo target:* $' + target + '  ' + arrow + ' ' + up +
-      '\n\nThree AI agents analyzed the fundamentals, the news behind the move, and how it compares to Wall Street.' +
-      '\n\nSee the full breakdown 👉 velumarkets.com';
-  }
-
-  if (style === 'x') {
-    return vEmoji + ' Velu says ' + verdict + ' on $' + ticker +
-      '\n\nNow $' + (price != null ? Number(price).toFixed(2) : '—') +
-      ' → 12-mo target $' + target + ' (' + arrow + ' ' + up + ')' +
-      '\n\nThree AI agents. One verdict. Every call tracked.' +
-      '\n\nvelumarkets.com';
-  }
-
-  // plain
-  return verdict + ' · $' + ticker + (name ? ' (' + name + ')' : '') +
-    '\nNow $' + (price != null ? Number(price).toFixed(2) : '—') +
-    ' → Velu 12-mo target $' + target + ' (' + arrow + ' ' + up + ')' +
-    '\n\nFull analysis at velumarkets.com';
-}
-
-function shareWhatsApp() {
-  if (!__currentCall) return;
-  var s = __currentCall.s, a = __currentCall.a;
-  var msg = buildCallMessage(s.symbol, s.name, a.verdict, a.targetPrice, a.upside, s.price, 'whatsapp');
-  var url = 'https://wa.me/?text=' + encodeURIComponent(msg);
-  var w = window.open(url, '_blank', 'noopener');
-  // Algunos navegadores dentro de iframes bloquean window.open
-  if (!w) { try { window.top.location.href = url; } catch(e) { window.location.href = url; } }
-}
-
-function shareX() {
-  if (!__currentCall) return;
-  var s = __currentCall.s, a = __currentCall.a;
-  var msg = buildCallMessage(s.symbol, '', a.verdict, a.targetPrice, a.upside, s.price, 'x');
-  var url = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(msg);
-  var w = window.open(url, '_blank', 'noopener');
-  if (!w) { try { window.top.location.href = url; } catch(e) { window.location.href = url; } }
-}
-
-function copyCall(btn) {
-  if (!__currentCall) return;
-  var s = __currentCall.s, a = __currentCall.a;
-  var msg = buildCallMessage(s.symbol, s.name, a.verdict, a.targetPrice, a.upside, s.price, 'plain');
-  var done = function() {
-    if (btn) {
-      var orig = btn.innerHTML;
-      btn.innerHTML = 'Copied ✓';
-      setTimeout(function(){ btn.innerHTML = orig; }, 1600);
-    }
-  };
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(msg).then(done).catch(function(){ fallbackCopy(msg, done); });
-  } else {
-    fallbackCopy(msg, done);
-  }
-}
-
-function fallbackCopy(msg, done) {
-  try {
-    var ta = document.createElement('textarea');
-    ta.value = msg;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    done();
-  } catch(e) {}
-}
-
-function trackThisCall() {
-  if (!__currentCall) return;
-  var s = __currentCall.s, a = __currentCall.a;
-  var btn = document.getElementById('veluTrackBtn');
-  if (isTracked(s.symbol)) {
-    removeFromMyCalls(s.symbol);
-    if (btn) btn.innerHTML = '◎ Track this call';
-  } else {
-    addToMyCalls(s, a);
-    if (btn) btn.innerHTML = '✓ Tracking';
-  }
-}
-
-
-function showUpgradeGate(title, subtitle) {
-  const backdrop = document.getElementById('analysisBackdrop');
-  const panel = document.getElementById('analysisPanel');
-  backdrop.classList.add('open');
-  document.body.style.overflow = 'hidden';
-
-  const proFeatures = ['pf_pro1','pf_pro2','pf_pro3','pf_pro4','pf_pro5','pf_pro6','pf_pro7']
-    .map(function(k) { return '<div>✓ ' + T(k) + '</div>'; }).join('');
-
-  panel.innerHTML = `
-    <div class=&quot;ap-head&quot;>
-      <button class=&quot;ap-close&quot; onclick=&quot;closeAnalysis()&quot;>×</button>
-      <div class=&quot;ap-ticker-row&quot;><span class=&quot;ap-ticker&quot; style=&quot;font-size:20px&quot;>⚡ ${T('gate_title')}</span></div>
-    </div>
-    <div style=&quot;padding:32px 28px;text-align:center&quot;>
-      <div style=&quot;font-size:20px;font-weight:650;margin-bottom:8px;color:var(--ink)&quot;>${title}</div>
-      <div style=&quot;font-size:14px;color:var(--mu);margin-bottom:28px&quot;>${subtitle}</div>
-      <div style=&quot;background:var(--bg2);border:1px solid var(--b1);border-radius:14px;padding:22px;text-align:left;margin-bottom:24px&quot;>
-        <div style=&quot;font-family:var(--mono);font-size:11px;color:var(--g);letter-spacing:.1em;margin-bottom:14px&quot;>PRO — $29/${T('gate_month')}</div>
-        <div style=&quot;display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--ink)&quot;>
-          ${proFeatures}
-        </div>
-      </div>
-      <button onclick=&quot;startCheckout('pro')&quot; style=&quot;width:100%;padding:14px;border-radius:12px;background:var(--g);color:#0A0B0D;font-weight:700;font-size:15px;border:none;cursor:pointer;font-family:var(--sans)&quot;>${T('gate_cta')}</button>
-    </div>
-  `;
-}
-
-function closeAnalysis() {
-  document.getElementById('analysisBackdrop').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-
-/* Escuchar sesion y refresh desde la pagina principal */
-window.addEventListener('message', function(ev) {
-  if (!ev.data) return;
-  if (ev.data.type === 'velu-session') {
-    __sessionEmail = ev.data.email || null;
-  }
-  if (ev.data.type === 'velu-refresh') {
-    (async function() {
-      await verifyPlanWithServer();
-      await loadWatchlist();
-      await loadMyCalls();
