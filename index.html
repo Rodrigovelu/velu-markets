@@ -4529,6 +4529,67 @@ window.addEventListener('message', function(e) {
 
   .radar-fresh { font-family: var(--mono); font-size: 10px; color: var(--dim); margin-left: 6px; }
 
+
+  /* ── MOVIL: scroll horizontal en filtros y lectura del analisis ── */
+  @media (max-width: 768px) {
+    /* Los chips de filtro se deslizan lateralmente en vez de apilarse */
+    .scr-controls { flex-wrap: nowrap; gap: 10px; padding: 12px 14px; align-items: stretch; }
+    .scr-chips {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+      scroll-snap-type: x proximity;
+    }
+    .scr-chips::-webkit-scrollbar { display: none; }
+    .scr-chip { flex: 0 0 auto; scroll-snap-align: start; }
+
+    /* El selector de orden no debe encogerse ni empujar a los chips */
+    .scr-controls select, .scr-sort { flex: 0 0 auto; }
+
+    /* ── Lectura del analisis en telefono ── */
+    .analysis-backdrop { padding: 0; }
+    .analysis-panel { border-radius: 0; min-height: 100%; }
+
+    .ap-body { padding: 18px 16px 28px; }
+
+    /* Tesis y textos largos: mas compactos y comodos de leer */
+    .vc-thesis { font-size: 15px; line-height: 1.55; }
+    .vc-edge { font-size: 13.5px; line-height: 1.5; }
+    .verdict-card { padding: 16px; border-radius: 14px; }
+    .vc-badge { font-size: 20px; padding: 6px 14px; }
+    .vc-target-v { font-size: 21px; }
+
+    .scenario-txt { font-size: 13.5px; line-height: 1.5; }
+    .agent-reason { font-size: 13.5px; line-height: 1.55; }
+    .why-full, .why-short { font-size: 13.5px; line-height: 1.55; }
+    .sc-detail { font-size: 13.5px; line-height: 1.55; }
+    .watch-item { font-size: 13.5px; line-height: 1.5; }
+    .sec-t { font-size: 14px; }
+
+    /* Encabezado del analisis: el precio ya no se encima con la X.
+       La fila pasa a dos lineas y se reserva espacio para el boton. */
+    .ap-head { padding: 16px 56px 14px 16px; }
+    .ap-ticker-row { flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
+    .ap-ticker { font-size: 24px; }
+    .ap-price { font-size: 19px; }
+    .ap-close { top: 14px; right: 14px; }
+    /* El nombre largo de la empresa no debe empujar el precio fuera */
+    .ap-name { flex: 1 1 100%; font-size: 13px; }
+
+    /* El nombre de la empresa usa todo el ancho disponible en vez de
+       cortarse a 200px fijos; el tema pasa a segunda linea. */
+    .stock-sym, .rad-row .stock-sym { min-width: 0; }
+    .sym-name { max-width: 100%; white-space: normal; line-height: 1.35;
+                display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+                overflow: hidden; }
+    .sym-ticker { font-size: 14px; }
+
+    /* Filas un poco mas compactas para que quepan mas en pantalla */
+    .stock-row, .rad-row { padding: 12px 14px; }
+  }
+
 </style>
 </head>
 <body>
@@ -6951,64 +7012,3 @@ window.addEventListener('message', function(ev) {
       await verifyPlanWithServer();
       await loadWatchlist();
       await loadMyCalls();
-      loadScreener();
-      loadTrackRecord();
-      renderWatchlistPanel();
-      renderMyCalls();
-      showTerminalTabIfEligible();
-    })();
-  }
-});
-
-/* ── INIT ──────────────────────────────────────── */
-(async function initTerminal() {
-  // Aplicar traducciones con el idioma default mientras llega el
-  // idioma real del padre via postMessage (el listener ya esta activo)
-  applyTermTranslations();
-
-  var tb1 = document.getElementById('tabBtnPunished');
-  var tb2 = document.getElementById('tabBtnRadar');
-  if (tb1) tb1.addEventListener('click', function(){ switchTab('punished'); });
-  if (tb2) tb2.addEventListener('click', function(){ switchTab('radar'); });
-  var tb3 = document.getElementById('tabBtnTerminal');
-  if (tb3) tb3.addEventListener('click', function(){ switchTab('terminal'); });
-
-  await requestSessionFromParent();
-  await verifyPlanWithServer();
-  await loadWatchlist();
-  await loadMyCalls();
-  loadScreener();
-  loadTrackRecord();
-  renderWatchlistPanel();
-  renderMyCalls();
-  showTerminalTabIfEligible();
-  setupPendingBanner();
-  setupWelcomeCard();
-})();
-</script>
-</body>
-</html>
-"></iframe>
-</div>
-
-<style>
-  #unifiedTerminalView {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    background: #fff;
-  }
-  #unifiedTerminalView iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
-    display: block;
-    background: #fff;
-  }
-</style>
-
-
-
-</body>
-</html>
