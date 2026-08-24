@@ -3696,6 +3696,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      // El iframe debe existir antes de ocultar el home. Si no esta,
+      // nos quedamos en el home en vez de dejar la pantalla en blanco.
+      const termFrame = document.getElementById('terminalFrame');
+      if (!termFrame) {
+        console.error('Velu: terminal iframe missing, staying on home.');
+        homeView.style.display = 'block';
+        termView.style.display = 'none';
+        return;
+      }
+
       homeView.style.display = 'none';
       termView.style.display = 'block';
       termView.setAttribute('aria-hidden', 'false');
@@ -3801,6 +3811,30 @@ document.addEventListener('DOMContentLoaded', () => {
         updateAuthCtas();
       }
     })();
+
+    // RED DE SEGURIDAD: pase lo que pase, la pagina nunca queda en blanco.
+    // Si al terminar el arranque ni el home ni el terminal estan visibles,
+    // forzamos el home. Esto cubre cualquier fallo que no hayamos previsto.
+    setTimeout(function ensureSomethingVisible() {
+      try {
+        var hv = document.getElementById('unifiedHomeView');
+        var tv = document.getElementById('unifiedTerminalView');
+        if (!hv) return;
+
+        var homeHidden = hv.style.display === 'none';
+        var termHidden = !tv || tv.style.display === 'none' || tv.style.display === '';
+
+        if (homeHidden && termHidden) {
+          console.warn('Velu: nothing was visible — restoring home view.');
+          if (tv) { tv.style.display = 'none'; tv.setAttribute('aria-hidden','true'); }
+          hv.style.display = 'block';
+          document.body.style.overflow = '';
+        }
+      } catch (e) {
+        // Ultimo recurso absoluto
+        try { document.getElementById('unifiedHomeView').style.display = 'block'; } catch (_) {}
+      }
+    }, 1200);
   });
 
 
@@ -7012,3 +7046,122 @@ function fallbackCopy(msg, done) {
 }
 
 function trackThisCall() {
+  if (!__currentCall) return;
+  var s = __currentCall.s, a = __currentCall.a;
+  var btn = document.getElementById('veluTrackBtn');
+  if (isTracked(s.symbol)) {
+    removeFromMyCalls(s.symbol);
+    if (btn) btn.innerHTML = '◎ Track this call';
+  } else {
+    addToMyCalls(s, a);
+    if (btn) btn.innerHTML = '✓ Tracking';
+  }
+}
+
+
+function showUpgradeGate(title, subtitle) {
+  const backdrop = document.getElementById('analysisBackdrop');
+  const panel = document.getElementById('analysisPanel');
+  backdrop.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  const proFeatures = ['pf_pro1','pf_pro2','pf_pro3','pf_pro4','pf_pro5','pf_pro6','pf_pro7']
+    .map(function(k) { return '<div>✓ ' + T(k) + '</div>'; }).join('');
+
+  panel.innerHTML = `
+    <div class=&quot;ap-head&quot;>
+      <button class=&quot;ap-close&quot; onclick=&quot;closeAnalysis()&quot;>×</button>
+      <div class=&quot;ap-ticker-row&quot;><span class=&quot;ap-ticker&quot; style=&quot;font-size:20px&quot;>⚡ ${T('gate_title')}</span></div>
+    </div>
+    <div style=&quot;padding:32px 28px;text-align:center&quot;>
+      <div style=&quot;font-size:20px;font-weight:650;margin-bottom:8px;color:var(--ink)&quot;>${title}</div>
+      <div style=&quot;font-size:14px;color:var(--mu);margin-bottom:28px&quot;>${subtitle}</div>
+      <div style=&quot;background:var(--bg2);border:1px solid var(--b1);border-radius:14px;padding:22px;text-align:left;margin-bottom:24px&quot;>
+        <div style=&quot;font-family:var(--mono);font-size:11px;color:var(--g);letter-spacing:.1em;margin-bottom:14px&quot;>PRO — $29/${T('gate_month')}</div>
+        <div style=&quot;display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--ink)&quot;>
+          ${proFeatures}
+        </div>
+      </div>
+      <button onclick=&quot;startCheckout('pro')&quot; style=&quot;width:100%;padding:14px;border-radius:12px;background:var(--g);color:#0A0B0D;font-weight:700;font-size:15px;border:none;cursor:pointer;font-family:var(--sans)&quot;>${T('gate_cta')}</button>
+    </div>
+  `;
+}
+
+function closeAnalysis() {
+  document.getElementById('analysisBackdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+
+/* Escuchar sesion y refresh desde la pagina principal */
+window.addEventListener('message', function(ev) {
+  if (!ev.data) return;
+  if (ev.data.type === 'velu-session') {
+    __sessionEmail = ev.data.email || null;
+  }
+  if (ev.data.type === 'velu-refresh') {
+    (async function() {
+      await verifyPlanWithServer();
+      await loadWatchlist();
+      await loadMyCalls();
+      loadScreener();
+      loadTrackRecord();
+      renderWatchlistPanel();
+      renderMyCalls();
+      showTerminalTabIfEligible();
+    })();
+  }
+});
+
+/* ── INIT ──────────────────────────────────────── */
+(async function initTerminal() {
+  // Aplicar traducciones con el idioma default mientras llega el
+  // idioma real del padre via postMessage (el listener ya esta activo)
+  applyTermTranslations();
+
+  var tb1 = document.getElementById('tabBtnPunished');
+  var tb2 = document.getElementById('tabBtnRadar');
+  if (tb1) tb1.addEventListener('click', function(){ switchTab('punished'); });
+  if (tb2) tb2.addEventListener('click', function(){ switchTab('radar'); });
+  var tb3 = document.getElementById('tabBtnTerminal');
+  if (tb3) tb3.addEventListener('click', function(){ switchTab('terminal'); });
+
+  await requestSessionFromParent();
+  await verifyPlanWithServer();
+  await loadWatchlist();
+  await loadMyCalls();
+  loadScreener();
+  loadTrackRecord();
+  renderWatchlistPanel();
+  renderMyCalls();
+  showTerminalTabIfEligible();
+  setupPendingBanner();
+  setupWelcomeCard();
+})();
+&lt;/script>
+</body>
+</html>
+"></iframe>
+</div>
+
+<style>
+  #unifiedTerminalView {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #fff;
+  }
+  #unifiedTerminalView iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+    background: #fff;
+  }
+</style>
+
+
+
+</body>
+</html>
