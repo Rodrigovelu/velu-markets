@@ -4644,7 +4644,8 @@ window.addEventListener('message', function(e) {
        Un solo margen lateral (--ap-gutter) para TODO el contenido, para
        que nada quede recargado a un lado. El panel llega a los bordes y
        el respiro visual lo dan los paddings internos, no el backdrop. */
-    .analysis-backdrop { padding: 0; display: block; }
+    .analysis-backdrop { padding: 0; }
+    .analysis-backdrop.open { display: block; }
     .analysis-panel {
       border-radius: 0;
       min-height: 100%;
@@ -7226,4 +7227,3 @@ window.addEventListener('message', function(ev) {
 
 
 </body>
-</html>
