@@ -4640,16 +4640,35 @@ window.addEventListener('message', function(e) {
     /* El selector de orden no debe encogerse ni empujar a los chips */
     .scr-controls select, .scr-sort { flex: 0 0 auto; }
 
-    /* ── Lectura del analisis en telefono ── */
-    .analysis-backdrop { padding: 0; }
-    .analysis-panel { border-radius: 0; min-height: 100%; }
+    /* ── Lectura del analisis en telefono ──
+       Un solo margen lateral (--ap-gutter) para TODO el contenido, para
+       que nada quede recargado a un lado. El panel llega a los bordes y
+       el respiro visual lo dan los paddings internos, no el backdrop. */
+    .analysis-backdrop { padding: 0; display: block; }
+    .analysis-panel {
+      border-radius: 0;
+      min-height: 100%;
+      max-width: 100%;
+      width: 100%;
+      margin: 0;
+      --ap-gutter: 18px;
+    }
 
-    .ap-body { padding: 18px 16px 28px; }
+    /* Cuerpo y encabezado comparten exactamente el mismo margen */
+    .ap-body { padding: 18px var(--ap-gutter) 32px; }
+
+    /* La tarjeta de veredicto ya no agrega margen propio: su texto
+       se alinea con el resto de las secciones de abajo. */
+    .verdict-card {
+      padding: 18px 16px;
+      border-radius: 14px;
+      margin-left: 0;
+      margin-right: 0;
+    }
 
     /* Tesis y textos largos: mas compactos y comodos de leer */
-    .vc-thesis { font-size: 15px; line-height: 1.55; }
-    .vc-edge { font-size: 13.5px; line-height: 1.5; }
-    .verdict-card { padding: 16px; border-radius: 14px; }
+    .vc-thesis { font-size: 15px; line-height: 1.6; }
+    .vc-edge { font-size: 13.5px; line-height: 1.55; }
     .vc-badge { font-size: 20px; padding: 6px 14px; }
     .vc-target-v { font-size: 21px; }
 
@@ -4660,15 +4679,16 @@ window.addEventListener('message', function(e) {
     .watch-item { font-size: 13.5px; line-height: 1.5; }
     .sec-t { font-size: 14px; }
 
-    /* Encabezado del analisis: el precio ya no se encima con la X.
-       La fila pasa a dos lineas y se reserva espacio para el boton. */
-    .ap-head { padding: 16px 56px 14px 16px; }
-    .ap-ticker-row { flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
+    /* Encabezado: mismo margen izquierdo que el cuerpo, y espacio a la
+       derecha solo para el boton de cerrar. Asi el ticker se alinea
+       verticalmente con la tesis y las metricas de abajo. */
+    .ap-head { padding: 16px 56px 16px var(--ap-gutter); }
+    .ap-ticker-row { flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
     .ap-ticker { font-size: 24px; }
     .ap-price { font-size: 19px; }
     .ap-close { top: 14px; right: 14px; }
-    /* El nombre largo de la empresa no debe empujar el precio fuera */
-    .ap-name { flex: 1 1 100%; font-size: 13px; }
+    /* El nombre de la empresa ocupa su propia linea completa */
+    .ap-name { flex: 1 1 100%; font-size: 13px; margin: 0; }
 
     /* El nombre de la empresa usa todo el ancho disponible en vez de
        cortarse a 200px fijos; el tema pasa a segunda linea. */
@@ -4680,6 +4700,48 @@ window.addEventListener('message', function(e) {
 
     /* Filas un poco mas compactas para que quepan mas en pantalla */
     .stock-row, .rad-row { padding: 12px 14px; }
+
+    /* Tarjetas internas: padding lateral mas justo para ganar ancho de
+       lectura, manteniendo el aire vertical que separa las ideas. */
+    .why-box, .sector-box { padding: 16px 15px; margin-bottom: 20px; }
+    .agent-card { padding: 15px 15px; }
+    .scenario { padding: 14px 15px; }
+    .qm { padding: 12px 10px; }
+    .fund-box, .consensus-box { padding: 16px 15px; }
+
+    /* Separacion entre secciones: suficiente para respirar, sin
+       obligar a scrollear de mas. */
+    .sec-block { margin-bottom: 24px; }
+    .sec-hd { margin-bottom: 12px; }
+
+    /* Ancho de linea comodo: el texto no se pega a los bordes */
+    .vc-thesis, .agent-reason, .scenario-txt,
+    .why-full, .why-short, .sc-detail { max-width: 100%; }
+
+    /* Las metricas rapidas ocupan todo el ancho disponible */
+    .quick-metrics { margin-bottom: 20px; }
+  }
+
+
+  /* Telefonos angostos (iPhone SE y similares): margenes mas justos
+     para no perder ancho de lectura en pantallas pequenas. */
+  @media (max-width: 380px) {
+    .analysis-panel { --ap-gutter: 14px; }
+    .verdict-card { padding: 16px 14px; }
+    .why-box, .sector-box, .agent-card, .scenario { padding: 14px 13px; }
+    .ap-ticker { font-size: 22px; }
+    .vc-thesis { font-size: 14.5px; }
+  }
+
+  /* Respetar el area segura de iPhone en horizontal (notch/isla) */
+  @supports (padding: max(0px)) {
+    @media (max-width: 768px) {
+      .ap-head { padding-left: max(var(--ap-gutter), env(safe-area-inset-left)); }
+      .ap-body {
+        padding-left: max(var(--ap-gutter), env(safe-area-inset-left));
+        padding-right: max(var(--ap-gutter), env(safe-area-inset-right));
+      }
+    }
   }
 
 </style>
@@ -6806,7 +6868,7 @@ function exportPDF() {
 function buildPDFDocument(s, a, extra) {
   var esc = function(t) {
     return String(t == null ? '' : t)
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      .replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>');
   };
   var num = function(v, d) { return (typeof v === 'number' && isFinite(v)) ? v.toFixed(d == null ? 2 : d) : '—'; };
   var pct = function(v) { return (typeof v === 'number' && isFinite(v)) ? (v*100).toFixed(1) + '%' : '—'; };
