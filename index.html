@@ -18,6 +18,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
+/* GARANTIA: el home es visible por defecto, sin depender de JavaScript.
+   Si el JS falla o tarda, la pagina se ve igual en vez de quedar en blanco.
+   veluApp.showTerminal() lo oculta despues cuando corresponde. */
+#unifiedHomeView { display: block; }
+#unifiedTerminalView { display: none; }
+
 /* ── TOKENS ─────────────────────────────────────────────────────── */
 :root {
   --w:   #FFFFFF;
@@ -3904,7 +3910,7 @@ async function loadMarketTape() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function veluLandingInit() {
   // Aplicar traducciones antes que nada, para que no haya parpadeo de ingles
   applyLandingTranslations();
 
@@ -3932,7 +3938,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { rootMargin: '200px' });
     engObs.observe(engSection);
   }
-});
+}
+
+// Igual que el arranque principal: correr aunque el DOM ya este listo.
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', veluLandingInit);
+} else {
+  veluLandingInit();
+}
 </script>
 
 </div>
@@ -4131,7 +4144,11 @@ document.addEventListener('DOMContentLoaded', () => {
   window.openEarlyAccess = () => veluApp.openEarlyAccess();
   window.closeEarlyAccess = () => veluApp.closeEarlyAccess();
 
-  document.addEventListener('DOMContentLoaded', () => {
+  // El arranque debe correr aunque DOMContentLoaded YA haya ocurrido.
+  // Con un archivo grande el navegador puede terminar de parsear antes
+  // de ejecutar este bloque; en ese caso el listener nunca dispararia
+  // y la pagina se quedaria sin inicializar (pantalla en blanco).
+  function veluBoot() {
     veluApp.init();
     resetOnboardingState();
 
@@ -4185,20 +4202,73 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!hv) return;
 
         var homeHidden = hv.style.display === 'none';
-        var termHidden = !tv || tv.style.display === 'none' || tv.style.display === '';
+        var termShown  = tv && tv.style.display === 'block';
 
-        if (homeHidden && termHidden) {
+        // Caso 1: ninguna vista visible -> restaurar el home.
+        if (homeHidden && !termShown) {
           console.warn('Velu: nothing was visible — restoring home view.');
           if (tv) { tv.style.display = 'none'; tv.setAttribute('aria-hidden','true'); }
           hv.style.display = 'block';
           document.body.style.overflow = '';
+          return;
+        }
+
+        // Caso 2: el contenedor del terminal dice estar visible, pero el
+        // iframe no cargo. El usuario veria una pantalla negra vacia, asi
+        // que volvemos al home, que si es utilizable.
+        if (termShown) {
+          var fr = document.getElementById('terminalFrame');
+          var frameOk = false;
+          try {
+            frameOk = !!(fr && (fr.contentDocument
+              ? (fr.contentDocument.body && fr.contentDocument.body.children.length > 0)
+              : true));
+          } catch (e) {
+            // Acceso denegado por origen distinto = el iframe SI cargo
+            frameOk = true;
+          }
+
+          if (!frameOk) {
+            console.warn('Velu: terminal frame did not load — retrying once.');
+            // Un reintento antes de rendirnos: forzar recarga del iframe
+            try {
+              if (fr && fr.getAttribute('srcdoc')) {
+                var doc = fr.getAttribute('srcdoc');
+                fr.setAttribute('srcdoc', doc);
+              }
+            } catch (e) {}
+
+            // Si en 2.5s sigue vacio, volvemos al home usable
+            setTimeout(function () {
+              var stillEmpty = false;
+              try {
+                stillEmpty = !!(fr && fr.contentDocument && fr.contentDocument.body
+                  && fr.contentDocument.body.children.length === 0);
+              } catch (e) { stillEmpty = false; }
+
+              if (stillEmpty) {
+                console.warn('Velu: terminal still empty — falling back to home.');
+                tv.style.display = 'none';
+                tv.setAttribute('aria-hidden','true');
+                hv.style.display = 'block';
+                document.body.style.overflow = '';
+              }
+            }, 2500);
+          }
         }
       } catch (e) {
         // Ultimo recurso absoluto
         try { document.getElementById('unifiedHomeView').style.display = 'block'; } catch (_) {}
       }
-    }, 1200);
-  });
+    }, 1800);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', veluBoot);
+  } else {
+    // El DOM ya estaba listo: arrancar de inmediato
+    veluBoot();
+  }
 
 
 
@@ -7157,73 +7227,3 @@ function renderAnalysis(s, a, news, history, fundamentals, sectorContext) {
       <!-- 7. Velu vs el consenso -->
       ${s.wallStreetTarget ? `
       <div class=&quot;sec-block&quot;>
-        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>04</span><span class=&quot;sec-t&quot;>${T('ap_sec_wallstreet')}</span></div>
-        ${renderConsensusCompare(s, a)}
-      </div>` : ''}
-
-      <!-- 8. Los tres agentes -->
-      <div class=&quot;sec-block&quot;>
-        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>05</span><span class=&quot;sec-t&quot;>${T('ap_sec_agents')}</span></div>
-        <div class=&quot;agents-grid&quot;>
-          ${a.agents.map((ag, i) => `
-            <div class=&quot;agent-card&quot;>
-              <div class=&quot;agent-head&quot;>
-                <span class=&quot;agent-icon&quot;>${agentIcons[i]}</span>
-                <span class=&quot;agent-name&quot;>${ag.name}</span>
-                <span class=&quot;agent-stance ${stanceClass(ag.stance)}&quot;>${ag.stance}</span>
-              </div>
-              <div class=&quot;agent-reason&quot;>${ag.reasoning}</div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-
-      <!-- 9. Que vigilar -->
-      <div class=&quot;sec-block&quot;>
-        <div class=&quot;sec-hd&quot;><span class=&quot;sec-n&quot;>06</span><span class=&quot;sec-t&quot;>${T('ap_sec_watch')}</span></div>
-        <div class=&quot;watch-list&quot;>
-          ${a.watchItems.map(w => `<div class=&quot;watch-item&quot;><span class=&quot;watch-bullet&quot;>▸</span><span>${w}</span></div>`).join('')}
-        </div>
-      </div>
-
-      <div class=&quot;action-row&quot;>
-        <button class=&quot;track-btn&quot; id=&quot;veluTrackBtn&quot; onclick=&quot;trackThisCall()&quot;>
-          ${isTracked(s.symbol) ? '✓ ' + T('tracking') : '◎ ' + T('track_this_call')}
-        </button>
-        <button class=&quot;pdf-btn ${getUserPlan() === 'terminal' ? '' : 'locked'}&quot; onclick=&quot;exportPDF()&quot;>
-          ${getUserPlan() === 'terminal' ? '⎙ ' + T('pdf_export') : '🔒 ' + T('pdf_export')}
-        </button>
-        <div class=&quot;share-group&quot;>
-          <span class=&quot;share-lbl&quot;>${T('share_lbl')}</span>
-          <button class=&quot;share-ico-btn wa&quot; title=&quot;Share on WhatsApp&quot; onclick=&quot;shareWhatsApp()&quot;>WhatsApp</button>
-          <button class=&quot;share-ico-btn x&quot; title=&quot;Share on X&quot; onclick=&quot;shareX()&quot;>𝕏</button>
-          <button class=&quot;share-ico-btn cp&quot; title=&quot;Copy to clipboard&quot; onclick=&quot;copyCall(this)&quot;>Copy</button>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-
-/* ── EXPORT PDF (plan Terminal) ─────────────────────── */
-function exportPDF() {
-  if (getUserPlan() !== 'terminal') {
-    showUpgradeGate(T('gate_pdf_title'), T('gate_pdf_sub'));
-    return;
-  }
-  if (!__currentCall) return;
-
-  var s = __currentCall.s, a = __currentCall.a;
-  var extra = __currentExtras || {};
-  var html = buildPDFDocument(s, a, extra);
-
-  var w = window.open('', '_blank');
-  if (!w) {
-    alert('Please allow pop-ups to export the PDF.');
-    return;
-  }
-  w.document.open();
-  w.document.write(html);
-  w.document.close();
-  // Dar tiempo a que renderice antes de abrir el diálogo de impresión
-  setTimeout(function() { try { w.focus(); w.print(); } catch(e) {} }, 600);
