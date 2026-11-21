@@ -540,7 +540,18 @@ button { cursor: pointer; border: none; background: none; font-family: var(--san
   width:100%; max-width:760px; background:rgba(255,255,255,.94);
   border:1px solid rgba(255,255,255,.74); border-radius:30px;
   box-shadow:0 36px 90px rgba(8,10,9,.18); overflow:hidden;
+  position:relative;
 }
+/* Salida siempre disponible: el onboarding nunca debe atrapar al usuario */
+.ob-close{
+  position:absolute; top:16px; right:18px; z-index:5;
+  width:34px; height:34px; border-radius:999px;
+  display:flex; align-items:center; justify-content:center;
+  border:1px solid rgba(12,18,16,.10); background:rgba(255,255,255,.9);
+  color:#4b5563; font-size:19px; line-height:1; cursor:pointer;
+  font-family:inherit; padding:0;
+}
+.ob-close:hover{ background:#fff; color:#0c1210; }
 .ob-head{
   padding:28px 30px 18px; border-bottom:1px solid rgba(12,18,16,.06);
   background:
@@ -1377,6 +1388,7 @@ body{
 <!-- ONBOARDING -->
 <div class="ob-backdrop" id="onboardingModal" aria-hidden="true">
   <div class="ob-modal" role="dialog" aria-modal="true" aria-labelledby="obTitle">
+    <button type="button" class="ob-close" id="obCloseBtn" onclick="skipOnboarding()" aria-label="Close">&times;</button>
     <div class="ob-head">
       <div class="ob-kicker"><span class="ob-kicker-dot"></span> <span data-i18n="ob_kicker">Personalize your terminal</span></div>
       <h2 class="ob-title" id="obTitle" data-i18n="ob_title">Help us tailor Velu to you</h2>
@@ -1517,6 +1529,9 @@ body{
       <div class="ob-foot">
         <div class="ob-note" id="obProgressNote">A few fast questions so Velu feels more relevant from the first click.</div>
         <div class="ob-actions">
+          <button type="button" id="obSkipBtn" onclick="skipOnboarding()"
+                  data-i18n="ob_skip"
+                  style="background:none;border:none;color:#6b7280;font-size:13px;font-family:inherit;cursor:pointer;text-decoration:underline;padding:8px 4px;margin-right:auto;">Skip for now</button>
           <button class="ob-btn" type="button" id="obBackBtn" onclick="onboardingBack()" style="display:none;">Back</button>
           <button class="ob-btn primary" type="button" id="obNextBtn" onclick="onboardingNext()" disabled>Continue</button>
           <button class="ob-btn signal" type="button" id="obFinishBtn" onclick="completeOnboarding()" style="display:none;">Enter terminal</button>
@@ -2214,6 +2229,34 @@ function normalizeUser(user) {
   };
 }
 
+/* ── Onboarding: una sola fuente de verdad ──────────────
+   El modal solo debe aparecer para alguien que de verdad nunca lo hizo.
+   Lo damos por hecho si se cumple cualquiera de estas tres:
+     1. la cuenta lo tiene marcado en Supabase
+     2. la cuenta ya tiene datos de perfil guardados
+     3. este navegador ya lo completo o lo omitio
+   La tercera es la red de seguridad: aunque Supabase falle al guardar,
+   el usuario no vuelve a ver el modal en su dispositivo.            */
+function onboardingLocalKey(email) {
+  return 'veluOnboardingDone:' + String(email || '').toLowerCase();
+}
+
+function markOnboardingDoneLocally(email) {
+  try { localStorage.setItem(onboardingLocalKey(email), '1'); } catch (e) {}
+}
+
+function isOnboardingDoneLocally(email) {
+  try { return localStorage.getItem(onboardingLocalKey(email)) === '1'; } catch (e) { return false; }
+}
+
+function needsOnboarding(user) {
+  if (!user) return false;
+  if (user.onboardingCompleted) return false;
+  if (typeof profileHasData === 'function' && profileHasData(user.profile)) return false;
+  if (isOnboardingDoneLocally(user.email)) return false;
+  return true;
+}
+
 // Convierte una fila de app_users al formato que usa la app
 function rowToUser(row, email) {
   if (!row) return null;
@@ -2361,19 +2404,74 @@ async function authRestoreSession() {
 }
 
 /* ── Guardar cambios del perfil ───────────────────────── */
+function profileHasData(p) {
+  if (!p || typeof p !== 'object') return false;
+  return Object.keys(p).some(k => String(p[k] || '').trim() !== '');
+}
+
+// Guarda cambios del perfil en app_users.
+//
+// IMPORTANTE: esta funcion escribe sobre la fila del usuario AUTENTICADO.
+// Por eso nunca debe aceptar valores "vacios" que borren datos buenos:
+//   - onboarding_completed jamas vuelve de true a false
+//   - un perfil vacio no reemplaza uno con datos
+//   - el nombre generico "Velu User" no reemplaza un nombre real
+// Estas tres reglas son las que evitan que una cuenta ya configurada
+// vuelva a quedar como recien creada.
 async function authSaveProfile(patch) {
   const client = sb();
   if (!client) return null;
   try {
     const { data } = await client.auth.getUser();
     if (!data || !data.user) return null;
+    const uid = data.user.id;
+
+    let current = null;
+    try {
+      const { data: rows } = await client.from('app_users')
+        .select('name,onboarding_completed,profile').eq('id', uid).limit(1);
+      current = Array.isArray(rows) && rows[0] ? rows[0] : null;
+    } catch (e) {}
 
     const update = { updated_at: new Date().toISOString() };
-    if (patch.name !== undefined) update.name = patch.name;
-    if (patch.onboardingCompleted !== undefined) update.onboarding_completed = patch.onboardingCompleted;
-    if (patch.profile !== undefined) update.profile = patch.profile;
 
-    await client.from('app_users').update(update).eq('id', data.user.id);
+    if (patch.name !== undefined) {
+      const generic = !patch.name || patch.name === 'Velu User';
+      if (!(generic && current && current.name && current.name !== 'Velu User')) {
+        update.name = patch.name;
+      }
+    }
+
+    if (patch.onboardingCompleted !== undefined) {
+      // Solo permitimos marcar como completado, nunca lo contrario.
+      if (patch.onboardingCompleted === true || !(current && current.onboarding_completed)) {
+        update.onboarding_completed = !!patch.onboardingCompleted;
+      }
+    }
+
+    if (patch.profile !== undefined) {
+      if (profileHasData(patch.profile) || !(current && profileHasData(current.profile))) {
+        update.profile = patch.profile;
+      }
+    }
+
+    await client.from('app_users').update(update).eq('id', uid);
+
+    // Verificar que si quedo guardado. Un fallo silencioso aqui era la razon
+    // de que el onboarding reapareciera despues de completarlo.
+    if (update.onboarding_completed === true) {
+      try {
+        const { data: check } = await client.from('app_users')
+          .select('onboarding_completed').eq('id', uid).limit(1);
+        const ok = Array.isArray(check) && check[0] && check[0].onboarding_completed === true;
+        if (!ok) {
+          await client.from('app_users')
+            .update({ onboarding_completed: true, updated_at: new Date().toISOString() })
+            .eq('id', uid);
+        }
+      } catch (e) {}
+    }
+
     return true;
   } catch (e) {
     return null;
@@ -2394,9 +2492,23 @@ async function authResetPassword(email) {
   }
 }
 
+/* Avisar al terminal (iframe) del correo de la sesion en cuanto exista.
+   El iframe se carga antes de que termine la restauracion de sesion, asi que
+   sin este aviso se quedaba sin correo y leia el plan como free. */
+function pushSessionToTerminal(email) {
+  try {
+    const fr = document.getElementById('terminalFrame');
+    if (fr && fr.contentWindow) {
+      fr.contentWindow.postMessage({ type: 'velu-session', email: email || null }, '*');
+      fr.contentWindow.postMessage({ type: 'velu-refresh' }, '*');
+    }
+  } catch (e) {}
+}
+
 /* ── Sesion en memoria (igual que antes) ──────────────── */
 function setSession(user) {
   const normalized = normalizeUser(user);
+  pushSessionToTerminal(normalized.email);
   if (window.__veluApp && typeof window.__veluApp.setSession === 'function') {
     return window.__veluApp.setSession(normalized);
   }
@@ -2584,6 +2696,50 @@ function closeOnboarding() {
   document.body.style.overflow = '';
 }
 
+/* Salir del onboarding sin contestarlo.
+   Guardamos lo que ya haya llenado, lo marcamos como hecho (en el servidor y
+   en este navegador) y lo dejamos entrar. El onboarding es util, pero nunca
+   debe ser una puerta cerrada. */
+function skipOnboarding() {
+  const state = window.__veluOnboarding || { data: {} };
+  const sess = getSession();
+  const email = (sess && sess.user && sess.user.email)
+    ? sess.user.email
+    : (state.pendingUserEmail || '');
+
+  markOnboardingDoneLocally(email);
+
+  if (sess && sess.user) {
+    const updated = {
+      ...sess.user,
+      onboardingCompleted: true,
+      profile: { ...(sess.user.profile || {}), ...(state.data || {}) }
+    };
+    setSession(updated);
+  }
+
+  try {
+    authSaveProfile({ onboardingCompleted: true, profile: state.data || {} });
+  } catch (e) {}
+
+  closeOnboarding();
+
+  if (sess && sess.user) goToTerminal(false);
+}
+
+/* Cerrar con Escape o haciendo clic fuera del modal */
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape') return;
+  const modal = document.getElementById('onboardingModal');
+  if (modal && modal.classList.contains('open')) skipOnboarding();
+});
+
+document.addEventListener('click', function (e) {
+  const modal = document.getElementById('onboardingModal');
+  if (!modal || !modal.classList.contains('open')) return;
+  if (e.target === modal) skipOnboarding();
+});
+
 function onboardingNext() {
   if (window.__veluOnboarding.step < 6) {
     window.__veluOnboarding.step += 1;
@@ -2629,6 +2785,10 @@ async function completeOnboarding() {
     profile: { ...state.data }
   };
   setSession(updated);
+
+  // Marcar tambien en este navegador: si Supabase falla, el usuario no vuelve
+  // a toparse con el onboarding la proxima vez que abra la pagina.
+  markOnboardingDoneLocally(updated.email || state.pendingUserEmail);
 
   // Persistir el perfil en la cuenta del usuario (app_users).
   // Envuelto en try/catch: si Supabase falla, el usuario igual debe entrar.
@@ -2856,17 +3016,31 @@ document.addEventListener('click', function(e) {
 /* ═══════════════════════════════════════════════════════
    SOCIAL AUTH (placeholder)
 ═══════════════════════════════════════════════════════ */
-function socialAuth(provider) {
-  const demoUser = upsertUser({
-    name: 'Velu User',
-    email: `demo+${provider}@velu.markets`,
-    provider,
-    onboardingCompleted: false,
-    profile: {}
-  });
-  closeLogin();
-  closeSignup();
-  openOnboarding(demoUser);
+// Inicio de sesion con Google REAL (Supabase OAuth).
+//
+// Antes esta funcion era un placeholder que creaba un usuario demo y lo
+// guardaba con upsertUser(). Como authSaveProfile() escribe SIEMPRE sobre la
+// fila del usuario autenticado, un clic en "Continue with Google" sobreescribia
+// la cuenta real del usuario con nombre "Velu User", perfil vacio y
+// onboarding_completed = false. Por eso el onboarding volvia a aparecer en cada
+// carga y no habia forma de quitarlo. Ahora no escribimos nada aqui.
+async function socialAuth(provider) {
+  const client = (typeof sb === 'function') ? sb() : null;
+  if (!client || !client.auth || typeof client.auth.signInWithOAuth !== 'function') {
+    alert('Google sign-in is not available right now. Please use your email and password.');
+    return;
+  }
+  try {
+    const { error } = await client.auth.signInWithOAuth({
+      provider: provider,
+      options: { redirectTo: window.location.origin }
+    });
+    if (error) throw error;
+    // Si todo va bien, el navegador se va a Google y vuelve autenticado.
+  } catch (e) {
+    console.warn('Velu: OAuth unavailable', e);
+    alert('Google sign-in is not enabled yet. Please create your account with email and password.');
+  }
 }
 
 
@@ -2900,7 +3074,7 @@ async function submitLogin() {
   const user = res.user;
   setSession(user);
 
-  if (!user.onboardingCompleted) {
+  if (needsOnboarding(user)) {
     closeLogin();
     openOnboarding(user);
     return false;
@@ -3036,7 +3210,7 @@ en: {
   ob_sub:'This takes less than a minute and helps us shape your first terminal experience around who you are, how you think, and what you care about most.',
   ob_country:'Where are you based?', ob_country_ph:'Type to search your country...',
   ob_role:'What best describes you?', ob_level:'How would you describe your experience level?',
-  ob_interest:'What matters most to you right now?', ob_capital:'How much capital do you actively manage?', ob_pill_country:'Country', ob_pill_identity:'Identity', ob_pill_experience:'Experience', ob_pill_focus:'Focus', ob_pill_capital:'Capital', ob_pill_profile:'Profile',
+  ob_interest:'What matters most to you right now?', ob_capital:'How much capital do you actively manage?', ob_pill_country:'Country', ob_pill_identity:'Identity', ob_pill_experience:'Experience', ob_pill_focus:'Focus', ob_pill_capital:'Capital', ob_pill_profile:'Profile', ob_skip:'Skip for now',
 },
 es: {
   nav_try:'Pruébalo', nav_how:'Cómo funciona',
@@ -3131,7 +3305,7 @@ es: {
   ob_sub:'Esto toma menos de un minuto y nos ayuda a moldear tu primera experiencia en el terminal según quién eres, cómo piensas, y qué te importa más.',
   ob_country:'¿Dónde te encuentras?', ob_country_ph:'Escribe para buscar tu país...',
   ob_role:'¿Qué te describe mejor?', ob_level:'¿Cómo describirías tu nivel de experiencia?',
-  ob_interest:'¿Qué te importa más en este momento?', ob_capital:'¿Cuánto capital manejas activamente?', ob_pill_country:'País', ob_pill_identity:'Identidad', ob_pill_experience:'Experiencia', ob_pill_focus:'Enfoque', ob_pill_capital:'Capital', ob_pill_profile:'Perfil',
+  ob_interest:'¿Qué te importa más en este momento?', ob_capital:'¿Cuánto capital manejas activamente?', ob_pill_country:'País', ob_pill_identity:'Identidad', ob_pill_experience:'Experiencia', ob_pill_focus:'Enfoque', ob_pill_capital:'Capital', ob_pill_profile:'Perfil', ob_skip:'Omitir por ahora',
 },
 pt: {
   nav_try:'Experimente', nav_how:'Como funciona',
@@ -3226,7 +3400,7 @@ pt: {
   ob_sub:'Isso leva menos de um minuto e nos ajuda a moldar sua primeira experiência no terminal de acordo com quem você é, como pensa, e o que mais importa para você.',
   ob_country:'Onde você está localizado?', ob_country_ph:'Digite para buscar seu país...',
   ob_role:'O que melhor te descreve?', ob_level:'Como você descreveria seu nível de experiência?',
-  ob_interest:'O que mais importa para você agora?', ob_capital:'Quanto capital você gerencia ativamente?', ob_pill_country:'País', ob_pill_identity:'Identidade', ob_pill_experience:'Experiência', ob_pill_focus:'Foco', ob_pill_capital:'Capital', ob_pill_profile:'Perfil',
+  ob_interest:'O que mais importa para você agora?', ob_capital:'Quanto capital você gerencia ativamente?', ob_pill_country:'País', ob_pill_identity:'Identidade', ob_pill_experience:'Experiência', ob_pill_focus:'Foco', ob_pill_capital:'Capital', ob_pill_profile:'Perfil', ob_skip:'Pular por enquanto',
 }
 };
 
@@ -3562,7 +3736,7 @@ async function handleCheckoutReturn() {
         localStorage.removeItem('veluPendingEmail');
       } catch (e) {}
 
-      if (u && !u.onboardingCompleted) { openOnboarding(u); return; }
+      if (u && needsOnboarding(u)) { openOnboarding(u); return; }
       if (u) { goToTerminal(false); return; }
     }
     return;
@@ -3616,7 +3790,7 @@ async function handleCheckoutReturn() {
       localStorage.removeItem('veluPendingEmail');
     } catch (e) {}
     const user = restored || getUserByEmail(email);
-    if (user && !user.onboardingCompleted) {
+    if (user && needsOnboarding(user)) {
       openOnboarding(user);
       return;
     }
@@ -4181,10 +4355,10 @@ if (document.readyState === 'loading') {
         updateAuthCtas();
         if (!user) return;   // ya estamos en el home
 
-        if (user.onboardingCompleted) {
-          veluApp.showTerminal(false);
-        } else {
+        if (needsOnboarding(user)) {
           openOnboarding(user);
+        } else {
+          veluApp.showTerminal(false);
         }
       } catch (e) {
         console.error('Velu: boot session failed, staying on home.', e);

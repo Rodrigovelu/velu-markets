@@ -1041,34 +1041,75 @@
 /* ── CLOCK ─────────────────────────────────────── */
 
 /* ── PLAN GATING (Free tier limits) ─────────────────── */
-var __verifiedPlan = null;  // cache del plan REAL verificado por el servidor
+var __verifiedPlan = null;   // ultimo plan CONFIRMADO por el servidor
+var __planChecking = false;  // hay una verificacion en curso
 
 function getUserPlan() {
-  // Mientras se verifica o si no hay sesión, tratar como free (seguro por defecto)
+  // Mientras no haya una respuesta confirmada tratamos al usuario como free
+  // para no regalar funciones de paga, pero NUNCA guardamos ese 'free' como
+  // si fuera un dato verificado.
   return __verifiedPlan || 'free';
 }
 
-async function verifyPlanWithServer() {
-  var email = getUserEmail();
-  if (!email) { __verifiedPlan = 'free'; updatePlanBadge(); return 'free'; }
-  try {
-    var res = await fetch('/api/billing?email=' + encodeURIComponent(email));
-    var data = await res.json();
-    __verifiedPlan = data.plan || 'free';
-  } catch (e) {
-    __verifiedPlan = 'free';
+/* Verifica el plan contra el servidor.
+ *
+ * Reglas que evitan que el plan "se caiga" solo:
+ *   - si todavia no sabemos el correo, NO asumimos free: reintentamos
+ *   - si falla la red o el servidor avisa de un error, conservamos el
+ *     ultimo plan confirmado en vez de degradar al usuario a free
+ * Antes cualquier tropiezo dejaba el plan en free hasta recargar, que es
+ * lo que hacia que Pro apareciera y desapareciera.
+ */
+async function verifyPlanWithServer(opts) {
+  opts = opts || {};
+  var attempts = opts.attempts || 6;
+
+  for (var i = 0; i < attempts; i++) {
+    var email = getUserEmail();
+
+    if (!email) {
+      // La sesion llega del contenedor por postMessage y puede tardar.
+      if (i === 0) { try { window.parent.postMessage('velu-request-session', '*'); } catch (e) {} }
+      await new Promise(function (r) { setTimeout(r, 400 + i * 400); });
+      continue;
+    }
+
+    try {
+      var res = await fetch('/api/billing?action=status&email=' + encodeURIComponent(email), { cache: 'no-store' });
+      var data = await res.json();
+
+      if (res.ok && data && data.plan && !data.error) {
+        __verifiedPlan = data.plan;
+        updatePlanBadge();
+        updatePlanSwitchLink();
+        return __verifiedPlan;
+      }
+    } catch (e) { /* reintentamos */ }
+
+    await new Promise(function (r) { setTimeout(r, 500 + i * 500); });
   }
+
+  // Sin confirmacion: conservamos lo ultimo que si fue confirmado.
   updatePlanBadge();
   updatePlanSwitchLink();
-  return __verifiedPlan;
+  return __verifiedPlan || 'free';
 }
+
+// Revisa el plan de nuevo cuando el usuario vuelve a la pestana. Cubre el
+// caso de volver de Stripe en otra ventana o de dejar la terminal abierta.
+document.addEventListener('visibilitychange', function () {
+  if (document.visibilityState !== 'visible') return;
+  if (__planChecking) return;
+  __planChecking = true;
+  verifyPlanWithServer({ attempts: 2 }).finally(function () { __planChecking = false; });
+});
 
 
 async function refreshPlan() {
   var b = document.getElementById('planBadge');
   if (b) b.textContent = '···';
   var before = __verifiedPlan;
-  await verifyPlanWithServer();
+  await verifyPlanWithServer({ attempts: 3 });
   updatePlanBadge();
   updatePlanSwitchLink();
   showTerminalTabIfEligible();
@@ -1095,14 +1136,22 @@ function updatePlanSwitchLink() {
   var plan = getUserPlan();
   if (plan === 'pro') {
     btn.style.display = '';
+    btn.disabled = false;
     btn.textContent = '↑ Upgrade to Terminal';
     btn.onclick = function() { openPlanSwitch('terminal'); };
   } else if (plan === 'terminal') {
     btn.style.display = '';
+    btn.disabled = false;
     btn.textContent = 'Switch to Pro';
     btn.onclick = function() { openPlanSwitch('pro'); };
   } else {
-    btn.style.display = 'none';
+    // Antes el boton se ocultaba en plan free, asi que un usuario cuyo plan
+    // se leyera mal como free se quedaba sin ninguna forma de contratar
+    // Terminal. Ahora siempre hay un camino a la caja.
+    btn.style.display = '';
+    btn.disabled = false;
+    btn.textContent = '↑ Upgrade';
+    btn.onclick = function() { startCheckout('terminal'); };
   }
 }
 
@@ -1130,7 +1179,7 @@ async function openPlanSwitch(targetPlan) {
 
     if (res.ok) {
       alert('Done — you are now on ' + label + '.');
-      await verifyPlanWithServer();
+      await verifyPlanWithServer({ attempts: 4 });
       updatePlanBadge();
       updatePlanSwitchLink();
       loadScreener();
@@ -1138,7 +1187,15 @@ async function openPlanSwitch(targetPlan) {
     } else if (data.needsCheckout) {
       startCheckout(targetPlan);
     } else {
-      alert(data.error || 'Could not change your plan.');
+      // Stripe puede negarse a cambiar la suscripcion en el lugar: por
+      // ejemplo si el cliente quedo fijado a una moneda distinta a la del
+      // precio nuevo. En vez de dejar al usuario sin salida, le ofrecemos
+      // pasar por la caja, que si puede crear la suscripcion correcta.
+      var detail = data.error || 'Could not change your plan.';
+      if (confirm(detail + '\n\nWe can take you to checkout to start ' + label + ' instead. Continue?')) {
+        startCheckout(targetPlan);
+        return;
+      }
       if (btn) { btn.disabled = false; }
       updatePlanSwitchLink();
     }
@@ -1379,25 +1436,45 @@ function getUserEmail() {
   return null;
 }
 
-function requestSessionFromParent() {
-  return new Promise(function(resolve) {
-    var settled = false;
+/* Pide el correo de la sesion al contenedor.
+ *
+ * El iframe se carga junto con la pagina, asi que normalmente arranca ANTES
+ * de que el contenedor termine de restaurar la sesion de Supabase. Con un
+ * solo intento de 1.5s el terminal se quedaba sin correo y, sin correo,
+ * todo se veia como plan free. Ahora preguntamos varias veces hasta que la
+ * sesion exista. */
+function requestSessionFromParent(maxWaitMs) {
+  var limit = maxWaitMs || 12000;
+  return new Promise(function (resolve) {
+    var done = false;
+    var started = Date.now();
+
     function onMsg(ev) {
-      if (ev.data && ev.data.type === 'velu-session') {
-        settled = true;
-        window.removeEventListener('message', onMsg);
-        __sessionEmail = ev.data.email || null;
-        resolve(__sessionEmail);
-      }
+      if (!ev.data || ev.data.type !== 'velu-session') return;
+      if (!ev.data.email) return;        // todavia sin sesion: seguimos esperando
+      __sessionEmail = ev.data.email;
+      finish();
     }
+
+    function finish() {
+      if (done) return;
+      done = true;
+      window.removeEventListener('message', onMsg);
+      clearInterval(timer);
+      resolve(getUserEmail());
+    }
+
     window.addEventListener('message', onMsg);
-    try { window.parent.postMessage('velu-request-session', '*'); } catch(e) {}
-    setTimeout(function() {
-      if (!settled) {
-        window.removeEventListener('message', onMsg);
-        resolve(getUserEmail());
-      }
-    }, 1500);
+
+    function ask() {
+      if (done) return;
+      if (getUserEmail()) { finish(); return; }
+      if (Date.now() - started > limit) { finish(); return; }
+      try { window.parent.postMessage('velu-request-session', '*'); } catch (e) {}
+    }
+
+    var timer = setInterval(ask, 600);
+    ask();
   });
 }
 
@@ -3290,7 +3367,7 @@ window.addEventListener('message', function(ev) {
   }
   if (ev.data.type === 'velu-refresh') {
     (async function() {
-      await verifyPlanWithServer();
+      await verifyPlanWithServer({ attempts: 3 });
       await loadWatchlist();
       await loadMyCalls();
       loadScreener();
@@ -3316,7 +3393,7 @@ window.addEventListener('message', function(ev) {
   if (tb3) tb3.addEventListener('click', function(){ switchTab('terminal'); });
 
   await requestSessionFromParent();
-  await verifyPlanWithServer();
+  await verifyPlanWithServer({ attempts: 3 });
   await loadWatchlist();
   await loadMyCalls();
   loadScreener();
