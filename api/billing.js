@@ -62,6 +62,12 @@ export default async function handler(req, res) {
         `${SUPABASE_URL}/rest/v1/subscriptions?email=eq.${encodeURIComponent(email)}&select=plan,status,current_period_end`,
         { headers: sbHeaders(SB) }
       );
+      if (!r.ok) {
+        // No sabemos el plan. Devolvemos un error explicito para que el
+        // cliente conserve el ultimo plan confirmado en vez de degradar al
+        // usuario a free por un tropiezo de la base de datos.
+        return res.status(503).json({ error: 'plan lookup unavailable' });
+      }
       const rows = await r.json();
       const sub = Array.isArray(rows) && rows[0] ? rows[0] : null;
       if (!sub || sub.status !== 'active') return res.status(200).json({ plan: 'free' });
@@ -70,7 +76,7 @@ export default async function handler(req, res) {
       }
       return res.status(200).json({ plan: sub.plan || 'free' });
     } catch (e) {
-      return res.status(200).json({ plan: 'free', error: true });
+      return res.status(503).json({ error: 'plan lookup failed' });
     }
   }
 
@@ -103,13 +109,28 @@ export default async function handler(req, res) {
 
       if (event.type === 'customer.subscription.updated') {
         const email = o.metadata?.email;
-        const plan = o.metadata?.plan;
-        const status = (o.status === 'active' || o.status === 'trialing') ? 'active' : 'inactive';
+
+        // El plan se saca de la metadata y, si falta, del precio real que
+        // Stripe tiene cobrando. Asi el plan nunca queda a medias.
+        const priceId = o.items?.data?.[0]?.price?.id;
+        const planFromPrice = priceId === PRICE_TERMINAL ? 'terminal'
+                            : priceId === PRICE_PRO ? 'pro' : null;
+        const plan = o.metadata?.plan || planFromPrice;
+
+        // Solo damos de baja el acceso cuando Stripe lo da por terminado.
+        // Estados pasajeros (past_due, incomplete, unpaid) ocurren mientras
+        // se reintenta un cobro o se confirma la tarjeta; degradar ahi era
+        // lo que hacia que el plan saltara de Pro a Free y de vuelta.
+        const ENDED = ['canceled', 'cancelled', 'incomplete_expired'];
+        const status = ENDED.indexOf(o.status) !== -1 ? 'inactive' : 'active';
+
+        // current_period_end vive en el item en las versiones nuevas de la API
+        const periodEnd = o.current_period_end || o.items?.data?.[0]?.current_period_end;
+
         if (email) {
           await upsertSub(SB, {
             email, plan: plan || undefined, stripe_subscription_id: o.id, status,
-            current_period_end: o.current_period_end
-              ? new Date(o.current_period_end * 1000).toISOString() : null
+            current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : undefined
           });
         }
       }
@@ -204,10 +225,18 @@ export default async function handler(req, res) {
       const sRes = await fetch(`https://api.stripe.com/v1/subscriptions/${sub.stripe_subscription_id}`,
         { headers: { 'Authorization': `Bearer ${STRIPE}` } });
       const sSub = await sRes.json();
-      if (!sRes.ok) return res.status(500).json({ error: 'Could not read subscription' });
+
+      // La suscripcion guardada ya no existe o ya no esta viva en Stripe:
+      // el camino correcto es una compra nueva, no un cambio en el lugar.
+      if (!sRes.ok || ['canceled', 'cancelled', 'incomplete_expired'].includes(sSub.status)) {
+        return res.status(400).json({
+          error: 'Your previous subscription is no longer active in Stripe.',
+          needsCheckout: true
+        });
+      }
 
       const itemId = sSub.items?.data?.[0]?.id;
-      if (!itemId) return res.status(500).json({ error: 'No billable item' });
+      if (!itemId) return res.status(400).json({ error: 'No billable item', needsCheckout: true });
 
       const p = new URLSearchParams();
       p.append('items[0][id]', itemId);
@@ -225,7 +254,18 @@ export default async function handler(req, res) {
       const upd = await uRes.json();
       if (!uRes.ok) {
         console.error('Upgrade error:', upd);
-        return res.status(500).json({ error: upd.error?.message || 'Could not change plan' });
+        const msg = upd.error?.message || 'Could not change plan';
+
+        // Caso conocido: el cliente de Stripe quedo fijado a una moneda y el
+        // precio nuevo esta en otra. No se puede cambiar en el lugar, pero si
+        // se puede crear una suscripcion nueva desde la caja.
+        const currencyClash = /currenc/i.test(msg);
+        return res.status(400).json({
+          error: currencyClash
+            ? 'This plan is priced in a different currency than your current subscription, so Stripe cannot swap it in place.'
+            : msg,
+          needsCheckout: currencyClash
+        });
       }
 
       await fetch(`${SUPABASE_URL}/rest/v1/subscriptions?email=eq.${encodeURIComponent(email)}`, {
